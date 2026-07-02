@@ -1,0 +1,117 @@
+/* mc-ui layout primitives — self-contained styles for the Stack / Grid / Inline / Pane /
+ * Scroll components. Carved (copied) from Mission Control's web/public/styles.css so the
+ * visuals travel with the package; MC keeps its own styles.css (this file is for standalone
+ * consumers). The spacing tokens below are the package defaults — override :root to theme. */
+
+:root {
+  --mc-space-none: 0px;
+  --mc-space-xs: 4px;
+  --mc-space-sm: 8px;
+  --mc-space-md: 12px;
+  --mc-space-lg: 16px;
+  --mc-space-xl: 24px;
+  --mc-space-2xl: 32px;
+}
+
+	.mc-stack { display: flex; flex-direction: column; min-width: 0; }
+	.mc-stack-gap--none { gap: 0; }
+	.mc-stack-gap--xs { gap: var(--mc-space-xs); }
+	.mc-stack-gap--sm { gap: var(--mc-space-sm); }
+	.mc-stack-gap--md { gap: var(--mc-space-md); }
+	.mc-stack-gap--lg { gap: var(--mc-space-lg); }
+	.mc-stack-gap--xl { gap: var(--mc-space-xl); }
+	.mc-stack-gap--2xl { gap: var(--mc-space-2xl); }
+	.mc-stack-align--start { align-items: flex-start; }
+	.mc-stack-align--center { align-items: center; }
+	.mc-stack-align--end { align-items: flex-end; }
+	.mc-stack-align--stretch { align-items: stretch; }
+	/* Inline — horizontal flex */
+	.mc-inline { display: flex; flex-direction: row; min-width: 0; flex-wrap: nowrap; }
+	.mc-inline--wrap { flex-wrap: wrap; }
+	.mc-inline-gap--none { gap: 0; }
+	.mc-inline-gap--xs { gap: var(--mc-space-xs); }
+	.mc-inline-gap--sm { gap: var(--mc-space-sm); }
+	.mc-inline-gap--md { gap: var(--mc-space-md); }
+	.mc-inline-gap--lg { gap: var(--mc-space-lg); }
+	.mc-inline-gap--xl { gap: var(--mc-space-xl); }
+	.mc-inline-gap--2xl { gap: var(--mc-space-2xl); }
+	.mc-inline-align--start { align-items: flex-start; }
+	.mc-inline-align--center { align-items: center; }
+	.mc-inline-align--end { align-items: flex-end; }
+	.mc-inline-align--stretch { align-items: stretch; }
+	.mc-inline-align--baseline { align-items: baseline; }
+	.mc-inline-justify--start { justify-content: flex-start; }
+	.mc-inline-justify--center { justify-content: center; }
+	.mc-inline-justify--end { justify-content: flex-end; }
+	.mc-inline-justify--between { justify-content: space-between; }
+	.mc-inline-justify--around { justify-content: space-around; }
+	.mc-inline-justify--evenly { justify-content: space-evenly; }
+	/* Grid — CSS Grid (template columns set inline) */
+	.mc-grid { display: grid; min-width: 0; }
+	.mc-grid-gap--none { gap: 0; }
+	.mc-grid-gap--xs { gap: var(--mc-space-xs); }
+	.mc-grid-gap--sm { gap: var(--mc-space-sm); }
+	.mc-grid-gap--md { gap: var(--mc-space-md); }
+	.mc-grid-gap--lg { gap: var(--mc-space-lg); }
+	.mc-grid-gap--xl { gap: var(--mc-space-xl); }
+	.mc-grid-gap--2xl { gap: var(--mc-space-2xl); }
+	.mc-grid-row-gap--none { row-gap: 0; }
+	.mc-grid-row-gap--xs { row-gap: var(--mc-space-xs); }
+	.mc-grid-row-gap--sm { row-gap: var(--mc-space-sm); }
+	.mc-grid-row-gap--md { row-gap: var(--mc-space-md); }
+	.mc-grid-row-gap--lg { row-gap: var(--mc-space-lg); }
+	.mc-grid-row-gap--xl { row-gap: var(--mc-space-xl); }
+	.mc-grid-row-gap--2xl { row-gap: var(--mc-space-2xl); }
+	.mc-grid-col-gap--none { column-gap: 0; }
+	.mc-grid-col-gap--xs { column-gap: var(--mc-space-xs); }
+	.mc-grid-col-gap--sm { column-gap: var(--mc-space-sm); }
+	.mc-grid-col-gap--md { column-gap: var(--mc-space-md); }
+	.mc-grid-col-gap--lg { column-gap: var(--mc-space-lg); }
+	.mc-grid-col-gap--xl { column-gap: var(--mc-space-xl); }
+	.mc-grid-col-gap--2xl { column-gap: var(--mc-space-2xl); }
+	.mc-grid-align--start { align-items: start; }
+	.mc-grid-align--center { align-items: center; }
+	.mc-grid-align--end { align-items: end; }
+	.mc-grid-align--stretch { align-items: stretch; }
+	.mc-grid-justify--start { justify-items: start; }
+	.mc-grid-justify--center { justify-items: center; }
+	.mc-grid-justify--end { justify-items: end; }
+	.mc-grid-justify--stretch { justify-items: stretch; }
+	.mc-grid-row-height--2xs { grid-auto-rows: var(--mc-clamp-2xs); }
+	.mc-grid-row-height--xs { grid-auto-rows: var(--mc-clamp-xs); }
+	.mc-grid-row-height--sm { grid-auto-rows: var(--mc-clamp-sm); }
+	.mc-grid-row-height--md { grid-auto-rows: var(--mc-clamp-md); }
+	.mc-grid-row-height--lg { grid-auto-rows: var(--mc-clamp-lg); }
+	.mc-grid-row-height--xl { grid-auto-rows: var(--mc-clamp-xl); }
+	.mc-stack-item-height--2xs > * { height: var(--mc-clamp-2xs); min-height: var(--mc-clamp-2xs); }
+	.mc-stack-item-height--xs > * { height: var(--mc-clamp-xs); min-height: var(--mc-clamp-xs); }
+	.mc-stack-item-height--sm > * { height: var(--mc-clamp-sm); min-height: var(--mc-clamp-sm); }
+	.mc-stack-item-height--md > * { height: var(--mc-clamp-md); min-height: var(--mc-clamp-md); }
+	.mc-stack-item-height--lg > * { height: var(--mc-clamp-lg); min-height: var(--mc-clamp-lg); }
+	.mc-stack-item-height--xl > * { height: var(--mc-clamp-xl); min-height: var(--mc-clamp-xl); }
+	/* Pane — bounded region with header/body/footer slots */
+	.mc-pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+	.mc-pane-height--fill { height: 100%; }
+	.mc-pane-height--auto { height: auto; }
+	.mc-pane-header { flex: 0 0 auto; }
+	.mc-pane-footer { flex: 0 0 auto; }
+	.mc-pane-body { flex: 1 1 auto; min-height: 0; min-width: 0; }
+	.mc-pane-body-scroll--auto { overflow: auto; }
+	.mc-pane-body-scroll--always { overflow: scroll; scrollbar-gutter: stable; }
+	.mc-pane-body-scroll--never { overflow: hidden; }
+	.mc-pane-body-padding--none { padding: 0; }
+	.mc-pane-body-padding--xs { padding: var(--mc-space-xs); }
+	.mc-pane-body-padding--sm { padding: var(--mc-space-sm); }
+	.mc-pane-body-padding--md { padding: var(--mc-space-md); }
+	.mc-pane-body-padding--lg { padding: var(--mc-space-lg); }
+	.mc-pane-body-padding--xl { padding: var(--mc-space-xl); }
+	.mc-pane-body-padding--2xl { padding: var(--mc-space-2xl); }
+	/* Scroll — explicit scroll region */
+	.mc-scroll { min-width: 0; min-height: 0; }
+	.mc-scroll-axis--y { overflow-y: auto; overflow-x: hidden; }
+	.mc-scroll-axis--x { overflow-x: auto; overflow-y: hidden; }
+	.mc-scroll-axis--both { overflow: auto; }
+	.mc-scroll-height--fill { height: 100%; }
+	.mc-scroll-height--auto { height: auto; }
+	.mc-scroll-width--fill { width: 100%; }
+	.mc-scroll-width--auto { width: auto; }
