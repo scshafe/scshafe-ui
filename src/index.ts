@@ -59,3 +59,16 @@ export * from "./widget/EmptyStateComponent.js";
 export * from "./container/ListComponent.js";
 export * from "./container/PanelComponent.js";
 export * from "./widget/ReaderComponent.js";
+
+// Fourth layer (C4): Bucket C — the Icon + Tooltip-consuming primitives, the LAST in-tree move
+// (ends the extraction arc). Each is import-closed to react + the now-package-internal Tooltip
+// family (Tooltip / useIcon) + Title / Description + sibling movers (Button / HoverButton).
+// Button/IconButton + Tab wrap Tooltip and resolve the icon renderer via useIcon (both internal
+// now); Editor composes Button + Title + Description; EditableName composes HoverButton. MC feeds
+// the live icon/popover state through McIconProvider / RtkPopoverProvider exactly as before —
+// byte-identical.
+export * from "./primitive/ButtonComponent.js";
+export * from "./primitive/HoverButtonComponent.js";
+export * from "./widget/TabComponent.js";
+export * from "./widget/EditorComponent.js";
+export * from "./widget/EditableNameComponent.js";

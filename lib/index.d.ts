@@ -29,3 +29,8 @@ export * from "./widget/EmptyStateComponent.js";
 export * from "./container/ListComponent.js";
 export * from "./container/PanelComponent.js";
 export * from "./widget/ReaderComponent.js";
+export * from "./primitive/ButtonComponent.js";
+export * from "./primitive/HoverButtonComponent.js";
+export * from "./widget/TabComponent.js";
+export * from "./widget/EditorComponent.js";
+export * from "./widget/EditableNameComponent.js";
