@@ -11,14 +11,21 @@ accessible wrappers over CSS layout tokens (`--mc-space-*`). Import-closed: they
 `joinClasses` helpers). This is the layout substrate an app renders through, and the home for a
 responsive/mobile pass.
 
-More layers (primitives like Button/Badge, widgets) follow as their couplings are decoupled — see
-`DESIGN-FRONTEND-COMPONENT-PACKAGE.md` at the repo root for the extraction arc.
+**Generic components — Bucket A (C2).** `Kbd` · `Sheet` (`SheetHeader`/`SheetBody`/`SheetFooter`) ·
+`PinnedDataTable` · `MarkdownEditor`. The first three are import-closed (react only); `MarkdownEditor`
+adds the tiptap editor stack (`@tiptap/react` · `@tiptap/starter-kit` · `@tiptap/extension-link` ·
+`@tiptap/extension-placeholder` · `tiptap-markdown`, declared as package deps). Their styles ship in
+`mc-ui/components.css`.
+
+More layers (primitives like Button/Badge, the remaining widgets) follow as their couplings are
+decoupled — see `DESIGN-FRONTEND-COMPONENT-PACKAGE.md` at the repo root for the extraction arc.
 
 ## Usage
 
 ```tsx
-import { Stack, Inline, Grid, Pane, Scroll } from "mc-ui";
-import "mc-ui/layout.css"; // ship the styles (self-contained; theme via the --mc-space-* tokens)
+import { Stack, Inline, Grid, Pane, Scroll, Kbd, Sheet, PinnedDataTable, MarkdownEditor } from "mc-ui";
+import "mc-ui/layout.css";     // layout-primitive styles (self-contained; theme via the --mc-space-* tokens)
+import "mc-ui/components.css"; // Bucket-A component styles (Kbd / Sheet / PinnedDataTable / MarkdownEditor)
 
 <Stack gap="md" align="stretch">
   <Inline gap="xs" wrap>…</Inline>

@@ -4,3 +4,7 @@ export * from "./layout/InlineComponent.js";
 export * from "./layout/GridComponent.js";
 export * from "./layout/PaneComponent.js";
 export * from "./layout/ScrollComponent.js";
+export * from "./primitive/KbdComponent.js";
+export * from "./primitive/MarkdownEditorComponent.js";
+export * from "./widget/SheetComponent.js";
+export * from "./table/PinnedDataTableComponent.js";

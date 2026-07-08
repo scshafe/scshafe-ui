@@ -11,3 +11,11 @@ export * from "./layout/InlineComponent.js";
 export * from "./layout/GridComponent.js";
 export * from "./layout/PaneComponent.js";
 export * from "./layout/ScrollComponent.js";
+
+// Second layer (C2): Bucket A — the import-closed generic components (react + npm only, zero
+// domain coupling). Kbd/Sheet/PinnedDataTable are react-only; MarkdownEditor adds @tiptap +
+// tiptap-markdown (package deps). Ship the styles with `import "mc-ui/components.css"`.
+export * from "./primitive/KbdComponent.js";
+export * from "./primitive/MarkdownEditorComponent.js";
+export * from "./widget/SheetComponent.js";
+export * from "./table/PinnedDataTableComponent.js";

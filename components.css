@@ -1,0 +1,103 @@
+/* mc-ui components — self-contained styles for the Bucket-A generic components
+ * (Kbd / Sheet / PinnedDataTable / MarkdownEditor). Carved (copied) from Mission
+ * Control's web/public/styles.css so the visuals travel with the package; MC keeps
+ * its own styles.css (this file is for standalone consumers). The theme tokens below
+ * are the package defaults — override :root to theme. */
+
+:root {
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text: #eff6ff;
+  --text-strong: #f8fbff;
+  --muted: #9fb0c8;
+  --line: rgba(183, 203, 231, 0.18);
+  --blue: #6cb6ff;
+  --accent: var(--blue);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius: var(--radius-md);
+}
+
+/* Kbd — keyboard-key badges (from web/public/styles.css: .mc-kbd, .mc-kbd-combo). */
+.mc-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: rgba(8, 17, 31, 0.6);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+.mc-kbd-combo { display: inline-flex; gap: 3px; align-items: center; }
+
+/* Sheet — native <dialog> slide-in / centered modal (from web/public/styles.css: .mc-sheet*). */
+.mc-sheet { color: var(--text); background: rgba(8, 17, 31, 0.98); border: 1px solid var(--line); border-radius: var(--radius); padding: 0; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); max-width: 100vw; max-height: 100vh; }
+.mc-sheet::backdrop { background: rgba(0, 0, 0, 0.4); }
+.mc-sheet--right { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(560px, 100vw); height: 100vh; max-height: 100vh; border-left: 1px solid var(--line); border-right: 0; border-top: 0; border-bottom: 0; border-radius: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.mc-sheet--center { width: min(460px, calc(100vw - 32px)); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.mc-sheet__header { padding: 12px 16px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.mc-sheet__title { margin: 0; font-size: 15px; font-weight: 700; color: var(--text); }
+.mc-sheet__description { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
+.mc-sheet__body { padding: 12px 16px; overflow: auto; min-height: 0; }
+.mc-sheet__body:empty { padding: 0; }
+.mc-sheet__footer { padding: 10px 16px; border-top: 1px solid var(--line); display: inline-flex; gap: 8px; align-items: center; justify-content: flex-end; background: rgba(8, 17, 31, 0.6); }
+
+/* PinnedDataTable — sticky-header / pinned-column data table (from web/public/styles.css: .mc-data-table*). */
+.mc-data-table-scroll { min-width: 0; min-height: 0; overflow: auto; scrollbar-gutter: stable; }
+.mc-data-table { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; }
+.mc-data-table th, .mc-data-table td {
+  min-width: var(--mc-data-table-min-width, 0);
+  width: var(--mc-data-table-live-width, var(--mc-data-table-width, var(--mc-data-table-max-width, auto)));
+  max-width: var(--mc-data-table-max-width, none);
+  background-clip: padding-box;
+}
+.mc-data-table thead th { position: sticky; top: 0; z-index: 3; }
+.mc-data-table [data-pinned-column="left"] {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: rgba(8, 17, 31, 0.98);
+  box-shadow: 10px 0 16px rgba(0, 0, 0, 0.22);
+}
+.mc-data-table thead [data-pinned-column="left"] { z-index: 7; }
+.mc-data-table [data-align="center"] { text-align: center; }
+.mc-data-table [data-align="right"] { text-align: right; }
+.mc-data-table-cell-content { display: block; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-data-table [data-cell-wrap="normal"] > .mc-data-table-cell-content { white-space: normal; overflow-wrap: anywhere; }
+.mc-data-table [data-line-clamp="true"] > .mc-data-table-cell-content { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--mc-data-table-line-clamp, 2); overflow: hidden; }
+.mc-data-table-header-cell { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px; min-width: 0; }
+.mc-data-table-resize-handle { align-self: stretch; width: 9px; min-height: 20px; border-radius: 3px; cursor: col-resize; touch-action: none; position: relative; }
+.mc-data-table-resize-handle::after { content: ""; position: absolute; inset: 2px 3px; border-left: 1px solid rgba(183, 203, 231, 0.36); }
+.mc-data-table-resize-handle:hover::after, .mc-data-table-resize-handle:focus-visible::after { border-color: var(--accent); }
+
+/* MarkdownEditor — tiptap markdown editor surface (from web/public/styles.css: .mc-markdown-editor*).
+ * The `.project-chat-composer-editor-wrap .mc-markdown-editor-content` override in styles.css is
+ * MC-domain (the chat composer) and intentionally NOT carried into the generic package. */
+.mc-markdown-editor { background: rgba(8, 17, 31, 0.45); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; transition: border-color 120ms ease; }
+.mc-markdown-editor:focus-within { border-color: rgba(108, 182, 255, 0.45); }
+.mc-markdown-editor-content { color: var(--text); font: inherit; font-size: 13px; line-height: 1.5; min-height: 60px; max-height: 240px; overflow-y: auto; outline: none; }
+.mc-markdown-editor-content > * { margin: 0; }
+.mc-markdown-editor-content > * + * { margin-top: 6px; }
+.mc-markdown-editor-content p { margin: 0; }
+.mc-markdown-editor-content p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--muted); float: left; height: 0; pointer-events: none; }
+.mc-markdown-editor-content h1, .mc-markdown-editor-content h2, .mc-markdown-editor-content h3 { font-weight: 600; line-height: 1.2; }
+.mc-markdown-editor-content h1 { font-size: 18px; }
+.mc-markdown-editor-content h2 { font-size: 16px; }
+.mc-markdown-editor-content h3 { font-size: 14px; }
+.mc-markdown-editor-content strong { color: var(--text-strong); font-weight: 600; }
+.mc-markdown-editor-content em { font-style: italic; }
+.mc-markdown-editor-content code { background: rgba(108, 182, 255, 0.08); border: 1px solid rgba(108, 182, 255, 0.16); border-radius: 4px; padding: 0 4px; font-family: var(--mono); font-size: 0.9em; }
+.mc-markdown-editor-content pre { background: rgba(8, 17, 31, 0.6); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; overflow-x: auto; }
+.mc-markdown-editor-content pre code { background: transparent; border: 0; padding: 0; font-size: inherit; }
+.mc-markdown-editor-content blockquote { border-left: 3px solid var(--accent); padding-left: 10px; color: var(--muted); }
+.mc-markdown-editor-content ul, .mc-markdown-editor-content ol { padding-left: 24px; }
+.mc-markdown-editor-content a { color: var(--accent); text-decoration: underline; }
+.mc-markdown-editor-content:focus-visible { outline: none; }

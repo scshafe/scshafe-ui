@@ -9,6 +9,7 @@
   "exports": {
     ".": { "types": "./lib/index.d.ts", "default": "./lib/index.js" },
     "./layout.css": "./layout.css",
+    "./components.css": "./components.css",
     "./*": { "types": "./lib/*.d.ts", "default": "./lib/*.js" },
     "./package.json": "./package.json"
   },
@@ -16,6 +17,7 @@
     "src",
     "lib",
     "layout.css",
+    "components.css",
     "README.md"
   ],
   "sideEffects": [
@@ -23,6 +25,13 @@
   ],
   "peerDependencies": {
     "react": ">=18"
+  },
+  "dependencies": {
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
+    "@tiptap/extension-link": "^3.23.6",
+    "@tiptap/extension-placeholder": "^3.23.6",
+    "tiptap-markdown": "^0.9.0"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
