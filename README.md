@@ -17,7 +17,16 @@ adds the tiptap editor stack (`@tiptap/react` · `@tiptap/starter-kit` · `@tipt
 `@tiptap/extension-placeholder` · `tiptap-markdown`, declared as package deps). Their styles ship in
 `mc-ui/components.css`.
 
-More layers (primitives like Button/Badge, the remaining widgets) follow as their couplings are
+**Tooltip family + Bucket B (C3).** The render + seam layer: `Tooltip` · `HoverCard` · `Popover`
+(now driven by an injected `PopoverController` — mount `LocalPopoverProvider` for a self-contained
+single-open controller, or inject your own; the `IconContext` seam + `useIcon` let a host supply its
+icon set) plus the Tooltip-decoupled leaves & composites — `Badge` · `Description` ·
+`InputField`/`SelectField`/`TextAreaField` · `Identifier` · `Label` · `Title` · `Copyable` ·
+`MarkdownContent` · `EmptyState` · `List` · `Panel`/`PanelHeader` · `Reader`. Their styles ship in
+`mc-ui/components.css`. (These are `.jsx`/`.js` sources compiled via `allowJs`; a package cannot
+reverse-import its host, so the contexts live here and the host re-provides live state.)
+
+More layers (Button/IconButton, Tab, Editor, EditableName — Bucket C) follow as their couplings are
 decoupled — see `DESIGN-FRONTEND-COMPONENT-PACKAGE.md` at the repo root for the extraction arc.
 
 ## Usage
