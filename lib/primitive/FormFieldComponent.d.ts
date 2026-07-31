@@ -14,7 +14,7 @@ export function SelectField({ id, field, label, value, options, disabled, toolti
     emptyLabel?: string;
     preserveUnknownValue?: boolean;
     [extra: string]: any;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
 export function InputField({ id, label, value, placeholder, type, inputMode, autoComplete, disabled, readOnly, required, tooltip, className, onChange, ...rest }: {
     [x: string]: any;
     id: any;
@@ -30,7 +30,7 @@ export function InputField({ id, label, value, placeholder, type, inputMode, aut
     tooltip: any;
     className: any;
     onChange: any;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
 export function TextAreaField({ id, label, value, placeholder, rows, disabled, readOnly, tooltip, className, onChange, ...rest }: {
     [x: string]: any;
     id: any;
@@ -43,4 +43,5 @@ export function TextAreaField({ id, label, value, placeholder, rows, disabled, r
     tooltip: any;
     className: any;
     onChange: any;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

@@ -20,4 +20,5 @@ export function Reader({ title, titleLevel, description, actions, children, tool
     actions?: null | undefined;
     children: any;
     tooltip?: null | undefined;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

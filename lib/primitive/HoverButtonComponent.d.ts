@@ -30,4 +30,4 @@ export interface HoverButtonProps {
  *     <HoverButton icon="action.edit" label="Rename" onClick={...} />
  *   </div>
  */
-export declare function HoverButton({ icon, label, onClick, disabled, variant, size, type, title, ariaPressed, ariaExpanded, ariaControls, popoverTarget, popoverTargetAction, dataMcComponent, data, }: HoverButtonProps): import("react/jsx-runtime").JSX.Element;
+export declare function HoverButton({ icon, label, onClick, disabled, variant, size, type, title, ariaPressed, ariaExpanded, ariaControls, popoverTarget, popoverTargetAction, dataMcComponent, data, }: HoverButtonProps): React.JSX.Element;

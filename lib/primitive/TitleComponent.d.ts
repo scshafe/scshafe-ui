@@ -13,4 +13,5 @@ export function Title({ children, level, tooltip }: {
     children: any;
     level?: number | undefined;
     tooltip?: null | undefined;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

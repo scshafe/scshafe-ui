@@ -12,4 +12,5 @@ export function Description({ children, tone, tooltip }: {
     children: any;
     tone?: string | undefined;
     tooltip?: null | undefined;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

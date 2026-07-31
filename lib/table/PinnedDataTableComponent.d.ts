@@ -28,4 +28,4 @@ export interface PinnedDataTableProps<Row> {
     onColumnWidthSet?: (columnId: string, width: number) => void;
     onColumnWidthReset?: (columnId: string) => void;
 }
-export declare function PinnedDataTable<Row>({ ariaLabel, columns, rows, rowKey, className, tableClassName, getRowClassName, tableId, onColumnWidthSet, onColumnWidthReset, }: PinnedDataTableProps<Row>): import("react/jsx-runtime").JSX.Element;
+export declare function PinnedDataTable<Row>({ ariaLabel, columns, rows, rowKey, className, tableClassName, getRowClassName, tableId, onColumnWidthSet, onColumnWidthReset, }: PinnedDataTableProps<Row>): React.JSX.Element;

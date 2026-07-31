@@ -29,6 +29,13 @@ reverse-import its host, so the contexts live here and the host re-provides live
 More layers (Button/IconButton, Tab, Editor, EditableName — Bucket C) follow as their couplings are
 decoupled — see `DESIGN-FRONTEND-COMPONENT-PACKAGE.md` at the repo root for the extraction arc.
 
+**Pagination + format (P1).** `InfiniteScrollSentinel` / `useInfiniteScroll` — an IntersectionObserver
+sentinel with host-owned paging state (the package observes and calls `onLoadMore`; the host owns
+offset/hasMore/inFlight and does the fetching — the `PinnedDataTable` philosophy applied to paging).
+`mc-ui/format` (also re-exported from the root) — the generic formatting helpers moved out of MC's
+`utils/format.js`: `toneByState` (the default workflow-state → tone vocabulary; extend via
+`new Map([...toneByState, …])`) · `timestamp` · `esc` · `classToken` · `plural` · `shortRef`.
+
 ## Usage
 
 ```tsx

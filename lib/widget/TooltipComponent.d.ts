@@ -10,5 +10,5 @@ export interface TooltipProps {
     as?: "span" | "div";
     children: React.ReactNode;
 }
-export declare function Tooltip({ tooltip, fallback, side, openDelayMs, closeDelayMs, className, as, children }: TooltipProps): import("react/jsx-runtime").JSX.Element;
+export declare function Tooltip({ tooltip, fallback, side, openDelayMs, closeDelayMs, className, as, children }: TooltipProps): React.JSX.Element;
 export {};

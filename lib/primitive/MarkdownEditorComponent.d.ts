@@ -15,4 +15,4 @@ export interface MarkdownEditorProps {
     onSubmit?: () => void;
     ref?: React.Ref<MarkdownEditorHandle>;
 }
-export declare function MarkdownEditor({ id, initialValue, placeholder, disabled, ariaLabel, onChange, onSubmit, ref, }: MarkdownEditorProps): import("react/jsx-runtime").JSX.Element;
+export declare function MarkdownEditor({ id, initialValue, placeholder, disabled, ariaLabel, onChange, onSubmit, ref, }: MarkdownEditorProps): React.JSX.Element;

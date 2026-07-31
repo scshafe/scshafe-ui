@@ -24,4 +24,5 @@ export function Tab({ id, label, icon, active, disabled, badge, onSelect, toolti
     badge?: null | undefined;
     onSelect?: null | undefined;
     tooltip?: null | undefined;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

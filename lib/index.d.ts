@@ -34,3 +34,5 @@ export * from "./primitive/HoverButtonComponent.js";
 export * from "./widget/TabComponent.js";
 export * from "./widget/EditorComponent.js";
 export * from "./widget/EditableNameComponent.js";
+export * from "./widget/InfiniteScrollSentinelComponent.js";
+export * from "./format.js";

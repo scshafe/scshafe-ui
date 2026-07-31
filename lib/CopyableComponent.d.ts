@@ -31,4 +31,5 @@ export function Copyable({ value, kind, className, children, title, tooltip, ari
     tooltip?: any;
     ariaLabel?: any;
     nested?: boolean;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

@@ -29,4 +29,5 @@ export function Editor({ title, titleLevel, description, children, onSubmit, sub
     secondaryAction?: null | undefined;
     error?: null | undefined;
     tooltip?: null | undefined;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

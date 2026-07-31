@@ -72,3 +72,11 @@ export * from "./primitive/HoverButtonComponent.js";
 export * from "./widget/TabComponent.js";
 export * from "./widget/EditorComponent.js";
 export * from "./widget/EditableNameComponent.js";
+
+// Fifth layer (P1): the consumers-standalone additions. InfiniteScrollSentinel /
+// useInfiniteScroll bring host-owned-state pagination (the package observes, the host
+// fetches); "./format.js" carries the generic formatting helpers moved out of MC's
+// utils/format.js (also importable as the `mc-ui/format` subpath) so format-dependent
+// components can extract without reverse-importing an app.
+export * from "./widget/InfiniteScrollSentinelComponent.js";
+export * from "./format.js";

@@ -6,7 +6,7 @@ export function Panel({ children, className, componentName, as, tooltip, ...rest
     as?: string;
     tooltip?: any;
     [extra: string]: any;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
 /** @param {{ title: any, description?: any, aside?: any, children?: any, className?: string, headingLevel?: number, componentName?: string, tooltip?: any, [extra: string]: any }} props */
 export function PanelHeader({ title, description, aside, children, className, headingLevel, componentName, tooltip, ...rest }: {
     title: any;
@@ -18,4 +18,5 @@ export function PanelHeader({ title, description, aside, children, className, he
     componentName?: string;
     tooltip?: any;
     [extra: string]: any;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

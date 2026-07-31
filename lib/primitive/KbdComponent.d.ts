@@ -4,4 +4,4 @@ export interface KbdProps {
     keys?: ReadonlyArray<string>;
     ariaLabel?: string;
 }
-export declare function Kbd({ children, keys, ariaLabel }: KbdProps): import("react/jsx-runtime").JSX.Element;
+export declare function Kbd({ children, keys, ariaLabel }: KbdProps): React.JSX.Element;

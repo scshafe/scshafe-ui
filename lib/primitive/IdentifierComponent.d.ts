@@ -14,4 +14,5 @@ export function Identifier({ value, kind, truncate: truncateMode, tooltip }: {
     kind?: string | undefined;
     truncate?: null | undefined;
     tooltip?: null | undefined;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

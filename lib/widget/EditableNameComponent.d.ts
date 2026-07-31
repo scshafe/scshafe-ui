@@ -1,3 +1,4 @@
+import React from "react";
 export interface EditableNameProps {
     value: string;
     isEditing: boolean;
@@ -23,4 +24,4 @@ export interface EditableNameProps {
  * Caller owns state via `isEditing`, `draft`, callbacks. Pure
  * presentational — no useState, no timers, no auto-arming.
  */
-export declare function EditableName({ value, isEditing, draft, canSave, isSaving, errorMessage, ariaLabel, className, onClick, onEditStart, onDraftChange, onSubmit, onCancel, }: EditableNameProps): import("react/jsx-runtime").JSX.Element;
+export declare function EditableName({ value, isEditing, draft, canSave, isSaving, errorMessage, ariaLabel, className, onClick, onEditStart, onDraftChange, onSubmit, onCancel, }: EditableNameProps): React.JSX.Element;

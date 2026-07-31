@@ -318,3 +318,6 @@
 .mc-editable-name-cancel:hover, .mc-editable-name-cancel:focus-visible { background: rgba(255, 107, 107, 0.18); color: #ffd5d5; outline: none; }
 .mc-editable-name-submit:disabled, .mc-editable-name-cancel:disabled { opacity: 0.4; cursor: not-allowed; }
 .mc-editable-name-error { flex: 1 0 100%; color: rgba(255, 180, 180, 0.95); font-size: 11px; margin-top: 2px; }
+
+/* InfiniteScrollSentinel — end-of-list pagination trigger (P1; host owns paging state). */
+.mc-infinite-sentinel { display: flex; align-items: center; justify-content: center; min-height: 36px; padding: 12px; color: var(--muted); font-size: 12px; }

@@ -12,4 +12,4 @@ export interface HoverCardProps {
     as?: "span" | "div";
     children: React.ReactNode;
 }
-export declare function HoverCard({ id, content, side, openDelayMs, closeDelayMs, disabled, payload, ariaLabel, className, as, children }: HoverCardProps): import("react/jsx-runtime").JSX.Element;
+export declare function HoverCard({ id, content, side, openDelayMs, closeDelayMs, disabled, payload, ariaLabel, className, as, children }: HoverCardProps): React.JSX.Element;

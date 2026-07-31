@@ -7,4 +7,5 @@ export function EmptyState({ children, message, className, componentName, role, 
     role?: string;
     tooltip?: any;
     [extra: string]: any;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";

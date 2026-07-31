@@ -18,4 +18,5 @@ export function Badge({ value, label, tone, emphasis, tooltip, componentName }: 
     emphasis?: any;
     tooltip?: any;
     componentName?: string;
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
+import React from "react";
