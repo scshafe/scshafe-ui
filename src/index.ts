@@ -80,3 +80,14 @@ export * from "./widget/EditableNameComponent.js";
 // components can extract without reverse-importing an app.
 export * from "./widget/InfiniteScrollSentinelComponent.js";
 export * from "./format.js";
+
+// Sixth layer (D): Bucket D — the formerly format-blocked composites, unblocked by
+// "./format.js". Status (Badge + the default toneByState vocabulary), Card/MetricCard,
+// ChipList, ListRow, MessageBubble, RecordMeta. Import-closed to react + package
+// siblings; their styles ship in components.css like every layer before them.
+export * from "./primitive/StatusComponent.js";
+export * from "./widget/CardComponent.js";
+export * from "./widget/ChipListComponent.js";
+export * from "./container/ListRowComponent.js";
+export * from "./widget/MessageBubbleComponent.js";
+export * from "./widget/RecordMetaComponent.js";

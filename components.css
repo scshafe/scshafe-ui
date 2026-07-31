@@ -20,6 +20,28 @@
   --popover: rgba(8, 17, 31, 0.96);
   --shadow: 0 10px 34px rgba(0,0,0,0.22);
   --shadow-lg: 0 16px 40px rgba(0,0,0,0.34);
+  /* D additions: the aliases + surfaces the Bucket-D composites reference (values = MC's dark theme). */
+  --bg: #08111f;
+  --panel: #111d2f;
+  --card: rgba(17, 29, 47, 0.82);
+  --bg-elevated: rgba(18, 31, 50, 0.72);
+  --bg-hover: rgba(108, 182, 255, 0.06);
+  --surface-2: var(--bg-elevated);
+  --border: var(--line);
+  --border-hover: rgba(108, 182, 255, 0.36);
+  --accent-hover: #8cc8ff;
+  --accent-subtle: rgba(108, 182, 255, 0.11);
+  --green: #52d273;
+  --ok: var(--green);
+  --ok-subtle: rgba(82, 210, 115, 0.08);
+  --radius-lg: 10px;
+  --chat-text-size: 13px;
+  --mc-clamp-2xs: 80px;
+  --mc-clamp-xs: 120px;
+  --mc-clamp-sm: 160px;
+  --mc-clamp-md: 200px;
+  --mc-clamp-lg: 280px;
+  --mc-clamp-xl: 360px;
 }
 
 /* Kbd — keyboard-key badges (from web/public/styles.css: .mc-kbd, .mc-kbd-combo). */
@@ -321,3 +343,135 @@
 
 /* InfiniteScrollSentinel — end-of-list pagination trigger (P1; host owns paging state). */
 .mc-infinite-sentinel { display: flex; align-items: center; justify-content: center; min-height: 36px; padding: 12px; color: var(--muted); font-size: 12px; }
+
+/* ============ Bucket D (layer 6) — carved (copied) from MC's styles.css ============ */
+
+/* Card / MetricCard — bounded card with optional HTML5 popover detail (styles.css: .mc-card*, .metric). */
+/* Card (REVAMP) — bounded card with optional HTML5 popover detail */
+.mc-card { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: var(--mc-space-sm); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); gap: var(--mc-space-xs); transition: border-color 120ms ease, background 120ms ease; }
+.mc-card:hover, .mc-card:focus-within { border-color: var(--border-hover); background: var(--bg-hover); }
+.mc-card-clamp--2xs { max-height: var(--mc-clamp-2xs); }
+.mc-card-clamp--xs { max-height: var(--mc-clamp-xs); }
+.mc-card-clamp--sm { max-height: var(--mc-clamp-sm); }
+.mc-card-clamp--md { max-height: var(--mc-clamp-md); }
+.mc-card-clamp--lg { max-height: var(--mc-clamp-lg); }
+.mc-card-clamp--xl { max-height: var(--mc-clamp-xl); }
+.mc-card-tone--green { border-color: rgba(82, 210, 115, 0.34); background: rgba(82, 210, 115, 0.055); }
+.mc-card-tone--yellow { border-color: rgba(245, 197, 66, 0.34); background: rgba(245, 197, 66, 0.055); }
+.mc-card-tone--orange { border-color: rgba(255, 159, 67, 0.34); background: rgba(255, 159, 67, 0.075); }
+.mc-card-tone--red { border-color: rgba(255, 107, 107, 0.44); background: rgba(255, 107, 107, 0.075); }
+.mc-card-tone--purple { border-color: rgba(177, 140, 255, 0.34); background: rgba(177, 140, 255, 0.07); }
+.mc-card-tone--blue { border-color: rgba(108, 182, 255, 0.34); background: rgba(108, 182, 255, 0.07); }
+.mc-card-tone--green:hover, .mc-card-tone--green:focus-within { border-color: rgba(82, 210, 115, 0.52); background: rgba(82, 210, 115, 0.10); }
+.mc-card-tone--yellow:hover, .mc-card-tone--yellow:focus-within { border-color: rgba(245, 197, 66, 0.52); background: rgba(245, 197, 66, 0.10); }
+.mc-card-tone--orange:hover, .mc-card-tone--orange:focus-within { border-color: rgba(255, 159, 67, 0.52); background: rgba(255, 159, 67, 0.12); }
+.mc-card-tone--red:hover, .mc-card-tone--red:focus-within { border-color: rgba(255, 107, 107, 0.62); background: rgba(255, 107, 107, 0.12); }
+.mc-card-tone--purple:hover, .mc-card-tone--purple:focus-within { border-color: rgba(177, 140, 255, 0.52); background: rgba(177, 140, 255, 0.11); }
+.mc-card-tone--blue:hover, .mc-card-tone--blue:focus-within { border-color: rgba(108, 182, 255, 0.52); background: rgba(108, 182, 255, 0.11); }
+.mc-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--mc-space-sm); flex: 0 0 auto; min-width: 0; }
+.mc-card-header-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.mc-card-header-title .mc-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-card-header-title .mc-description { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-card-header-actions { display: inline-flex; gap: var(--mc-space-xs); align-items: center; flex-wrap: wrap; flex: 0 0 auto; }
+.mc-card-body { flex: 1 1 auto; min-height: 0; min-width: 0; }
+.mc-card-body--clamped { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; }
+.mc-card-clamp--2xs > .mc-card-body--clamped { -webkit-line-clamp: 2; }
+.mc-card-clamp--xs > .mc-card-body--clamped { -webkit-line-clamp: 4; }
+.mc-card-clamp--sm > .mc-card-body--clamped { -webkit-line-clamp: 6; }
+.mc-card-clamp--md > .mc-card-body--clamped { -webkit-line-clamp: 8; }
+.mc-card-clamp--lg > .mc-card-body--clamped { -webkit-line-clamp: 13; }
+.mc-card-clamp--xl > .mc-card-body--clamped { -webkit-line-clamp: 17; }
+.mc-card-body--clamped > p { margin: 0; }
+.mc-card-footer { position: absolute; bottom: 4px; right: 4px; display: none; z-index: 1; }
+.mc-card:has(> .mc-card-body[data-mc-overflowing="true"]) > .mc-card-footer { display: flex; }
+.mc-card-show-full { background: var(--bg); border: 1px solid var(--border-strong); color: var(--accent); font: inherit; font-size: 11px; cursor: pointer; padding: 1px 8px; border-radius: var(--radius-sm); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+.mc-card-show-full:hover { background: var(--bg-elevated); border-color: var(--border-hover); color: var(--accent-hover); }
+/* Card detail popover (HTML5 popover API; positioned by browser) */
+.mc-card-detail-popover { border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--panel); color: var(--text); padding: var(--mc-space-md); max-width: 80vw; max-height: 80vh; width: min(640px, 80vw); box-shadow: var(--shadow-lg); overflow: auto; }
+.mc-card-detail-popover::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(2px); }
+.mc-card-detail-popover-header { display: flex; justify-content: space-between; align-items: center; gap: var(--mc-space-sm); margin-bottom: var(--mc-space-sm); }
+.mc-card-detail-close { background: transparent; border: 0; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); }
+.mc-card-detail-close:hover { background: var(--bg-hover); color: var(--text); }
+.mc-card-detail-popover-body { overflow-wrap: anywhere; }
+.metric { padding: 10px; border-radius: var(--radius); background: var(--surface-2); border: 1px solid var(--line); }
+.metric span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.metric strong { display: block; font-size: 24px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+/* ChipList (styles.css: .mc-chip*). */
+/* Chip (ChipList) */
+.mc-chip { display: inline-block; padding: 2px 6px; font-size: 11px; font-family: var(--mono); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.mc-chip[data-mc-chip-tone="green"] { background: rgba(82, 210, 115, 0.10); border-color: rgba(82, 210, 115, 0.32); color: #c9ecd3; }
+.mc-chip[data-mc-chip-tone="yellow"] { background: rgba(245, 197, 66, 0.10); border-color: rgba(245, 197, 66, 0.32); color: #f1dc9e; }
+.mc-chip[data-mc-chip-tone="orange"] { background: rgba(255, 159, 67, 0.10); border-color: rgba(255, 159, 67, 0.32); color: #f0c89e; }
+.mc-chip[data-mc-chip-tone="red"] { background: rgba(255, 107, 107, 0.10); border-color: rgba(255, 107, 107, 0.32); color: #f0c0c0; }
+.mc-chip[data-mc-chip-tone="purple"] { background: rgba(177, 140, 255, 0.10); border-color: rgba(177, 140, 255, 0.32); color: #d6c4f5; }
+.mc-chip[data-mc-chip-tone="blue"] { background: rgba(108, 182, 255, 0.10); border-color: rgba(108, 182, 255, 0.32); color: #c0d8f5; }
+
+/* Status renders Badge (`.chip <tone>`, already carved with Bucket B). */
+
+/* ListRow — dense repeated row (styles.css: .task-row, .card-top, .list-row-*, .chips). */
+.task-row { padding: 8px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,0.035); }
+.task-row strong { display: block; }
+.task-row small { color: var(--muted); }
+.card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.card-top h3 { margin: 0 0 6px; font-size: 16px; }
+.card-top p { margin: 0; color: var(--muted); }
+.list-row-media { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; min-width: 24px; }
+.list-row-content { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+.list-row-content .mc-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-row-aside { flex: 0 0 auto; display: inline-flex; gap: 6px; align-items: center; }
+.list-row-actions { display: inline-flex; gap: 4px; align-items: center; }
+.chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.card-top .mc-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-top .mc-description { color: var(--muted); }
+
+/* MessageBubble — chat-style message wrapper (styles.css: .project-chat-message* core + .project-chat-markdown).
+ * Only the classes the component itself renders travel; MC's chat-page structure (groups,
+ * metadata popovers, mobile avatar hiding) stays host-side. */
+.project-chat-message { position: relative; display: block; max-width: min(900px, 78%); overflow-wrap: anywhere; }
+.project-chat-message-user { align-self: flex-end; margin-left: auto; }
+.project-chat-message-user .project-chat-message-bubble { border-color: color-mix(in srgb, var(--accent) 42%, transparent); background: var(--accent-subtle); }
+.project-chat-message-bubble { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card); font-size: var(--chat-text-size); line-height: 1.5; box-shadow: none; transition: border-color 120ms ease; overflow: hidden; }
+.project-chat-message:hover .project-chat-message-bubble, .project-chat-message:focus-within .project-chat-message-bubble { border-color: var(--border-hover); }
+.project-chat-message-tool .project-chat-message-bubble { border-color: var(--border-strong); border-radius: var(--radius-md); background: color-mix(in srgb, var(--card) 72%, var(--bg) 28%); }
+.project-chat-message-final .project-chat-message-bubble { border-color: color-mix(in srgb, var(--ok) 54%, transparent); background: var(--ok-subtle); box-shadow: 0 0 0 1px rgba(86, 211, 100, 0.12) inset; }
+.project-chat-message-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 12px; background: color-mix(in srgb, var(--bg) 55%, var(--card) 45%); border-bottom: 1px solid var(--border); }
+.project-chat-message-user .project-chat-message-toolbar { background: color-mix(in srgb, var(--accent) 18%, var(--accent-subtle)); border-bottom-color: color-mix(in srgb, var(--accent) 36%, transparent); }
+.project-chat-message-final .project-chat-message-toolbar { background: color-mix(in srgb, var(--ok) 20%, var(--ok-subtle)); border-bottom-color: color-mix(in srgb, var(--ok) 42%, transparent); }
+.project-chat-message-tool .project-chat-message-toolbar { background: color-mix(in srgb, var(--bg) 60%, var(--card) 40%); border-bottom-color: var(--border-strong); }
+.project-chat-message-toolbar > span:first-child { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; }
+.project-chat-message-toolbar strong { color: var(--text); }
+.project-chat-message-toolbar small { color: var(--muted); text-transform: none; letter-spacing: 0; }
+.project-chat-message-toolbar-actions { display: inline-flex; align-items: center; gap: 6px; }
+.project-chat-message-parts { display: grid; gap: 6px; padding: 10px 14px; }
+.project-chat-message-part { display: grid; gap: 5px; min-width: 0; }
+.project-chat-message-part-label { color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.project-chat-message-part pre { padding: 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: rgba(4, 10, 20, 0.55); overflow: auto; }
+.project-chat-message-part pre { margin: 0; white-space: pre-wrap; color: inherit; font-family: var(--mono); font-size: 0.95em; }
+.project-chat-markdown { display: grid; gap: 6px; color: var(--text); line-height: 1.5; }
+.project-chat-markdown :is(p, ul, ol, blockquote, pre, h1, h2, h3, h4, h5, h6) { margin: 0; }
+.project-chat-markdown ul, .project-chat-markdown ol { padding-left: 20px; }
+.project-chat-markdown blockquote { border-left: 3px solid color-mix(in srgb, var(--accent) 48%, transparent); padding: 6px 10px; color: var(--muted); background: rgba(255,255,255,0.05); border-radius: var(--radius-sm); }
+.project-chat-markdown :dir(rtl) ul, .project-chat-markdown :dir(rtl) ol { padding-left: 0; padding-right: 20px; }
+.project-chat-markdown :dir(rtl) blockquote { border-left: 0; border-right: 3px solid color-mix(in srgb, var(--accent) 48%, transparent); padding-left: 0; padding-right: 10px; }
+.project-chat-markdown code { border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: 1px 4px; background: rgba(4, 10, 20, 0.6); font-family: var(--mono); font-size: 0.92em; }
+.project-chat-markdown .markdown-code-block { padding: 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: rgba(4, 10, 20, 0.58); overflow: auto; }
+.project-chat-markdown .markdown-code-block code { display: block; border: 0; padding: 0; background: transparent; white-space: pre; }
+.project-chat-markdown a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* RecordMeta — provenance pill list (styles.css: .card-meta, .meta-pill). */
+.card-meta { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0; }
+.meta-pill {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.035);
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.meta-pill span { color: var(--blue); text-transform: uppercase; letter-spacing: 0.07em; font-size: 10px; }
