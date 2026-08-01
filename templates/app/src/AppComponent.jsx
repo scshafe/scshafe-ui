@@ -15,7 +15,7 @@ export function AppComponent() {
       <Title level={1}>__APP_NAME__</Title>
       <Panel>
         <p>Example resource: {example.status}{example.data ? ` — ${JSON.stringify(example.data)}` : ""}</p>
-        <Button label="Toast it" onClick={() => dispatch(showToastThunk({ message: "Hello from mc-ui/state" }))} />
+        <Button label="Toast it" icon="action.send" onClick={() => dispatch(showToastThunk({ message: "Hello from mc-ui/state" }))} />
       </Panel>
       <ToastTray />
     </main>

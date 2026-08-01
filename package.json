@@ -15,6 +15,10 @@
       "types": "./lib/state/index.d.ts",
       "default": "./lib/state/index.js"
     },
+    "./icons": {
+      "types": "./lib/icons/index.d.ts",
+      "default": "./lib/icons/index.js"
+    },
     "./build": {
       "types": "./lib/build.d.ts",
       "default": "./lib/build.js"
@@ -48,7 +52,8 @@
     "react": ">=18",
     "@reduxjs/toolkit": ">=2",
     "react-redux": ">=9",
-    "esbuild": ">=0.20"
+    "esbuild": ">=0.20",
+    "iconoir-react": ">=7"
   },
   "dependencies": {
     "@tiptap/core": "^3.23.6",
@@ -73,6 +78,9 @@
     },
     "esbuild": {
       "optional": true
+    },
+    "iconoir-react": {
+      "optional": true
     }
   },
   "devDependencies": {
@@ -83,7 +91,8 @@
     "react-dom": "^19.2.6",
     "react-redux": "^9.3.0",
     "typescript": "5.8.3",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "iconoir-react": "^7.11.0"
   },
   "bin": {
     "create-mc-app": "./bin/create-mc-app.mjs"

@@ -26,7 +26,7 @@ async function bundleEntry(source) {
       outfile: outPath,
       external: [
         "react", "react-dom", "react/jsx-runtime",
-        "@reduxjs/toolkit", "react-redux",
+        "@reduxjs/toolkit", "react-redux", "iconoir-react",
         "@tiptap/react", "@tiptap/starter-kit", "@tiptap/extension-link",
         "@tiptap/extension-placeholder", "@tiptap/core", "@tiptap/pm", "tiptap-markdown",
       ],
@@ -38,10 +38,16 @@ async function bundleEntry(source) {
   }
 }
 
-test("the root export pulls zero Redux machinery", async () => {
+test("the root export pulls zero Redux machinery and zero icon library", async () => {
   const bundle = await bundleEntry(`export * from ${JSON.stringify(join(repoRoot, "lib", "index.js"))};`);
   assert.doesNotMatch(bundle, /@reduxjs\/toolkit/, "root bundle must not import @reduxjs/toolkit");
   assert.doesNotMatch(bundle, /react-redux/, "root bundle must not import react-redux");
+  assert.doesNotMatch(bundle, /iconoir-react/, "root bundle must not import iconoir-react (L4 optional peer)");
+});
+
+test("the icons subpath imports iconoir (positive control for the probe)", async () => {
+  const bundle = await bundleEntry(`export * from ${JSON.stringify(join(repoRoot, "lib", "icons", "index.js"))};`);
+  assert.match(bundle, /iconoir-react/);
 });
 
 test("the state subpath imports Redux machinery (positive control for the probe)", async () => {
@@ -54,6 +60,8 @@ test("package.json keeps the peers optional and the subpath exported", () => {
   const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(pkg.peerDependenciesMeta?.["@reduxjs/toolkit"]?.optional, true, "RTK must be an OPTIONAL peer (npm ≥7 auto-installs peers otherwise)");
   assert.equal(pkg.peerDependenciesMeta?.["react-redux"]?.optional, true);
+  assert.equal(pkg.peerDependenciesMeta?.["iconoir-react"]?.optional, true, "iconoir must be an OPTIONAL peer");
+  assert.deepEqual(pkg.exports["./icons"], { types: "./lib/icons/index.d.ts", default: "./lib/icons/index.js" });
   assert.equal(pkg.peerDependenciesMeta?.react, undefined, "react stays a REQUIRED peer");
   assert.deepEqual(pkg.exports["./state"], { types: "./lib/state/index.d.ts", default: "./lib/state/index.js" });
   // The root barrel must never re-export the state module.
