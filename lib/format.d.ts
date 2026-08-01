@@ -9,3 +9,4 @@ export declare function classToken(value: unknown, { lowercase, collapse }?: Cla
 export declare function plural(value: number, label: string): string;
 export declare function timestamp(value: string | number | Date | null | undefined): string;
 export declare function shortRef(value: unknown): string;
+export declare function relativeTimeLabel(value: string | number | Date | null | undefined, now?: string | number | Date): string;

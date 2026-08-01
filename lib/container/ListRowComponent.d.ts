@@ -1,8 +1,10 @@
-export function ListRow({ title, subtitle, titleLevel, chips, media, actions, children, className, componentName, as, tooltip, ...rest }: {
+export function ListRow({ title, subtitle, titleLevel, status, timestamp: timestampValue, chips, media, actions, children, className, componentName, as, tooltip, ...rest }: {
     [x: string]: any;
     title: any;
     subtitle: any;
     titleLevel?: number | undefined;
+    status: any;
+    timestamp: any;
     chips?: never[] | undefined;
     media: any;
     actions: any;

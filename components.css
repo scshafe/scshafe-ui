@@ -539,3 +539,21 @@
 .data-table-column-order-button { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(8, 17, 31, 0.38); color: var(--muted); cursor: pointer; }
 .data-table-column-order-button:hover, .data-table-column-order-button:focus-visible { color: var(--text); border-color: var(--border-hover); background: var(--accent-subtle); }
 .data-table-column-order-button:disabled { opacity: 0.38; cursor: not-allowed; }
+
+/* ============ L3 — the card doctrine ============ */
+/* Iconized chips: the state glyph inside Status/Badge (renders only under an icon provider). */
+.chip > svg { flex: 0 0 auto; margin-right: 1px; opacity: 0.85; }
+/* The glanceable state slot — distinct from taxonomy chips (Card/ListRow `status` prop). */
+.mc-card-status { display: inline-flex; flex: 0 0 auto; align-items: center; }
+.mc-card-status .chip { font-weight: 650; }
+/* Relative timestamp, demoted (absolute on hover via title). */
+.mc-card-timestamp { color: var(--muted); font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* "+N" chip-overflow indicator (hidden chips listed in its title). */
+.mc-card-chip-overflow { cursor: default; }
+/* Demoted provenance footer (RecordMeta inside a card). */
+.mc-card-meta { border-top: 1px solid var(--line); padding-top: 6px; margin-top: 2px; }
+.mc-card-meta .card-meta { margin: 0; }
+/* EmptyState glyph. */
+.mc-empty-icon { display: block; margin-bottom: 6px; opacity: 0.6; }
+/* StatCount — a state + count pair that cannot wrap apart. */
+.mc-stat-count { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }

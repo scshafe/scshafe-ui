@@ -1,5 +1,6 @@
 import React from "react";
 import { Tooltip } from "../widget/TooltipComponent.js";
+import { useIcon } from "../widget/IconContext.js";
 
 const TONE_CLASSES = new Set(["blue", "green", "yellow", "orange", "red", "purple"]);
 
@@ -21,8 +22,11 @@ function normalizeTone(tone) {
  *  - emphasis: true to wrap the value in <strong> (default true for count, false otherwise)
  *  - tooltip: tooltip metadata object or string
  */
-/** @param {{ value: any, label?: any, tone?: any, emphasis?: any, tooltip?: any, componentName?: string }} props */
-export function Badge({ value, label = null, tone = "blue", emphasis = null, tooltip = null, componentName = "Badge" }) {
+/** @param {{ value: any, label?: any, tone?: any, emphasis?: any, tooltip?: any, componentName?: string, icon?: any }} props */
+export function Badge({ value, label = null, tone = "blue", emphasis = null, tooltip = null, componentName = "Badge", icon = null }) {
+  // L3: optional leading glyph via the injected icon seam — no provider renders
+  // nothing, so providerless markup (and the bucket-test pins) stay byte-identical.
+  const renderIcon = useIcon();
   const resolvedTone = normalizeTone(tone);
   const text = String(value ?? "");
   const showLabel = typeof label === "string" && label.length > 0;
@@ -40,6 +44,7 @@ export function Badge({ value, label = null, tone = "blue", emphasis = null, too
       data-mc-tone={resolvedTone}
       aria-label={showLabel ? `${text} ${label}` : undefined}
     >
+      {icon ? renderIcon(icon, { size: 11, "aria-hidden": "true" }) : null}
       {wrapInStrong ? <strong>{text}</strong> : text}
       {showLabel ? <span className="count-pill-label">{label}</span> : null}
     </span>

@@ -1,8 +1,10 @@
 import React from "react";
 import { Tooltip } from "./TooltipComponent.js";
+import { useIcon } from "./IconContext.js";
 
 /** @param {{ children?: any, message?: any, className?: string, componentName?: string, role?: string, tooltip?: any, [extra: string]: any }} props */
-export function EmptyState({ children, message, className = "empty", componentName = "EmptyState", role, tooltip, ...rest }) {
+export function EmptyState({ children, message, className = "empty", componentName = "EmptyState", role, tooltip, icon = null, ...rest }) {
+  const renderIcon = useIcon();
   const content = children ?? message;
   const defaultTooltip = {
     component: componentName,
@@ -16,6 +18,6 @@ export function EmptyState({ children, message, className = "empty", componentNa
       data-mc-component={componentName}
       role={role}
       {...rest}
-    >{content}</div>
+    >{icon ? <span className="mc-empty-icon">{renderIcon(icon, { size: 20, "aria-hidden": "true" })}</span> : null}{content}</div>
   </Tooltip>;
 }

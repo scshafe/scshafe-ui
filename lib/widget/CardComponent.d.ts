@@ -12,7 +12,18 @@ export interface CardProps {
     title?: string;
     subtitle?: string;
     titleLevel?: CardHeadingLevel;
+    /** L3 doctrine: THE glanceable state — an iconized Status in a fixed header slot, visually distinct from taxonomy chips. */
+    status?: string;
     chips?: ReadonlyArray<CardChip>;
+    /** Visible chip cap (default 2); the rest collapse into a "+N" chip whose title lists them. */
+    maxChips?: number;
+    /** ISO timestamp — rendered relative + muted in the header, absolute on hover. */
+    timestamp?: string;
+    /** Demoted provenance footer (ids, hashes — full, copyable, out of the title's line). Entries per RecordMeta. */
+    meta?: ReadonlyArray<{
+        label: string;
+        value: string;
+    } | null>;
     actions?: ReactNode;
     maxHeight?: ClampToken;
     tone?: StatusTone;

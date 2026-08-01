@@ -86,6 +86,7 @@ export * from "./format.js";
 // ChipList, ListRow, MessageBubble, RecordMeta. Import-closed to react + package
 // siblings; their styles ship in components.css like every layer before them.
 export * from "./primitive/StatusComponent.js";
+export * from "./primitive/StatCountComponent.js";
 export * from "./widget/CardComponent.js";
 export * from "./widget/ChipListComponent.js";
 export * from "./container/ListRowComponent.js";

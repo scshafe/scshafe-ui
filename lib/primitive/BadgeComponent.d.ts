@@ -10,13 +10,14 @@
  *  - emphasis: true to wrap the value in <strong> (default true for count, false otherwise)
  *  - tooltip: tooltip metadata object or string
  */
-/** @param {{ value: any, label?: any, tone?: any, emphasis?: any, tooltip?: any, componentName?: string }} props */
-export function Badge({ value, label, tone, emphasis, tooltip, componentName }: {
+/** @param {{ value: any, label?: any, tone?: any, emphasis?: any, tooltip?: any, componentName?: string, icon?: any }} props */
+export function Badge({ value, label, tone, emphasis, tooltip, componentName, icon }: {
     value: any;
     label?: any;
     tone?: any;
     emphasis?: any;
     tooltip?: any;
     componentName?: string;
+    icon?: any;
 }): React.JSX.Element;
 import React from "react";

@@ -37,6 +37,7 @@ export * from "./widget/EditableNameComponent.js";
 export * from "./widget/InfiniteScrollSentinelComponent.js";
 export * from "./format.js";
 export * from "./primitive/StatusComponent.js";
+export * from "./primitive/StatCountComponent.js";
 export * from "./widget/CardComponent.js";
 export * from "./widget/ChipListComponent.js";
 export * from "./container/ListRowComponent.js";

@@ -54,3 +54,20 @@ export function shortRef(value: unknown): string {
   const text = String(value ?? "");
   return text.length > 18 ? `${text.slice(0, 18)}…` : text;
 }
+
+export function relativeTimeLabel(value: string | number | Date | null | undefined, now: string | number | Date = Date.now()): string {
+  if (!value) return "";
+  const then = new Date(value).getTime();
+  const base = new Date(now).getTime();
+  if (!Number.isFinite(then) || !Number.isFinite(base)) return "";
+  const seconds = Math.round((base - then) / 1000);
+  const ago = seconds >= 0;
+  const span = Math.abs(seconds);
+  const unit = span < 60 ? [span, "s"] as const
+    : span < 3600 ? [Math.round(span / 60), "m"] as const
+    : span < 86400 ? [Math.round(span / 3600), "h"] as const
+    : span < 2592000 ? [Math.round(span / 86400), "d"] as const
+    : [Math.round(span / 2592000), "mo"] as const;
+  if (span < 10) return "now";
+  return ago ? `${unit[0]}${unit[1]} ago` : `in ${unit[0]}${unit[1]}`;
+}

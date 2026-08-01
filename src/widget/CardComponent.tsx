@@ -2,6 +2,8 @@ import React, { type ReactNode } from "react";
 import { Title } from "../primitive/TitleComponent.js";
 import { Description } from "../primitive/DescriptionComponent.js";
 import { Status } from "../primitive/StatusComponent.js";
+import { RecordMeta } from "./RecordMetaComponent.js";
+import { relativeTimeLabel, timestamp as timestampLabel } from "../format.js";
 import { type ClampToken, type DataAttributes, type StatusTone } from "../layout/layoutShared.js";
 
 export interface CardChip {
@@ -18,7 +20,15 @@ export interface CardProps {
   title?: string;
   subtitle?: string;
   titleLevel?: CardHeadingLevel;
+  /** L3 doctrine: THE glanceable state — an iconized Status in a fixed header slot, visually distinct from taxonomy chips. */
+  status?: string;
   chips?: ReadonlyArray<CardChip>;
+  /** Visible chip cap (default 2); the rest collapse into a "+N" chip whose title lists them. */
+  maxChips?: number;
+  /** ISO timestamp — rendered relative + muted in the header, absolute on hover. */
+  timestamp?: string;
+  /** Demoted provenance footer (ids, hashes — full, copyable, out of the title's line). Entries per RecordMeta. */
+  meta?: ReadonlyArray<{ label: string; value: string } | null>;
   actions?: ReactNode;
   maxHeight?: ClampToken;
   tone?: StatusTone;
@@ -46,7 +56,11 @@ export function Card(props: CardProps) {
     title,
     subtitle,
     titleLevel = 4,
+    status,
     chips = [],
+    maxChips = 2,
+    timestamp: timestampValue,
+    meta,
     actions = null,
     maxHeight,
     tone,
@@ -56,7 +70,9 @@ export function Card(props: CardProps) {
     data,
   } = props;
   const Tag = as as React.ElementType;
-  const hasHeader = Boolean(title) || Boolean(subtitle) || chips.length > 0 || Boolean(actions);
+  const hasHeader = Boolean(title) || Boolean(subtitle) || chips.length > 0 || Boolean(actions) || Boolean(status) || Boolean(timestampValue);
+  const visibleChips = chips.slice(0, Math.max(0, maxChips));
+  const overflowChips = chips.slice(Math.max(0, maxChips));
   const popoverId = `${id}-detail`;
   const cardClassName = [
     "mc-card",
@@ -73,17 +89,22 @@ export function Card(props: CardProps) {
       >
         {hasHeader ? (
           <header className="mc-card-header">
+            {status ? <span className="mc-card-status"><Status state={status} /></span> : null}
             {(title || subtitle) ? (
               <div className="mc-card-header-title">
                 {title ? <Title level={titleLevel}>{title}</Title> : null}
                 {subtitle ? <Description>{subtitle}</Description> : null}
               </div>
             ) : null}
-            {(chips.length > 0 || actions) ? (
+            {(visibleChips.length > 0 || overflowChips.length > 0 || actions || timestampValue) ? (
               <div className="mc-card-header-actions">
-                {chips.map((chip) => (
-                  <Status key={chip.label} state={chip.status ?? chip.label} />
+                {visibleChips.map((chip) => (
+                  <Status key={chip.label} state={chip.status ?? chip.label} icon={null} />
                 ))}
+                {overflowChips.length > 0 ? (
+                  <span className="mc-card-chip-overflow chip blue" title={overflowChips.map((chip) => chip.label).join(", ")}>+{overflowChips.length}</span>
+                ) : null}
+                {timestampValue ? <small className="mc-card-timestamp" title={timestampLabel(timestampValue)}>{relativeTimeLabel(timestampValue)}</small> : null}
                 {actions}
               </div>
             ) : null}
@@ -95,6 +116,11 @@ export function Card(props: CardProps) {
         >
           {children}
         </div>
+        {meta?.some(Boolean) ? (
+          <div className="mc-card-meta">
+            <RecordMeta entries={meta as any} />
+          </div>
+        ) : null}
         {maxHeight ? (
           <footer className="mc-card-footer">
             <button

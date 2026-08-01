@@ -7,9 +7,13 @@
  * Props:
  *  - state: the workflow state string (e.g. "active", "blocked", "completed")
  *  - tooltip: tooltip metadata object or string
+ *  - icon: "auto" (default — resolve the state glyph from iconByState), a
+ *    semantic icon name to override, or null to render text-only
  */
-export function Status({ state, tooltip }: {
+/** @param {{ state: any, tooltip?: any, icon?: any }} props */
+export function Status({ state, tooltip, icon }: {
     state: any;
-    tooltip?: null | undefined;
+    tooltip?: any;
+    icon?: any;
 }): React.JSX.Element;
 import React from "react";
