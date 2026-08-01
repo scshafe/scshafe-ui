@@ -475,3 +475,67 @@
   overflow-wrap: anywhere;
 }
 .meta-pill span { color: var(--blue); text-transform: uppercase; letter-spacing: 0.07em; font-size: 10px; }
+
+
+/* ============ Bucket E movers (S3) — carved (copied) from MC's styles.css ============ */
+
+/* ToastTray (styles.css: .mc-toast*). */
+.mc-toast-tray { position: fixed; bottom: 16px; right: 16px; display: grid; gap: 8px; max-width: min(420px, calc(100vw - 32px)); margin: 0; padding: 0; list-style: none; z-index: 9000; pointer-events: none; }
+.mc-toast { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(8, 17, 31, 0.96); color: var(--text); font-size: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35); pointer-events: auto; }
+.mc-toast--success { border-color: rgba(82, 210, 115, 0.45); background: rgba(20, 38, 30, 0.96); }
+.mc-toast--error { border-color: rgba(255, 107, 107, 0.5); background: rgba(46, 22, 22, 0.96); color: #ffd6d6; }
+.mc-toast--info { border-color: rgba(108, 182, 255, 0.45); background: rgba(20, 33, 52, 0.96); }
+.mc-toast-message { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; }
+.mc-toast-dismiss { display: inline-grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 0; background: transparent; color: inherit; opacity: 0.55; cursor: pointer; font-size: 14px; line-height: 1; }
+.mc-toast-dismiss:hover { opacity: 1; }
+
+/* ContextMenu / MoreActionsMenu (styles.css: .mc-context-menu*). */
+.mc-context-menu-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 6px; min-width: 240px; }
+.mc-context-menu-panel-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.mc-context-menu-panel-actions .mc-button { font-size: 12px; padding: 4px 8px; }
+.mc-context-menu-divider { height: 1px; background: var(--line); margin: 4px 0; }
+.mc-context-menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0; min-width: 180px; }
+.mc-context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.mc-context-menu-item > svg, .mc-context-menu-item > [data-mc-component="Icon"] { flex: 0 0 auto; color: var(--muted); }
+.mc-context-menu-item:hover > svg, .mc-context-menu-item:hover > [data-mc-component="Icon"] { color: inherit; }
+.mc-context-menu-item-label { flex: 1 1 auto; min-width: 0; }
+.mc-context-menu-item:hover, .mc-context-menu-item:focus-visible {
+  background: var(--accent-subtle);
+  color: var(--text-strong);
+  outline: none;
+}
+.mc-context-menu-item:disabled { color: var(--muted); cursor: not-allowed; }
+.mc-context-menu-item--danger { color: rgba(255, 180, 180, 0.95); }
+.mc-context-menu-item--danger:hover, .mc-context-menu-item--danger:focus-visible {
+  background: rgba(255, 107, 107, 0.12); color: #ffd5d5;
+}
+.mc-context-menu-item-kbd { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+
+/* DataTableColumnMenu (styles.css: .data-table-column*). ConfirmDialog reuses .mc-sheet + .mc-button (already carved). */
+.data-table-column-menu { display: inline-flex; align-items: center; }
+.data-table-column-menu-panel { display: flex; flex-direction: column; gap: 8px; min-width: min(420px, calc(100vw - 32px)); }
+.data-table-column-menu-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 2px 4px; border-bottom: 1px solid var(--line); }
+.data-table-column-menu-header strong { font-size: 13px; color: var(--text-strong); }
+.data-table-column-menu-list { display: grid; gap: 4px; max-height: min(420px, calc(100vh - 180px)); overflow: auto; padding-right: 2px; }
+.data-table-column-menu-row { display: grid; grid-template-columns: minmax(150px, 1fr) auto auto 78px auto; gap: 5px; align-items: center; padding: 4px; border: 1px solid rgba(183, 203, 231, 0.12); border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.025); }
+.data-table-column-visibility { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--text); font-size: 12px; }
+.data-table-column-visibility span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.data-table-column-width-input { min-width: 0; width: 78px; padding: 4px 5px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(8, 17, 31, 0.6); color: var(--text); font: inherit; font-size: 12px; }
+.data-table-column-width-input:focus { border-color: var(--accent); outline: none; }
+.data-table-column-order-button { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(8, 17, 31, 0.38); color: var(--muted); cursor: pointer; }
+.data-table-column-order-button:hover, .data-table-column-order-button:focus-visible { color: var(--text); border-color: var(--border-hover); background: var(--accent-subtle); }
+.data-table-column-order-button:disabled { opacity: 0.38; cursor: not-allowed; }

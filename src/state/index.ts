@@ -30,3 +30,12 @@ export * from "./createPersistMiddleware.js";
 export * from "./createMcStore.js";
 export * from "./RtkPopoverProvider.js";
 export * from "./McProviders.js";
+
+// State-coupled components (S3, Bucket E movers) — exported HERE, never from the
+// root barrel: the root stays RTK-free (the no-leak pin test enforces it). Each
+// pairs with its slice above; icons resolve through the injected useIcon seam.
+export * from "./components/ToastTrayComponent.js";
+export * from "./components/ConfirmDialogComponent.js";
+export * from "./components/ContextMenuComponent.js";
+export * from "./components/MoreActionsMenuComponent.js";
+export * from "./components/DataTableColumnMenuComponent.js";
