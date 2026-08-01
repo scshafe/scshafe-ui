@@ -595,6 +595,26 @@
 .collapsible-list-rail-body .copyable { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .collapsible-list-rail-body .copyable > * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .collapsible-list-rail-body code, .collapsible-list-rail-body small, .collapsible-list-rail-body strong { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Card-style rail chrome inside a RailWorkspace (the look MC duplicated per
+ * workspace); plain rails outside a RailWorkspace keep the dashed base above. */
+.mc-rail-workspace > .collapsible-list-rail {
+  flex: 0 0 240px;
+  width: 240px;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  padding-right: 0;
+  overflow: hidden;
+}
+.mc-rail-workspace > .collapsible-list-rail.is-collapsed { flex: 0 0 36px; width: 36px; }
+.mc-rail-workspace > .collapsible-list-rail .collapsible-list-rail-resize-handle { right: 0; width: 8px; }
+.mc-rail-workspace > .collapsible-list-rail > .collapsible-list-rail-header { padding: 8px 10px; border-bottom: 1px solid var(--border); background: var(--bg-elevated); min-height: 36px; }
+.mc-rail-workspace > .collapsible-list-rail > .collapsible-list-rail-body { padding: 7px; }
+
 /* Responsive, owned here (the component skips the persisted inline width on
  * mobile, so none of these need !important): stack at ≤560px by default, or at
  * ≤880px for master-detail shapes opting into --stack-mobile. */
