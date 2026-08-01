@@ -1,16 +1,26 @@
 {
   "name": "mc-ui",
   "version": "0.1.0",
-  "description": "Mission Control's generic frontend component package. First layer: the layout primitives (Stack / Grid / Inline / Pane / Scroll) — framework-light React components over CSS tokens, import-closed (react + itself, zero domain coupling). graphpaper is the sibling diagram library.",
+  "description": "Mission Control's generic frontend component package. First layer: the layout primitives (Stack / Grid / Inline / Pane / Scroll) \u2014 framework-light React components over CSS tokens, import-closed (react + itself, zero domain coupling). graphpaper is the sibling diagram library.",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
-    ".": { "types": "./lib/index.d.ts", "default": "./lib/index.js" },
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./state": {
+      "types": "./lib/state/index.d.ts",
+      "default": "./lib/state/index.js"
+    },
     "./layout.css": "./layout.css",
     "./components.css": "./components.css",
-    "./*": { "types": "./lib/*.d.ts", "default": "./lib/*.js" },
+    "./*": {
+      "types": "./lib/*.d.ts",
+      "default": "./lib/*.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -24,7 +34,9 @@
     "*.css"
   ],
   "peerDependencies": {
-    "react": ">=18"
+    "react": ">=18",
+    "@reduxjs/toolkit": ">=2",
+    "react-redux": ">=9"
   },
   "dependencies": {
     "@tiptap/core": "^3.23.6",
@@ -37,6 +49,24 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf lib"
+    "clean": "rm -rf lib",
+    "test": "node --test --test-force-exit test/*.test.mjs"
+  },
+  "peerDependenciesMeta": {
+    "@reduxjs/toolkit": {
+      "optional": true
+    },
+    "react-redux": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@reduxjs/toolkit": "^2.12.0",
+    "@types/react": "^19.2.14",
+    "esbuild": "^0.28.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-redux": "^9.3.0",
+    "typescript": "5.8.3"
   }
 }

@@ -36,6 +36,33 @@ offset/hasMore/inFlight and does the fetching — the `PinnedDataTable` philosop
 `utils/format.js`: `toneByState` (the default workflow-state → tone vocabulary; extend via
 `new Map([...toneByState, …])`) · `timestamp` · `esc` · `classToken` · `plural` · `shortRef`.
 
+**State layer — OPTIONAL (S1, `mc-ui/state`).** The Redux Toolkit memory model both consumers
+carried by hand, as library code (see `DESIGN-STATE-LAYER.md`). Import via the subpath only —
+the root export pulls zero RTK (pinned by `test/state-optionality.test.mjs`), and
+`@reduxjs/toolkit` / `react-redux` are *optional* peer dependencies, so components-only
+consumers stay exactly as light as before. Ships: the `webApiJson`/`webApiMutation` fetch seam ·
+slice factories `createResourceSlice` (fetch-once `{status,error,data}` with condition guard) /
+`createPagedListSlice` (infinite-scroll accumulation with the request-version stale-page guard;
+pairs with `InfiniteScrollSentinel`) / `createDetailSlice` (one-open detail with the
+stale-response drop) · standard slices `Toasts` / `Popovers` / `ConfirmDialog` /
+`DataTablePreferences` (the state half of `PinnedDataTable`'s width callbacks) ·
+`createRouteStateSlice` (pathname + hash strategies) · `createPersistMiddleware` +
+`readPersistedState` · `createMcStore` and the `McProviders` app root (`RtkPopoverProvider`
+drives the popover seam from the `Popovers` slice; `LocalPopoverProvider` remains the
+store-free alternative). Every factory takes host-injected fetchers — the package never knows
+an endpoint — and accepts `reducers`/`extraReducers` extensions.
+
+```tsx
+import { createMcStore, createResourceSlice, McProviders, Popovers, Toasts, webApiJson } from "mc-ui/state";
+
+const Trends = createResourceSlice({ name: "Trends", fetch: () => webApiJson("/api/trends") });
+const store = createMcStore({ slices: [Toasts, Popovers, Trends] });
+
+<McProviders store={store}>
+  <App />
+</McProviders>
+```
+
 ## Usage
 
 ```tsx
