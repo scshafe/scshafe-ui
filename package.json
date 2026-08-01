@@ -15,6 +15,14 @@
       "types": "./lib/state/index.d.ts",
       "default": "./lib/state/index.js"
     },
+    "./build": {
+      "types": "./lib/build.d.ts",
+      "default": "./lib/build.js"
+    },
+    "./testing": {
+      "types": "./lib/testing.d.ts",
+      "default": "./lib/testing.js"
+    },
     "./layout.css": "./layout.css",
     "./components.css": "./components.css",
     "./*": {
@@ -28,7 +36,10 @@
     "lib",
     "layout.css",
     "components.css",
-    "README.md"
+    "README.md",
+    "bin",
+    "templates",
+    "docs"
   ],
   "sideEffects": [
     "*.css"
@@ -36,7 +47,8 @@
   "peerDependencies": {
     "react": ">=18",
     "@reduxjs/toolkit": ">=2",
-    "react-redux": ">=9"
+    "react-redux": ">=9",
+    "esbuild": ">=0.20"
   },
   "dependencies": {
     "@tiptap/core": "^3.23.6",
@@ -58,6 +70,9 @@
     },
     "react-redux": {
       "optional": true
+    },
+    "esbuild": {
+      "optional": true
     }
   },
   "devDependencies": {
@@ -67,6 +82,10 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-redux": "^9.3.0",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "@types/node": "^22.0.0"
+  },
+  "bin": {
+    "create-mc-app": "./bin/create-mc-app.mjs"
   }
 }
