@@ -557,3 +557,52 @@
 .mc-empty-icon { display: block; margin-bottom: 6px; opacity: 0.6; }
 /* StatCount — a state + count pair that cannot wrap apart. */
 .mc-stat-count { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+
+
+/* ============ L2 — RailWorkspace + the rail family (carved from MC's styles.css) ============ */
+.mc-rail-workspace { display: flex; flex-direction: row; gap: 10px; min-width: 0; min-height: 0; overflow: hidden; flex: 1 1 0; }
+.panel-rail-toggle { align-self: center; }
+.collapsible-list-rail { display: flex; flex-direction: column; gap: 6px; min-width: 0; border-right: 1px dashed var(--line); padding-right: 6px; position: relative; }
+.collapsible-list-rail.is-collapsed { padding-right: 0; border-right: 1px dashed var(--line); align-items: center; }
+.collapsible-list-rail.no-header.is-collapsed { display: none; }
+.collapsible-list-rail-resize-handle { position: absolute; top: 0; right: -5px; bottom: 0; width: 10px; cursor: col-resize; z-index: 5; background: transparent; touch-action: none; }
+.collapsible-list-rail-resize-handle::before { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; border-radius: 1px; transition: background 120ms ease; }
+.collapsible-list-rail-resize-handle:hover::before, .collapsible-list-rail[data-resizing="true"] .collapsible-list-rail-resize-handle::before { background: rgba(108, 182, 255, 0.55); }
+.collapsible-list-rail[data-resizing="true"] { user-select: none; }
+.collapsible-list-rail.is-collapsed .collapsible-list-rail-resize-handle { display: none; }
+.collapsible-list-rail-header { display: flex; align-items: center; gap: 6px; min-height: 24px; }
+.collapsible-list-rail-actions { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.collapsible-list-rail-toggle {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.collapsible-list-rail-toggle:hover, .collapsible-list-rail-toggle:focus-visible { color: #dff0ff; border-color: rgba(108, 182, 255, 0.55); }
+.collapsible-list-rail-title { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.collapsible-list-rail-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0; flex: 1 1 0; overflow-y: auto; overflow-x: hidden; width: 100%; }
+.collapsible-list-rail-body > * { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; flex-shrink: 0; }
+.collapsible-list-rail-body * { min-width: 0; }
+.collapsible-list-rail-body button, .collapsible-list-rail-body article { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; overflow: hidden; flex-shrink: 0; }
+.collapsible-list-rail-body .copyable { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.collapsible-list-rail-body .copyable > * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.collapsible-list-rail-body code, .collapsible-list-rail-body small, .collapsible-list-rail-body strong { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Responsive, owned here (the component skips the persisted inline width on
+ * mobile, so none of these need !important): stack at ≤560px by default, or at
+ * ≤880px for master-detail shapes opting into --stack-mobile. */
+@media (max-width: 880px) {
+  .mc-rail-workspace--stack-mobile { flex-direction: column; }
+  .mc-rail-workspace--stack-mobile > .collapsible-list-rail { flex: 1 1 auto; width: 100%; border-right: 0; padding-right: 0; }
+}
+@media (max-width: 560px) {
+  .mc-rail-workspace { flex-direction: column; }
+  .mc-rail-workspace > .collapsible-list-rail { flex: 0 0 auto; width: 100%; max-height: 38vh; border-right: 0; border-bottom: 1px dashed var(--line); padding-right: 0; padding-bottom: 6px; }
+}
