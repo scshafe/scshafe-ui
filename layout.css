@@ -115,3 +115,28 @@
 	.mc-scroll-height--auto { height: auto; }
 	.mc-scroll-width--fill { width: 100%; }
 	.mc-scroll-width--auto { width: auto; }
+
+/* ============ L1 — the workspace frame contract ============
+ * The contained-scroll chain MC proved as app CSS, as package classes: an
+ * unbroken min-height:0 chain from the frame root to the leaf .mc-scroll.
+ * Compose: .mc-app-frame > (chrome…, .mc-app-shell[--contained] > .mc-workspace
+ * > (tab strip, .mc-focus-area > .mc-workspace-panel > (pinned…, ONE growing
+ * child marked .mc-fill / .mc-scroll / .mc-rail-workspace))). */
+
+/* The clipped column root (a document body's <main> or an app's main column). */
+.mc-app-frame { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+/* The shell scrolls like a document by default; --contained flips the page into
+ * an app frame (the one-attribute switch, generalized as a modifier). */
+.mc-app-shell { flex: 1 1 auto; min-width: 0; min-height: 0; overflow: auto; }
+.mc-app-shell--contained { overflow: hidden; }
+/* The single grid link: a pinned strip row + the growing focus row. */
+.mc-workspace { height: 100%; min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+/* The focus area renders ONE active focus; it fills and clips. */
+.mc-focus-area { min-height: 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
+.mc-focus-area > * { flex: 1 1 auto; min-height: 0; }
+/* The panel: every child pinned except the one growing child. */
+.mc-workspace-panel { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; overflow: hidden; }
+.mc-workspace-panel > * { flex: 0 0 auto; }
+.mc-workspace-panel > .mc-scroll, .mc-workspace-panel > .mc-fill, .mc-workspace-panel > .mc-rail-workspace { flex: 1 1 0; min-height: 0; }
+/* The growing-child marker (generalizes MC's .project-tab-fill). */
+.mc-fill { flex: 1 1 0; min-height: 0; min-width: 0; }

@@ -92,3 +92,11 @@ export * from "./widget/ChipListComponent.js";
 export * from "./container/ListRowComponent.js";
 export * from "./widget/MessageBubbleComponent.js";
 export * from "./widget/RecordMetaComponent.js";
+
+// Seventh layer (L1): the workspace frame contract. FocusTabs (the model-driven
+// icon-first strip, moved from MC) and TabPanelHeader (the standardized panel
+// header with the single iconized-refresh convention); the frame CLASSES
+// (.mc-app-frame / .mc-app-shell[--contained] / .mc-workspace / .mc-focus-area /
+// .mc-workspace-panel / .mc-fill) ship in layout.css.
+export * from "./widget/FocusTabsComponent.js";
+export * from "./widget/TabPanelHeaderComponent.js";

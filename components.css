@@ -626,3 +626,20 @@
   .mc-rail-workspace { flex-direction: column; }
   .mc-rail-workspace > .collapsible-list-rail { flex: 0 0 auto; width: 100%; max-height: 38vh; border-right: 0; border-bottom: 1px dashed var(--line); padding-right: 0; padding-bottom: 6px; }
 }
+
+/* ============ L1 — FocusTabs inner contract + TabPanelHeader ============ */
+/* FocusTabs inner classes (carved verbatim from MC; the strip + button outer
+ * classes arrive on the model and stay host-styled). */
+.project-tab-icon { font-size: 14px; line-height: 1; }
+.project-tab-counts { display: inline-flex; flex-wrap: nowrap; gap: 4px; align-items: center; }
+.project-tab-count { color: var(--muted); border: 1px solid rgba(183, 203, 231, 0.18); border-radius: var(--radius-sm); padding: 1px 5px; background: rgba(255,255,255,0.035); font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
+.project-tab-divider { flex: 0 0 1px; align-self: stretch; min-height: 26px; margin: 0 4px; background: var(--line); }
+
+/* TabPanelHeader — the standardized panel header (self-contained; hosts may add
+ * their legacy header classes alongside via className). */
+.mc-tab-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 0; flex: 0 0 auto; }
+.mc-tab-panel-header h1, .mc-tab-panel-header h2, .mc-tab-panel-header h3, .mc-tab-panel-header h4, .mc-tab-panel-header h5, .mc-tab-panel-header h6 { margin: 0; line-height: 1.2; }
+.mc-tab-panel-title-group { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.mc-tab-panel-aside { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.mc-tab-panel-actions { display: inline-flex; align-items: center; gap: 8px; }
+.mc-tab-panel-status { color: var(--muted); font-size: 12px; }

@@ -43,3 +43,5 @@ export * from "./widget/ChipListComponent.js";
 export * from "./container/ListRowComponent.js";
 export * from "./widget/MessageBubbleComponent.js";
 export * from "./widget/RecordMetaComponent.js";
+export * from "./widget/FocusTabsComponent.js";
+export * from "./widget/TabPanelHeaderComponent.js";
