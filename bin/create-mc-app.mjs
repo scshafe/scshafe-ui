@@ -7,7 +7,7 @@
 // tsconfig, a build script on mc-ui/build, theme.css with the token registry,
 // and a doctrine-shaped first slice + page on mc-ui/state. Copied files are
 // yours to edit — nothing references the generator afterward.
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,6 +38,9 @@ if (existsSync(targetDir) && readdirSync(targetDir).length > 0) {
 const templateDir = fileURLToPath(new URL("../templates/app", import.meta.url));
 mkdirSync(targetDir, { recursive: true });
 cpSync(templateDir, targetDir, { recursive: true });
+// npm strips ".gitignore" files from packages, so the template ships it as
+// "gitignore" and the scaffold restores the dot (the create-react-app trick).
+renameSync(join(targetDir, "gitignore"), join(targetDir, ".gitignore"));
 
 const appName = name ?? target.split("/").at(-1);
 const mcUiPin = pin
