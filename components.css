@@ -562,8 +562,8 @@
 /* ============ L2 — RailWorkspace + the rail family (carved from MC's styles.css) ============ */
 .mc-rail-workspace { display: flex; flex-direction: row; gap: 10px; min-width: 0; min-height: 0; overflow: hidden; flex: 1 1 0; }
 .panel-rail-toggle { align-self: center; }
-.collapsible-list-rail { display: flex; flex-direction: column; gap: 6px; min-width: 0; border-right: 1px dashed var(--line); padding-right: 6px; position: relative; }
-.collapsible-list-rail.is-collapsed { padding-right: 0; border-right: 1px dashed var(--line); align-items: center; }
+.collapsible-list-rail { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 0 0 auto; border-right: 1px dashed var(--line); padding-right: 6px; position: relative; }
+.collapsible-list-rail.is-collapsed { flex: 0 0 36px; padding-right: 0; border-right: 1px dashed var(--line); align-items: center; }
 .collapsible-list-rail.no-header.is-collapsed { display: none; }
 .collapsible-list-rail-resize-handle { position: absolute; top: 0; right: -5px; bottom: 0; width: 10px; cursor: col-resize; z-index: 5; background: transparent; touch-action: none; }
 .collapsible-list-rail-resize-handle::before { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; border-radius: 1px; transition: background 120ms ease; }
