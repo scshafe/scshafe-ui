@@ -91,6 +91,27 @@ function resizeStartWidth(handleEl: HTMLElement, headerCell: HTMLElement | null)
 
 const MIN_RESIZABLE_COLUMN_WIDTH = 72;
 const MAX_RESIZABLE_COLUMN_WIDTH = 960;
+const KEYBOARD_RESIZE_STEP = 8;
+const KEYBOARD_RESIZE_LARGE_STEP = 32;
+
+function clampResizableColumnWidth(value: number): number {
+  return Math.max(MIN_RESIZABLE_COLUMN_WIDTH, Math.min(MAX_RESIZABLE_COLUMN_WIDTH, Math.round(value)));
+}
+
+function accessibleResizeWidth<Row>(column: PinnedDataTableColumn<Row>): number {
+  const width = typeof column.width === "number"
+    ? column.width
+    : typeof column.width === "string" && /^\d+(?:\.\d+)?px$/.test(column.width.trim())
+      ? Number.parseFloat(column.width)
+      : 120;
+  return clampResizableColumnWidth(width);
+}
+
+function announceResizeWidth(handleEl: HTMLElement, width: number): void {
+  const roundedWidth = Math.round(width);
+  handleEl.setAttribute("aria-valuenow", String(roundedWidth));
+  handleEl.setAttribute("aria-valuetext", `${roundedWidth} pixels wide`);
+}
 
 export function PinnedDataTable<Row>({
   ariaLabel,
@@ -119,6 +140,7 @@ export function PinnedDataTable<Row>({
       handleEl.dataset.startX = String(event.clientX);
       handleEl.dataset.startWidth = String(startWidth);
       handleEl.dataset.lastWidth = String(startWidth);
+      announceResizeWidth(handleEl, clampResizableColumnWidth(startWidth));
     };
     const handlePointerMove = (event: React.PointerEvent<HTMLSpanElement>) => {
       const handleEl = event.currentTarget;
@@ -131,6 +153,7 @@ export function PinnedDataTable<Row>({
       const tableElement = findClosestElement(handleEl, "table");
       tableElement?.style.setProperty(liveWidthVariableName(tableId, column.id), `${nextWidth}px`);
       handleEl.dataset.lastWidth = String(nextWidth);
+      announceResizeWidth(handleEl, nextWidth);
     };
     const cleanupResize = (handleEl: HTMLElement, pointerId: number) => {
       if (handleEl.hasPointerCapture?.(pointerId)) handleEl.releasePointerCapture?.(pointerId);
@@ -155,19 +178,50 @@ export function PinnedDataTable<Row>({
       findClosestElement(handleEl, "table")?.style.removeProperty(liveWidthVariableName(tableId, column.id));
       onColumnWidthReset(column.id);
     };
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+      const direction = event.key === "ArrowLeft"
+        ? -1
+        : event.key === "ArrowRight"
+          ? 1
+          : 0;
+      if (direction === 0 && event.key !== "Home" && event.key !== "End") return;
+      event.preventDefault();
+      const handleEl = event.currentTarget;
+      const headerCell = findClosestElement(handleEl, "th");
+      const currentWidth = numberFromData(handleEl.getAttribute("aria-valuenow") ?? undefined)
+        ?? resizeStartWidth(handleEl, headerCell);
+      const step = event.shiftKey ? KEYBOARD_RESIZE_LARGE_STEP : KEYBOARD_RESIZE_STEP;
+      const nextWidth = event.key === "Home"
+        ? MIN_RESIZABLE_COLUMN_WIDTH
+        : event.key === "End"
+          ? MAX_RESIZABLE_COLUMN_WIDTH
+          : clampResizableColumnWidth(currentWidth + direction * step);
+      findClosestElement(handleEl, "table")?.style.setProperty(
+        liveWidthVariableName(tableId, column.id),
+        `${nextWidth}px`
+      );
+      announceResizeWidth(handleEl, nextWidth);
+      onColumnWidthSet(column.id, nextWidth);
+    };
     return (
       <span
         className="mc-data-table-resize-handle"
         role="separator"
+        tabIndex={0}
         aria-orientation="vertical"
         aria-label={`Resize ${label}`}
-        title="Resize column"
+        aria-valuemin={MIN_RESIZABLE_COLUMN_WIDTH}
+        aria-valuemax={MAX_RESIZABLE_COLUMN_WIDTH}
+        aria-valuenow={accessibleResizeWidth(column)}
+        aria-valuetext={`${accessibleResizeWidth(column)} pixels wide`}
+        title="Drag or use Left and Right Arrow keys to resize. Shift changes the width faster."
         data-column-resize-handle={column.id}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={handleKeyDown}
       />
     );
   };
