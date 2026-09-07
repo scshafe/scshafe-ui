@@ -19,6 +19,10 @@
       "types": "./lib/icons/index.d.ts",
       "default": "./lib/icons/index.js"
     },
+    "./identity": {
+      "types": "./lib/identity/index.d.ts",
+      "default": "./lib/identity/index.js"
+    },
     "./build": {
       "types": "./lib/build.d.ts",
       "default": "./lib/build.js"

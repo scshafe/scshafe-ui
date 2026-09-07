@@ -63,6 +63,38 @@ const store = createMcStore({ slices: [Toasts, Popovers, Trends] });
 </McProviders>
 ```
 
+## Identity (`mc-ui/identity`)
+
+The React-only proxy-session seam is optional and stays out of the root barrel.
+`UserMenu` reads `/oauth2/userinfo` once on mount and shows identity plus Sign out;
+loading, anonymous, failed, and un-proxied development responses render nothing.
+The hook exposes `status: "loading" | "anonymous" | "identified"`; identified
+results contain `user`, `email`, optional `preferredUsername`/`groups`, and every
+result includes a manual `refresh()`. There is no polling or focus refresh.
+
+```tsx
+import { UserMenu, useIdentity, buildSignOutUrl } from "mc-ui/identity";
+import "mc-ui/components.css";
+
+function Account() {
+  const identity = useIdentity();
+  return <><UserMenu identity={identity} /><button onClick={() => void identity.refresh()}>Refresh identity</button></>;
+}
+// Or mount <UserMenu /> alone. Hosts with existing state pass identity directly.
+```
+
+`buildSignOutUrl()` derives Pocket ID's `id.` host from the browser's suffix,
+preserves oauth2-proxy's `{id_token}` substitution, and returns to the app root.
+It returns `null` on IP literals, localhost, or a non-derivable hostname. No token
+is read by this package. Identity is display data; authorization stays on the
+server. The response shape follows
+[oauth2-proxy v7.15.3's UserInfo handler](https://github.com/oauth2-proxy/oauth2-proxy/blob/v7.15.3/oauthproxy.go#L660-L688),
+including optional fields and ignored `additionalClaims`.
+
+Paved-road P1 supplies imports only. P4 deployment enrollment also requires a
+source-controlled gated manifest in Mission Control's `docs/conductor/`, pinned
+by `test/conductor-shipped-manifests.test.mjs`; a `deploy.conf` alone is insufficient.
+
 ## Usage
 
 ```tsx

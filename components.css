@@ -317,6 +317,11 @@
 .mc-button-danger { border-color: rgba(255, 107, 107, 0.5); background: rgba(255, 107, 107, 0.12); color: #ffd6d6; }
 .mc-button-mini { padding: 4px 8px; font-size: 12px; }
 
+/* Optional identity chip (mc-ui/identity), using the host's existing tokens. */
+.mc-user-menu { display: inline-flex; align-items: center; gap: var(--mc-space-xs, 6px); min-width: 0; max-width: 100%; color: var(--text); }
+.mc-user-menu-identity { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+.mc-user-menu > a { flex-shrink: 0; text-decoration: none; }
+
 /* Tab — single tab button in a strip (styles.css: .mc-tab*). */
 .mc-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--muted); padding: 6px 10px; font: inherit; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color 120ms ease, background 120ms ease, color 120ms ease; }
 .mc-tab:hover:not(:disabled) { border-color: rgba(108, 182, 255, 0.32); background: rgba(108, 182, 255, 0.06); color: var(--text); }
