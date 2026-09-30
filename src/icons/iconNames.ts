@@ -1,11 +1,11 @@
-// L4 — the semantic icon-name registry, moved from MC's web/src/icons/icon-names.js.
+// L4 — the semantic icon-name registry.
 // Names are SEMANTIC (what the icon means in the UI), not visual (which glyph); the
 // library binding lives in iconRegistry.tsx, so call sites stay library-agnostic and
 // the closed set lets the registry assert every name is bound at module load.
 //
-// L4 additions over the MC original: `tab.git` + `tab.delete` (referenced by MC's
-// navigation but never declared — they rendered the QuestionMark fallback in
-// production) and the `state.*` section backing iconByState (L3's iconized Status).
+// Includes `tab.git` + `tab.delete` (once referenced but undeclared, so they
+// rendered the QuestionMark fallback) and the `state.*` section backing
+// iconByState (L3's iconized Status).
 //
 // Hosts with domain vocabulary beyond this set keep their own closed list + registry
 // beside it (the mechanism is the contract, not this particular list).

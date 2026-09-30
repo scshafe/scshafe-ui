@@ -3,9 +3,7 @@ import { createAsyncThunk, createSlice, type ActionReducerMapBuilder } from "@re
 // ============================================================================
 // createResourceSlice — the fetch-once resource skeleton.
 //
-// The `{status, error, data}` lifecycle both consumers kept hand-writing (MC has
-// ~20 slices of this shape; voice-journey built three the week before this
-// factory existed): a condition-guarded thunk that fetches once, caches for the
+// The `{status, error, data}` lifecycle apps kept hand-writing: a condition-guarded thunk that fetches once, caches for the
 // session, and degrades to a failed state with the error message. `invalidated`
 // re-arms the fetch (existing data is kept until the refetch lands, so hosts
 // get stale-while-revalidate for free).

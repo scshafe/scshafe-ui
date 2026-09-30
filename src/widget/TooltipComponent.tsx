@@ -1,8 +1,8 @@
 import React from "react";
 // C0: devUxEnabled + the open-popover id now arrive via the injected
-// PopoverController context, not a direct useSelector on the DevUxManager /
-// Popovers slices. MC's RtkPopoverProvider feeds those exact slices in, so this
-// is byte-identical; a standalone consumer gets LocalPopoverProvider.
+// PopoverController context, not a direct useSelector on a store.
+// RtkPopoverProvider feeds the Popovers slice in; a store-free consumer mounts
+// LocalPopoverProvider.
 import { useDevUxEnabled, usePopoverController } from "./PopoverControllerContext.js";
 import { tooltipText } from "../tooltip.js";
 import { HoverCard } from "./HoverCardComponent.js";

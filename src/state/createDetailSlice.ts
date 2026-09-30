@@ -5,9 +5,8 @@ import { createAsyncThunk, createSlice, type ActionReducerMapBuilder } from "@re
 //
 // One record open at a time: `openThunk({ id })` records the open id and
 // fetches; responses for anything but the currently-open id are DROPPED (the
-// stale-response guard voice-journey's DetailManager and TakeInspectorManager
-// both hand-implemented — open A, quickly open B, A's slow response must not
-// render over B). `closed()` clears everything, so fetched detail never
+// stale-response guard detail views keep hand-implementing — open A, quickly
+// open B, A's slow response must not render over B). `closed()` clears everything, so fetched detail never
 // outlives its view.
 // ============================================================================
 

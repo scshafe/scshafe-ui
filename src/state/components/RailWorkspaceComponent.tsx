@@ -1,14 +1,10 @@
 import React from "react";
 
 // ============================================================================
-// RailWorkspace — the rail + detail focus-tab body (L2). The pattern MC carried
-// as FOUR hand-rolled per-tab copies (.architecture-workspace,
-// .project-notes-workspace, .implementation-plan-workspace,
-// .project-chat-live-grid — literally the same declaration + duplicated rail
-// chrome), written once with the contained-scroll and responsive behavior owned
-// by package CSS. Supersedes the never-adopted SplitWorkspace.
+// RailWorkspace — the rail + detail focus-tab body (L2), with the
+// contained-scroll and responsive behavior owned by package CSS.
 //
-//   <RailWorkspace className="project-tab-fill">
+//   <RailWorkspace>
 //     <FocusSelectionList surfaceId="plans" title="Plans" count={12}>…</FocusSelectionList>
 //     <Scroll axis="y">…detail…</Scroll>
 //   </RailWorkspace>

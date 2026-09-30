@@ -1,8 +1,7 @@
 // S4 — @scshafe/ui/testing: the test harness both consumers copied, as library imports.
 // Node-only (test-time); esbuild resolves from the consumer's devDependencies.
 //
-// Two primitives, extracted from the copies in MC's bucket tests and
-// voice-journey's web-spa test:
+// Two primitives:
 //
 //   bundleEntry   — write an inline entry source into a temp dir INSIDE the app
 //                   root (so node_modules resolution finds the app's react/@scshafe/ui)
@@ -93,7 +92,7 @@ export function runNodeChild({ scriptPath, input, timeoutMs = 30000 }: RunNodeCh
   });
 }
 
-// The composed harness voice-journey's web-spa test hand-rolled: bundle a
+// The composed harness: bundle a
 // renderApp(preloadedState) entry over the app's store + root component, then
 // render each preloaded state in a child process (see runNodeChild's rationale).
 export interface SpaRenderHarnessOptions {

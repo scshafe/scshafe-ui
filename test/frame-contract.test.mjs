@@ -21,7 +21,7 @@ test("layout.css carries the full contained-scroll chain", () => {
 });
 
 test("FocusTabs renders the model contract with injected icons", () => {
-  assert.equal(FocusTabs, FocusTabsComponent, "MC's historical export name aliases the same component");
+  assert.equal(FocusTabs, FocusTabsComponent, "the *Component export name aliases the same component");
   const model = {
     className: "project-tabs",
     role: "tablist",

@@ -1,8 +1,7 @@
 import { createSlice, type Dispatch, type PayloadAction } from "@reduxjs/toolkit";
 
 // ============================================================================
-// ConfirmDialog — single in-flight confirm prompt for destructive actions
-// (moved from MC's web/src/state/ConfirmDialog.js; behavior unchanged).
+// ConfirmDialog — single in-flight confirm prompt for destructive actions.
 //
 // Replaces `globalThis.confirm?.(...)` with a styled in-app dialog. The slice
 // stores only the prompt shape; the awaiting Promise resolver is held in a

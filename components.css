@@ -1,8 +1,6 @@
-/* @scshafe/ui components — self-contained styles for the Bucket-A generic components
- * (Kbd / Sheet / PinnedDataTable / MarkdownEditor). Carved (copied) from Mission
- * Control's web/public/styles.css so the visuals travel with the package; MC keeps
- * its own styles.css (this file is for standalone consumers). The theme tokens below
- * are the package defaults — override :root to theme. */
+/* @scshafe/ui components — self-contained styles for every component the package
+ * renders. The theme tokens below are the package defaults (the registry is
+ * tokens.css / @scshafe/ui/tokens) — override :root to theme. */
 
 :root {
   --sui-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -20,7 +18,7 @@
   --sui-popover: rgba(8, 17, 31, 0.96);
   --sui-shadow: 0 10px 34px rgba(0,0,0,0.22);
   --sui-shadow-lg: 0 16px 40px rgba(0,0,0,0.34);
-  /* D additions: the aliases + surfaces the Bucket-D composites reference (values = MC's dark theme). */
+  /* D additions: the aliases + surfaces the Bucket-D composites reference (dark defaults). */
   --sui-bg: #08111f;
   --sui-panel: #111d2f;
   --sui-card: rgba(17, 29, 47, 0.82);
@@ -44,7 +42,7 @@
   --sui-clamp-xl: 360px;
 }
 
-/* Kbd — keyboard-key badges (from web/public/styles.css: .sui-kbd, .sui-kbd-combo). */
+/* Kbd — keyboard-key badges. */
 .sui-kbd {
   display: inline-flex;
   align-items: center;
@@ -65,7 +63,7 @@
 }
 .sui-kbd-combo { display: inline-flex; gap: 3px; align-items: center; }
 
-/* Sheet — native <dialog> slide-in / centered modal (from web/public/styles.css: .sui-sheet*). */
+/* Sheet — native <dialog> slide-in / centered modal. */
 .sui-sheet { color: var(--sui-text); background: rgba(8, 17, 31, 0.98); border: 1px solid var(--sui-line); border-radius: var(--sui-radius); padding: 0; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); max-width: 100vw; max-height: 100vh; }
 .sui-sheet::backdrop { background: rgba(0, 0, 0, 0.4); }
 .sui-sheet--right { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(560px, 100vw); height: 100vh; max-height: 100vh; border-left: 1px solid var(--sui-line); border-right: 0; border-top: 0; border-bottom: 0; border-radius: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
@@ -77,7 +75,7 @@
 .sui-sheet__body:empty { padding: 0; }
 .sui-sheet__footer { padding: 10px 16px; border-top: 1px solid var(--sui-line); display: inline-flex; gap: 8px; align-items: center; justify-content: flex-end; background: rgba(8, 17, 31, 0.6); }
 
-/* PinnedDataTable — sticky-header / pinned-column data table (from web/public/styles.css: .sui-data-table*). */
+/* PinnedDataTable — sticky-header / pinned-column data table. */
 .sui-data-table-scroll { min-width: 0; min-height: 0; overflow: auto; scrollbar-gutter: stable; }
 .sui-data-table { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; }
 .sui-data-table th, .sui-data-table td {
@@ -110,9 +108,7 @@
   .sui-data-table-resize-handle::after { inset-inline: 20px; }
 }
 
-/* MarkdownEditor — tiptap markdown editor surface (from web/public/styles.css: .sui-markdown-editor*).
- * The `.project-chat-composer-editor-wrap .sui-markdown-editor-content` override in styles.css is
- * MC-domain (the chat composer) and intentionally NOT carried into the generic package. */
+/* MarkdownEditor — tiptap markdown editor surface. */
 .sui-markdown-editor { background: rgba(8, 17, 31, 0.45); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); padding: 8px 10px; transition: border-color 120ms ease; }
 .sui-markdown-editor:focus-within { border-color: rgba(108, 182, 255, 0.45); }
 .sui-markdown-editor-content { color: var(--sui-text); font: inherit; font-size: 13px; line-height: 1.5; min-height: 60px; max-height: 240px; overflow-y: auto; outline: none; }
@@ -135,17 +131,11 @@
 .sui-markdown-editor-content:focus-visible { outline: none; }
 
 /* ===========================================================================
- * C3 — the Tooltip render family + Bucket B. Copied verbatim (families) from
- * web/public/styles.css so the visuals travel with the package for standalone
- * consumers; MC keeps its own styles.css (rules live in both places until the
- * later de-dup slice). MC-domain-scoped rules (the chat-composer
- * `.project-chat-composer-context*` SelectField styling, the
- * `.sui-popover:has(> .workspace-hover-panel)` / `.sui-form-popover` variants, and
- * the `.project-chat-markdown .markdown-code-block` MarkdownContent rule) are
- * intentionally NOT carried into the generic package.
+ * C3 — the Tooltip render family + Bucket B. Host-specific variants (composer
+ * contexts, hover panels, form popovers) stay in the host's own stylesheet.
  * =========================================================================== */
 
-/* Popover — fixed-position floating container (styles.css: .sui-popover*). */
+/* Popover — fixed-position floating container. */
 .sui-popover {
   z-index: 60;
   min-width: 160px;
@@ -164,7 +154,7 @@
 .sui-popover-side--left { transform: translateY(-50%); }
 .sui-popover-side--right { transform: translateY(-50%); }
 
-/* HoverCard content + Tooltip (styles.css: .sui-hover-card-content*, .sui-tooltip*). */
+/* HoverCard content + Tooltip. */
 .sui-hover-card-content { display: flex; flex-direction: column; gap: 6px; min-width: 200px; font-size: 12px; color: var(--sui-text); }
 .sui-hover-card-content small { color: var(--sui-muted); }
 .sui-hover-card-content strong { font-size: 13px; color: var(--sui-text-strong); }
@@ -180,7 +170,7 @@
   word-break: break-word;
 }
 
-/* Badge — categorical pills (styles.css: .chip*, .count-pill*). Badge emits `chip <tone>`. */
+/* Badge — categorical pills. Badge emits `chip <tone>`. */
 .chip, .count-pill {
   display: inline-flex;
   align-items: center;
@@ -202,30 +192,29 @@
 .chip.purple { border-color: rgba(177, 140, 255, 0.45); color: #dfd2ff; }
 .chip.blue { border-color: rgba(108, 182, 255, 0.45); color: #cae5ff; }
 
-/* Label (styles.css: .sui-label*). */
+/* Label. */
 .sui-label { display: inline-flex; align-items: baseline; gap: 4px; color: var(--sui-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .sui-label-required { color: rgba(255, 107, 107, 0.85); }
 
-/* Description (styles.css: .sui-description*). */
+/* Description. */
 .sui-description { margin: 0; color: var(--sui-muted); font-size: 12px; line-height: 1.5; }
 .sui-description-muted { color: var(--sui-muted); }
 .sui-description-default { color: var(--sui-text); }
 
-/* Title (styles.css: .sui-title*). */
+/* Title. */
 .sui-title { margin: 0; color: var(--sui-text); font-weight: 600; line-height: 1.25; }
 .sui-title-h1 { font-size: 20px; letter-spacing: -0.01em; }
 .sui-title-h2 { font-size: 16px; }
 .sui-title-h3 { font-size: 14px; }
 .sui-title-h4, .sui-title-h5, .sui-title-h6 { font-size: 13px; color: var(--sui-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
-/* Identifier (styles.css: .sui-identifier*). */
+/* Identifier. */
 .sui-identifier { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--sui-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); padding: 1px 5px; word-break: break-all; }
 .sui-identifier-uuid { color: rgba(202, 229, 255, 0.78); }
 .sui-identifier-slug { color: rgba(191, 248, 201, 0.78); }
 .sui-identifier-hash { color: rgba(223, 210, 255, 0.78); }
 
-/* FormField — InputField + TextAreaField (styles.css: .sui-input-field*, .text-area-field).
- * SelectField's `.project-chat-composer-context*` styling is MC-domain and NOT carried here. */
+/* FormField — InputField + TextAreaField. */
 .sui-input-field { display: flex; flex-direction: column; gap: 4px; }
 .sui-input-field-label { color: var(--sui-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .sui-input-field-required { color: rgba(255, 107, 107, 0.85); }
@@ -235,7 +224,7 @@
 .sui-input-field input[readonly] { background: rgba(255,255,255,0.025); }
 .text-area-field { display: contents; }
 
-/* Copyable (styles.css: .copyable*). */
+/* Copyable. */
 .copyable { display: inline-flex; align-items: baseline; gap: 4px; font: inherit; color: inherit; background: rgba(108, 182, 255, 0.08); border: 1px solid rgba(108, 182, 255, 0.16); border-radius: 4px; padding: 0 4px; margin: 0 1px; cursor: copy; max-width: 100%; text-align: left; vertical-align: baseline; transition: background 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease; }
 .copyable > * { min-width: 0; }
 .copyable:hover { background: rgba(108, 182, 255, 0.16); border-color: rgba(108, 182, 255, 0.36); color: var(--sui-text); }
@@ -248,25 +237,24 @@
 .copyable.copyable-id:hover { color: var(--sui-text); }
 .copyable.copyable-value { font-family: inherit; }
 
-/* EmptyState — default `empty` class (styles.css: .empty). */
+/* EmptyState — default `empty` class. */
 .empty { padding: 12px; border: 1px dashed var(--sui-line); border-radius: var(--sui-radius); color: var(--sui-muted); background: rgba(255,255,255,0.025); }
 
-/* List (styles.css: .sui-list*). */
+/* List. */
 .sui-list { display: flex; flex-direction: column; gap: 8px; }
 .sui-list-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
 .sui-list-heading { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sui-list-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .sui-list-items { display: flex; flex-direction: column; gap: 6px; }
 
-/* Reader (styles.css: .sui-reader*). */
+/* Reader. */
 .sui-reader { display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: rgba(255,255,255,0.025); padding: 14px 16px; }
 .sui-reader-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .sui-reader-heading { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .sui-reader-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .sui-reader-body { color: var(--sui-text); font-size: 13px; line-height: 1.55; }
 
-/* Panel + PanelHeader — default `panel` / `panel-header` classes (styles.css: .panel*, the base
- * surface carved out of the `.state-panel, .panel, .run-card, .project-card` group). */
+/* Panel + PanelHeader — default `panel` / `panel-header` classes. */
 .panel { border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: linear-gradient(180deg, rgba(255,255,255,0.034), rgba(255,255,255,0.015)); box-shadow: var(--sui-shadow); padding: 8px 10px; margin-bottom: 8px; }
 .panel h2 { margin: 0 0 4px; font-size: 15px; }
 .panel h3, .panel h4, .panel h5, .panel h6 { letter-spacing: 0; margin: 0 0 4px; }
@@ -275,19 +263,12 @@
 
 /* ===========================================================================
  * C4 — Bucket C: the Icon + Tooltip-consuming primitives (Button / IconButton,
- * HoverButton, Tab, Editor, EditableName). The LAST in-tree move — this ends the
- * extraction arc. Families copied verbatim from web/public/styles.css so the
- * visuals travel with the package for standalone consumers; MC keeps its own
- * styles.css (rules live in both places until the later de-dup slice). Purely
- * MC-domain-scoped rules (`.project-chat-composer .sui-button-icon`,
- * `.inbox-filter-bar`, the `.settings-tab-list .sui-button-tab` grid override, the
- * `.sui-context-menu-panel-actions .sui-button` sizing, the mobile @media 44px tap
- * overrides, and the `.home-workspace`/`.sidebar-nav-item` HoverButton margins)
- * are intentionally NOT carried into the generic package.
+ * HoverButton, Tab, Editor, EditableName). Host-specific overrides (filter bars,
+ * settings grids, mobile tap-size overrides, navigation margins) stay in the
+ * host's own stylesheet.
  * =========================================================================== */
 
-/* HoverButton — small circular icon button revealed on parent hover
- * (styles.css: .sui-hover-button*, .sui-hover-host). */
+/* HoverButton — small circular icon button revealed on parent hover. */
 .sui-hover-button { display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; border: 0; background: transparent; color: var(--sui-muted); border-radius: 50%; cursor: pointer; opacity: 0; transition: opacity 120ms ease, background 120ms ease, color 120ms ease, transform 120ms ease; flex: 0 0 auto; }
 .sui-hover-button--size-sm { width: 16px; height: 16px; }
 .sui-hover-button--size-md { width: 20px; height: 20px; }
@@ -299,7 +280,7 @@
 .sui-hover-button--accent:hover { background: rgba(108, 182, 255, 0.28); color: var(--sui-accent); }
 .sui-hover-host:hover .sui-hover-button, .sui-hover-host:focus-within .sui-hover-button, .sui-hover-button:focus-visible { opacity: 1; }
 
-/* Button + IconButton (styles.css: .sui-button*). */
+/* Button + IconButton. */
 .sui-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); background: rgba(8, 17, 31, 0.5); color: var(--sui-text); padding: 6px 10px; font: inherit; font-weight: 600; line-height: 1; cursor: pointer; transition: border-color 120ms ease, background 120ms ease, color 120ms ease; }
 .sui-button:hover:not(:disabled) { border-color: rgba(108, 182, 255, 0.4); background: rgba(108, 182, 255, 0.08); }
 .sui-button:disabled { opacity: 0.48; cursor: not-allowed; }
@@ -322,7 +303,7 @@
 .sui-user-menu-identity { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--sui-muted); }
 .sui-user-menu > a { flex-shrink: 0; text-decoration: none; }
 
-/* Tab — single tab button in a strip (styles.css: .sui-tab*). */
+/* Tab — single tab button in a strip. */
 .sui-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-sm); background: transparent; color: var(--sui-muted); padding: 6px 10px; font: inherit; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color 120ms ease, background 120ms ease, color 120ms ease; }
 .sui-tab:hover:not(:disabled) { border-color: rgba(108, 182, 255, 0.32); background: rgba(108, 182, 255, 0.06); color: var(--sui-text); }
 .sui-tab-active { border-color: rgba(108, 182, 255, 0.56); background: rgba(108, 182, 255, 0.14); color: var(--sui-text); font-weight: 600; }
@@ -330,14 +311,14 @@
 .sui-tab-label { white-space: nowrap; }
 .sui-tab-badge { background: rgba(108, 182, 255, 0.16); color: var(--sui-text); border: 1px solid rgba(108, 182, 255, 0.32); border-radius: 999px; padding: 0 6px; min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
 
-/* Editor — mutation form composite (styles.css: .sui-editor*). */
+/* Editor — mutation form composite. */
 .sui-editor { display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: rgba(255,255,255,0.025); padding: 14px 16px; }
 .sui-editor-header { display: flex; flex-direction: column; gap: 4px; }
 .sui-editor-body { display: flex; flex-direction: column; gap: 12px; }
 .sui-editor-error { margin: 0; color: rgba(255, 196, 196, 0.95); background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.45); border-radius: var(--sui-radius-sm); padding: 6px 10px; font-size: 12px; }
 .sui-editor-footer { display: flex; justify-content: flex-end; gap: 8px; }
 
-/* EditableName — inline name field with view/edit states (styles.css: .sui-editable-name*). */
+/* EditableName — inline name field with view/edit states. */
 .sui-editable-name { display: inline-flex; align-items: center; gap: 4px; min-width: 0; max-width: 100%; }
 .sui-editable-name-text { flex: 1 1 auto; min-width: 0; max-width: 100%; border: 0; background: transparent; color: var(--sui-text); font: inherit; font-size: 13px; font-weight: 600; text-align: left; padding: 0; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sui-editable-name-text:hover { color: var(--sui-text-strong); }
@@ -354,9 +335,9 @@
 /* InfiniteScrollSentinel — end-of-list pagination trigger (P1; host owns paging state). */
 .sui-infinite-sentinel { display: flex; align-items: center; justify-content: center; min-height: 36px; padding: 12px; color: var(--sui-muted); font-size: 12px; }
 
-/* ============ Bucket D (layer 6) — carved (copied) from MC's styles.css ============ */
+/* ============ Bucket D (layer 6) — cards, chips, rows, messages ============ */
 
-/* Card / MetricCard — bounded card with optional HTML5 popover detail (styles.css: .sui-card*, .metric). */
+/* Card / MetricCard — bounded card with optional HTML5 popover detail. */
 /* Card (REVAMP) — bounded card with optional HTML5 popover detail */
 .sui-card { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: var(--sui-space-sm); border: 1px solid var(--sui-border); border-radius: var(--sui-radius-md); background: var(--sui-card); gap: var(--sui-space-xs); transition: border-color 120ms ease, background 120ms ease; }
 .sui-card:hover, .sui-card:focus-within { border-color: var(--sui-border-hover); background: var(--sui-bg-hover); }
@@ -407,7 +388,7 @@
 .metric span { display: block; color: var(--sui-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
 .metric strong { display: block; font-size: 24px; margin-top: 2px; font-variant-numeric: tabular-nums; }
 
-/* ChipList (styles.css: .sui-chip*). */
+/* ChipList. */
 /* Chip (ChipList) */
 .sui-chip { display: inline-block; padding: 2px 6px; font-size: 11px; font-family: var(--sui-mono); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); color: var(--sui-text); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .sui-chip[data-sui-chip-tone="green"] { background: rgba(82, 210, 115, 0.10); border-color: rgba(82, 210, 115, 0.32); color: #c9ecd3; }
@@ -417,9 +398,9 @@
 .sui-chip[data-sui-chip-tone="purple"] { background: rgba(177, 140, 255, 0.10); border-color: rgba(177, 140, 255, 0.32); color: #d6c4f5; }
 .sui-chip[data-sui-chip-tone="blue"] { background: rgba(108, 182, 255, 0.10); border-color: rgba(108, 182, 255, 0.32); color: #c0d8f5; }
 
-/* Status renders Badge (`.chip <tone>`, already carved with Bucket B). */
+/* Status renders Badge (`.chip <tone>`, styled with Bucket B). */
 
-/* ListRow — dense repeated row (styles.css: .task-row, .card-top, .list-row-*, .chips). */
+/* ListRow — dense repeated row. */
 .task-row { padding: 8px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: rgba(255,255,255,0.035); }
 .task-row strong { display: block; }
 .task-row small { color: var(--sui-muted); }
@@ -435,8 +416,8 @@
 .card-top .sui-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-top .sui-description { color: var(--sui-muted); }
 
-/* MessageBubble — chat-style message wrapper (styles.css: .project-chat-message* core + .project-chat-markdown).
- * Only the classes the component itself renders travel; MC's chat-page structure (groups,
+/* MessageBubble — chat-style message wrapper.
+ * Only the classes the component itself renders are styled; a chat page's structure (groups,
  * metadata popovers, mobile avatar hiding) stays host-side. */
 .project-chat-message { position: relative; display: block; max-width: min(900px, 78%); overflow-wrap: anywhere; }
 .project-chat-message-user { align-self: flex-end; margin-left: auto; }
@@ -469,7 +450,7 @@
 .project-chat-markdown .markdown-code-block code { display: block; border: 0; padding: 0; background: transparent; white-space: pre; }
 .project-chat-markdown a { color: var(--sui-accent); text-decoration: underline; text-underline-offset: 2px; }
 
-/* RecordMeta — provenance pill list (styles.css: .card-meta, .meta-pill). */
+/* RecordMeta — provenance pill list. */
 .card-meta { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0; }
 .meta-pill {
   display: inline-flex;
@@ -487,9 +468,9 @@
 .meta-pill span { color: var(--sui-blue); text-transform: uppercase; letter-spacing: 0.07em; font-size: 10px; }
 
 
-/* ============ Bucket E movers (S3) — carved (copied) from MC's styles.css ============ */
+/* ============ Bucket E (S3) — toasts, menus, dialogs, column menus ============ */
 
-/* ToastTray (styles.css: .sui-toast*). */
+/* ToastTray. */
 .sui-toast-tray { position: fixed; bottom: 16px; right: 16px; display: grid; gap: 8px; max-width: min(420px, calc(100vw - 32px)); margin: 0; padding: 0; list-style: none; z-index: 9000; pointer-events: none; }
 .sui-toast { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 8px 10px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: rgba(8, 17, 31, 0.96); color: var(--sui-text); font-size: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35); pointer-events: auto; }
 .sui-toast--success { border-color: rgba(82, 210, 115, 0.45); background: rgba(20, 38, 30, 0.96); }
@@ -499,7 +480,7 @@
 .sui-toast-dismiss { display: inline-grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 0; background: transparent; color: inherit; opacity: 0.55; cursor: pointer; font-size: 14px; line-height: 1; }
 .sui-toast-dismiss:hover { opacity: 1; }
 
-/* ContextMenu / MoreActionsMenu (styles.css: .sui-context-menu*). */
+/* ContextMenu / MoreActionsMenu. */
 .sui-context-menu-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 6px; min-width: 240px; }
 .sui-context-menu-panel-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
 .sui-context-menu-panel-actions .sui-button { font-size: 12px; padding: 4px 8px; }
@@ -535,7 +516,7 @@
 }
 .sui-context-menu-item-kbd { color: var(--sui-muted); font-family: var(--sui-mono); font-size: 11px; }
 
-/* DataTableColumnMenu (styles.css: .data-table-column*). ConfirmDialog reuses .sui-sheet + .sui-button (already carved). */
+/* DataTableColumnMenu. ConfirmDialog reuses .sui-sheet + .sui-button. */
 .data-table-column-menu { display: inline-flex; align-items: center; }
 .data-table-column-menu-panel { display: flex; flex-direction: column; gap: 8px; min-width: min(420px, calc(100vw - 32px)); }
 .data-table-column-menu-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 2px 4px; border-bottom: 1px solid var(--sui-line); }
@@ -569,7 +550,7 @@
 .sui-stat-count { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 
 
-/* ============ L2 — RailWorkspace + the rail family (carved from MC's styles.css) ============ */
+/* ============ L2 — RailWorkspace + the rail family ============ */
 .sui-rail-workspace { display: flex; flex-direction: row; gap: 10px; min-width: 0; min-height: 0; overflow: hidden; flex: 1 1 0; }
 .panel-rail-toggle { align-self: center; }
 .collapsible-list-rail { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 0 0 auto; border-right: 1px dashed var(--sui-line); padding-right: 6px; position: relative; }
@@ -606,8 +587,7 @@
 .collapsible-list-rail-body .copyable > * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .collapsible-list-rail-body code, .collapsible-list-rail-body small, .collapsible-list-rail-body strong { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Card-style rail chrome inside a RailWorkspace (the look MC duplicated per
- * workspace); plain rails outside a RailWorkspace keep the dashed base above. */
+/* Card-style rail chrome inside a RailWorkspace; plain rails outside a RailWorkspace keep the dashed base above. */
 .sui-rail-workspace > .collapsible-list-rail {
   flex: 0 0 240px;
   width: 240px;
@@ -638,8 +618,8 @@
 }
 
 /* ============ L1 — FocusTabs inner contract + TabPanelHeader ============ */
-/* FocusTabs inner classes (carved verbatim from MC; the strip + button outer
- * classes arrive on the model and stay host-styled). */
+/* FocusTabs inner classes (the strip + button outer classes arrive on the
+ * model and stay host-styled). */
 .project-tab-icon { font-size: 14px; line-height: 1; }
 .project-tab-counts { display: inline-flex; flex-wrap: nowrap; gap: 4px; align-items: center; }
 .project-tab-count { color: var(--sui-muted); border: 1px solid rgba(183, 203, 231, 0.18); border-radius: var(--sui-radius-sm); padding: 1px 5px; background: rgba(255,255,255,0.035); font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }

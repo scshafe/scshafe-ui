@@ -1,7 +1,6 @@
 /* @scshafe/ui layout primitives — self-contained styles for the Stack / Grid / Inline / Pane /
- * Scroll components. Carved (copied) from Mission Control's web/public/styles.css so the
- * visuals travel with the package; MC keeps its own styles.css (this file is for standalone
- * consumers). The spacing tokens below are the package defaults — override :root to theme. */
+ * Scroll components and the workspace frame contract. The spacing tokens below are the
+ * package defaults (registered in tokens.css / @scshafe/ui/tokens) — override :root to theme. */
 
 :root {
   --sui-space-none: 0px;
@@ -117,7 +116,7 @@
 	.sui-scroll-width--auto { width: auto; }
 
 /* ============ L1 — the workspace frame contract ============
- * The contained-scroll chain MC proved as app CSS, as package classes: an
+ * The contained-scroll chain, as package classes: an
  * unbroken min-height:0 chain from the frame root to the leaf .sui-scroll.
  * Compose: .sui-app-frame > (chrome…, .sui-app-shell[--contained] > .sui-workspace
  * > (tab strip, .sui-focus-area > .sui-workspace-panel > (pinned…, ONE growing
@@ -138,5 +137,5 @@
 .sui-workspace-panel { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; overflow: hidden; }
 .sui-workspace-panel > * { flex: 0 0 auto; }
 .sui-workspace-panel > .sui-scroll, .sui-workspace-panel > .sui-fill, .sui-workspace-panel > .sui-rail-workspace { flex: 1 1 0; min-height: 0; }
-/* The growing-child marker (generalizes MC's .project-tab-fill). */
+/* The growing-child marker. */
 .sui-fill { flex: 1 1 0; min-height: 0; min-width: 0; }

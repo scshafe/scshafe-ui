@@ -7,7 +7,7 @@
 // no-reverse-import rule extended to data: the library never knows an endpoint, a
 // field name, or a store shape beyond its own slices — hosts inject fetchers.
 
-// The fetch seam (moved from the verbatim copies MC and voice-journey carried).
+// The fetch seam.
 export * from "./webApi.js";
 
 // Slice factories — the doctrine's recurring lifecycles, written once:
@@ -16,7 +16,7 @@ export * from "./createResourceSlice.js";
 export * from "./createPagedListSlice.js";
 export * from "./createDetailSlice.js";
 
-// Standard slices (moved from MC; voice-journey copied Toasts verbatim).
+// Standard slices.
 export * from "./Toasts.js";
 export * from "./Popovers.js";
 export * from "./ConfirmDialog.js";
@@ -41,8 +41,8 @@ export * from "./components/MoreActionsMenuComponent.js";
 export * from "./components/DataTableColumnMenuComponent.js";
 
 // L2 — the rail workspace family: Layout + PaneSizes slices and the rail
-// components (moved from MC), plus RailWorkspace — the rail+detail pattern MC
-// hand-rolled four times, with responsive behavior owned in package CSS.
+// components, plus RailWorkspace — the rail+detail pattern, with responsive
+// behavior owned in package CSS.
 export * from "./Layout.js";
 export * from "./PaneSizes.js";
 export * from "./components/CollapsibleListRailComponent.js";

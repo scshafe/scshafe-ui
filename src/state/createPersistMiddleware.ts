@@ -1,7 +1,6 @@
 // ============================================================================
 // createPersistMiddleware + readPersistedState — the localStorage persistence
-// pattern MC hand-rolled three times (ChatReadReceipts, ProjectPins, PaneSizes),
-// written once.
+// pattern (read receipts, pins, pane sizes, ...), written once.
 //
 // The middleware saves `select(getState())` under `key` after any matching
 // action; `readPersistedState` hydrates a slice's initialState (with a

@@ -2,9 +2,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { MOBILE_CLAMP_MAX_WIDTH } from "../widget/popoverPosition.js";
 
 // ============================================================================
-// Layout — the viewport signal + the surface-collapse registry (L2; moved from
-// the generic half of MC's LayoutManager — MC keeps its app-shell fields,
-// sidebar/mobileNav, host-side).
+// Layout — the viewport signal + the surface-collapse registry (L2). App-shell
+// fields (sidebar, mobile navigation) stay host-side.
 //
 // `isMobile` mirrors the ≤880px media query (the shipped MOBILE_CLAMP_MAX_WIDTH),
 // dispatched by `attachViewportSync`; default false so SSR and test stores render

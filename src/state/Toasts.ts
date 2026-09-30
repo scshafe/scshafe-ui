@@ -1,8 +1,7 @@
 import { createSlice, type Dispatch, type PayloadAction } from "@reduxjs/toolkit";
 
 // ============================================================================
-// Toasts — non-blocking success / error / info messages (moved from MC's
-// web/src/state/Toasts.js; voice-journey carried a verbatim copy).
+// Toasts — non-blocking success / error / info messages.
 //
 // Success/info default to 4s auto-dismiss; errors are persistent until the
 // user clicks them away. Auto-dismiss is set up in `showToastThunk` via

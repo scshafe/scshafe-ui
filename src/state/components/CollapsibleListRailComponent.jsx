@@ -87,7 +87,7 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
   }, [dispatch, surfaceId, defaultWidth]);
   // L2 fix for the mobile !important war: on a phone the rail is full-width by
   // package CSS, so the persisted desktop width must NOT render as an inline style
-  // (inline px could only be beaten by !important — the old MC pattern).
+  // (inline px could only be beaten by !important).
   const inlineStyle = collapsed || !resizable || isMobile ? undefined : { width: `${effectiveWidth}px`, flexBasis: `${effectiveWidth}px` };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <aside

@@ -53,8 +53,8 @@ export function HoverButton({
   dataSuiComponent = "HoverButton",
   data,
 }: HoverButtonProps) {
-  // C1: icon-name string resolves through the INJECTED renderer (byte-identical
-  // for MC via SuiIconProvider; graceful no-op glyph for standalone consumers).
+  // C1: icon-name string resolves through the INJECTED renderer (the host's
+  // icon set; graceful no-op glyph when no provider is mounted).
   const renderIcon = useIcon();
   const handle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();

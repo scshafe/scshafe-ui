@@ -6,8 +6,7 @@ import { popoverClosed, popoverClosedIfCurrent, popoverOpened, selectOpenPopover
 // ============================================================================
 // RtkPopoverProvider — the adapter from the state layer's Popovers slice to the
 // injected PopoverController context the Tooltip / HoverCard / Popover
-// components read. The library twin of the ~60-LOC adapter MC carried
-// (web/src/components/app/RtkPopoverProvider.tsx); the contract is identical:
+// components read. The contract:
 //
 //   open           -> dispatch popoverOpened({ id, anchor, payload })
 //   close          -> dispatch popoverClosed()

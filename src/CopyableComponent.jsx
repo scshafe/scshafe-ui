@@ -9,7 +9,7 @@ import { Tooltip } from "./widget/TooltipComponent.js";
  * Usage:
  *   <Copyable value="agent-server" kind="slug">agent-server</Copyable>
  *   <Copyable value="b9b787e1-…" kind="id">b9b787e1…</Copyable>
- *   <Copyable value="Mission Control demo" kind="name">Mission Control demo</Copyable>
+ *   <Copyable value="Example workspace" kind="name">Example workspace</Copyable>
  *
  * Props:
  *  - value (string): the text written to the clipboard on click.

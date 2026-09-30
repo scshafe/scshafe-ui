@@ -1,6 +1,4 @@
-// S1 (state layer) — the fetch seam, moved from the copies both consumers carried
-// (MC web/src/state/webApi.js, voice-journey web/src/state/webApi.js — verbatim
-// behavior, now typed). The library never knows an endpoint: hosts call these with
+// S1 (state layer) — the fetch seam. The library never knows an endpoint: hosts call these with
 // their own paths, and the factories accept fetchers built on top.
 
 export interface WebApiErrorOptions {

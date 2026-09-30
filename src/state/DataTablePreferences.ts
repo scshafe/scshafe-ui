@@ -2,9 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 // ============================================================================
 // DataTablePreferences — per-table column preferences (hidden columns, order,
-// drag-set widths), keyed by `tableId`. Moved from MC's
-// web/src/state/DataTablePreferencesManager.ts (behavior unchanged; slice name
-// normalized for the library). This is the state half of PinnedDataTable's
+// drag-set widths), keyed by `tableId`. This is the state half of PinnedDataTable's
 // host-owned width callbacks: wire `onColumnWidthSet`/`onColumnWidthReset` to
 // dataTableColumnWidthSet/-Reset and merge columns with
 // `mergeDataTableColumnsWithPreferences` before rendering.

@@ -14,8 +14,8 @@ function buttonClassName({ variant = "secondary", size = null, iconOnly = false,
 
 /** @param {{ label?: any, children?: any, icon?: any, variant?: string, size?: any, tooltip?: any, className?: any, disabled?: boolean, type?: string, [extra: string]: any }} props */
 export function Button({ label, children, icon, variant = "secondary", size, tooltip, className, disabled = false, type = "button", ...rest }) {
-  // C1: icon-name strings resolve through the INJECTED renderer (MC → its
-  // registry; standalone → its own set / nothing). Byte-identical for MC.
+  // C1: icon-name strings resolve through the INJECTED renderer (the host's
+  // icon set, or nothing under the default).
   const renderIcon = useIcon();
   const renderedLabel = children ?? label;
   const defaultTooltip = {

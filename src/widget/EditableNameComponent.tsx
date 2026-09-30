@@ -43,8 +43,7 @@ export function EditableName({
   onSubmit,
   onCancel,
 }: EditableNameProps) {
-  // C1: icon-name strings resolve through the INJECTED renderer (byte-identical
-  // for MC via SuiIconProvider). Called unconditionally per the rules of hooks,
+  // C1: icon-name strings resolve through the INJECTED renderer. Called unconditionally per the rules of hooks,
   // even though the glyphs only appear in the editing branch below.
   const renderIcon = useIcon();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

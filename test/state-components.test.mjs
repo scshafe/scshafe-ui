@@ -1,7 +1,6 @@
 // S3 pin — the Bucket E movers render from the compiled lib with their class +
 // data-sui-component contract intact, driven by the state layer's slices through
-// SuiProviders (byte-identical markup relative to their MC originals under the
-// same store state; MC's bucket-e test re-verifies on the consumer side).
+// SuiProviders.
 import assert from "node:assert/strict";
 import test from "node:test";
 import React from "react";

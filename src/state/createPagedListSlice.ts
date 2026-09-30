@@ -3,8 +3,7 @@ import { createAsyncThunk, createSlice, type ActionReducerMapBuilder } from "@re
 // ============================================================================
 // createPagedListSlice — the infinite-scroll list skeleton.
 //
-// The lifecycle voice-journey's RowsManager hand-implemented (170 LOC), written
-// once: rows accumulate in server order through a host-injected page fetcher;
+// The paged-list lifecycle apps kept hand-implementing, written once: rows accumulate in server order through a host-injected page fetcher;
 // any filter or sort change RESETS the accumulation and bumps `requestVersion`,
 // and page responses stamped with an older version are dropped — a slow page-2
 // response can never splice into a newer filter's list. `sortChanged` toggles

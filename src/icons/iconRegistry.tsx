@@ -1,5 +1,5 @@
-// L4 — the single seam binding icon-library choices to the semantic names
-// (moved from MC's web/src/icons/icon-registry.jsx). NO other file in the package
+// L4 — the single seam binding icon-library choices to the semantic names.
+// NO other file in the package
 // or a host imports an icon library directly — call sites use names via <Icon/>.
 // Today's binding: iconoir-react (regular weight), an OPTIONAL peer resolved from
 // the consumer. Swap the imports below to switch libraries; everything else keeps

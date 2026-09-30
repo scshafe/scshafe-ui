@@ -20,8 +20,7 @@ import { useIcon } from "./IconContext.js";
  *  - tooltip: tooltip metadata object or string
  */
 export function Tab({ id, label, icon = null, active = false, disabled = false, badge = null, onSelect = null, tooltip = null }) {
-  // C1: icon-name string resolves through the INJECTED renderer (byte-identical
-  // for MC via SuiIconProvider).
+  // C1: icon-name string resolves through the INJECTED renderer.
   const renderIcon = useIcon();
   const defaultTooltip = {
     component: "Tab",

@@ -1,8 +1,7 @@
 import React from "react";
 // C0: the open id + anchor now come from the injected PopoverController context
-// instead of a direct useSelector on the Popovers slice. MC's RtkPopoverProvider
-// feeds the exact selectOpenPopoverId / selectPopoverAnchor values in, so this
-// renders byte-identically; the domain menus (ContextMenu et al.) that dispatch
+// instead of a direct useSelector on the Popovers slice. RtkPopoverProvider
+// feeds the exact selectOpenPopoverId / selectPopoverAnchor values in; the menus (ContextMenu et al.) that dispatch
 // to the slice directly still drive this Popover through that same live state.
 import { usePopoverController } from "./PopoverControllerContext.js";
 import { popoverStyleForViewport } from "./popoverPosition.js";

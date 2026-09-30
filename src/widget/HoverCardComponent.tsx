@@ -1,9 +1,9 @@
 import React from "react";
 // C0: the open/close of the single popover now flows through the injected
 // PopoverController context instead of dispatching popoverOpened /
-// popoverClosedIfCurrent directly on the Popovers slice. MC's RtkPopoverProvider
+// popoverClosedIfCurrent directly on the Popovers slice. RtkPopoverProvider
 // maps these 1:1 to those exact actions, so the timing / scoped-close / instant
-// handoff (P1-B1) logic below is UNCHANGED — only the source of state inverted.
+// handoff (P1-B1) logic below is independent of where the state lives.
 import { usePopoverController } from "./PopoverControllerContext.js";
 import { Popover } from "./PopoverComponent.js";
 

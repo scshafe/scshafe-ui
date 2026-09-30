@@ -51,7 +51,7 @@ test("PaneSizes slice persists through the package middleware and hydrates", () 
     const store = createSuiStore({ slices: [Layout, PaneSizes, Popovers], middleware: [paneSizesPersistMiddleware] });
     store.dispatch(paneSizeSet({ paneId: "rail:plans", size: 321.6 }));
     assert.equal(selectPaneSize("rail:plans")(store.getState()), 322, "sizes round");
-    assert.equal(backing.get("sui-pane-sizes"), JSON.stringify({ sizes: { "rail:plans": 322 } }), "persists under MC's existing key");
+    assert.equal(backing.get("sui-pane-sizes"), JSON.stringify({ sizes: { "rail:plans": 322 } }), "persists under the sui-pane-sizes key");
   } finally {
     delete globalThis.localStorage;
   }
