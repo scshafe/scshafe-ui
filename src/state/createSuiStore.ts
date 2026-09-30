@@ -1,13 +1,13 @@
 import { configureStore, type Middleware } from "@reduxjs/toolkit";
 
 // ============================================================================
-// createMcStore — configureStore with the house conventions.
+// createSuiStore — configureStore with the house conventions.
 //
 // Accepts a mixed list of "slice-like" things: raw RTK slices ({name, reducer})
 // and factory results ({slice}) interchangeably, so a store reads as a
 // manifest:
 //
-//   const store = createMcStore({
+//   const store = createSuiStore({
 //     slices: [Toasts, Popovers, ConfirmDialog, RowsManager, MyDomainSlice],
 //     middleware: [persistPaneSizes],
 //   });
@@ -22,22 +22,22 @@ export interface SliceLike {
   slice?: { name: string; reducer: (state: any, action: any) => any };
 }
 
-export interface CreateMcStoreOptions {
+export interface CreateSuiStoreOptions {
   slices?: ReadonlyArray<SliceLike>;
   reducers?: Record<string, (state: any, action: any) => any>;
   middleware?: ReadonlyArray<Middleware>;
   preloadedState?: Record<string, unknown>;
 }
 
-export function createMcStore({ slices = [], reducers = {}, middleware = [], preloadedState }: CreateMcStoreOptions = {}) {
+export function createSuiStore({ slices = [], reducers = {}, middleware = [], preloadedState }: CreateSuiStoreOptions = {}) {
   const reducerMap: Record<string, (state: any, action: any) => any> = { ...reducers };
   for (const entry of slices) {
     const resolved = entry?.slice ?? entry;
     if (!resolved?.name || typeof resolved.reducer !== "function") {
-      throw new Error("createMcStore: every `slices` entry needs {name, reducer} (an RTK slice or a factory result)");
+      throw new Error("createSuiStore: every `slices` entry needs {name, reducer} (an RTK slice or a factory result)");
     }
     if (reducerMap[resolved.name]) {
-      throw new Error(`createMcStore: duplicate slice name "${resolved.name}"`);
+      throw new Error(`createSuiStore: duplicate slice name "${resolved.name}"`);
     }
     reducerMap[resolved.name] = resolved.reducer;
   }

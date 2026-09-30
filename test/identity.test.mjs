@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { build } from "esbuild";
-import { buildSignOutUrl, useIdentity, UserMenu } from "mc-ui/identity";
+import { buildSignOutUrl, useIdentity, UserMenu } from "@scshafe/ui/identity";
 import { createIdentityResource } from "../lib/identity/identityResource.js";
 
 const appLocation = { hostname: "inbox.example.ts.net", origin: "https://inbox.example.ts.net" };
@@ -99,7 +99,7 @@ test("UserMenu renders the chip and exact sign-out href; anonymous/loading rende
   const html = renderToStaticMarkup(React.createElement(UserMenu, {
     identity: { status: "identified", ...userInfo }, location: appLocation
   }));
-  assert.match(html, /data-mc-component="UserMenu"/);
+  assert.match(html, /data-sui-component="UserMenu"/);
   assert.ok(html.includes(`href="${expectedSignOut}"`));
   assert.ok(html.includes("person@example.test"));
   assert.ok(html.includes(">Sign out</a>"));
@@ -135,7 +135,7 @@ test("identity subpath is React-only and stays out of the root barrel", async ()
   assert.deepEqual(pkg.exports["./identity"], { types: "./lib/identity/index.d.ts", default: "./lib/identity/index.js" });
   assert.doesNotMatch(readFileSync(new URL("../lib/index.js", import.meta.url), "utf8"), /identity\//);
   const bundle = await build({
-    stdin: { contents: 'export * from "mc-ui/identity";', resolveDir: fileURLToPath(new URL("..", import.meta.url)) },
+    stdin: { contents: 'export * from "@scshafe/ui/identity";', resolveDir: fileURLToPath(new URL("..", import.meta.url)) },
     bundle: true, write: false, format: "esm", platform: "browser", metafile: true,
     external: ["react", "react/jsx-runtime"], logLevel: "silent"
   });

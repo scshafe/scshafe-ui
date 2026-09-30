@@ -75,7 +75,7 @@ export function Copyable({
       role="button"
       tabIndex={nested ? -1 : 0}
       className={`copyable copyable-${kind}${className ? ` ${className}` : ""}`}
-      data-mc-component="Copyable"
+      data-sui-component="Copyable"
       aria-label={ariaLabel ?? `Copy ${kind} ${value}`}
       onClick={onClick}
       onKeyDown={onKeyDown}

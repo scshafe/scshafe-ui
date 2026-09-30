@@ -15,9 +15,9 @@ export function EmptyState({ children, message, className = "empty", componentNa
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
       className={className}
-      data-mc-component={componentName}
+      data-sui-component={componentName}
       role={role}
       {...rest}
-    >{icon ? <span className="mc-empty-icon">{renderIcon(icon, { size: 20, "aria-hidden": "true" })}</span> : null}{content}</div>
+    >{icon ? <span className="sui-empty-icon">{renderIcon(icon, { size: 20, "aria-hidden": "true" })}</span> : null}{content}</div>
   </Tooltip>;
 }

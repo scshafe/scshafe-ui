@@ -53,7 +53,7 @@ export function DataTableColumnMenu<Row>({
     dispatch(popoverOpened({ id: popoverId, anchor: { x: rect.right, y: rect.bottom } }));
   };
   return (
-    <span className="data-table-column-menu" data-mc-component="DataTableColumnMenu" data-table-column-menu={tableId} data-mc-popover-anchor="">
+    <span className="data-table-column-menu" data-sui-component="DataTableColumnMenu" data-table-column-menu={tableId} data-sui-popover-anchor="">
       <IconButton
         label={label}
         icon="action.settings"
@@ -66,7 +66,7 @@ export function DataTableColumnMenu<Row>({
             <strong>Columns</strong>
             <button
               type="button"
-              className="mc-button mc-button-secondary mc-button-mini"
+              className="sui-button sui-button-secondary sui-button-mini"
               data-table-preferences-reset={tableId}
               onClick={() => dispatch(dataTablePreferencesReset({ tableId }))}
             >

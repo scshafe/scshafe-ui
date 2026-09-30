@@ -17,7 +17,7 @@ export function ListRow({ title, subtitle, titleLevel = 5, status, timestamp: ti
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <Tag
       className={className}
-      data-mc-component={componentName}
+      data-sui-component={componentName}
       {...rest}
     >
       <div className="card-top">
@@ -27,8 +27,8 @@ export function ListRow({ title, subtitle, titleLevel = 5, status, timestamp: ti
           {subtitle ? <Description>{subtitle}</Description> : null}
         </div>
         {hasAside ? <div className="list-row-aside">
-          {timestampValue ? <small className="mc-card-timestamp" title={timestampLabel(timestampValue)}>{relativeTimeLabel(timestampValue)}</small> : null}
-          {status ? <span className="mc-card-status"><Status state={status} /></span> : null}
+          {timestampValue ? <small className="sui-card-timestamp" title={timestampLabel(timestampValue)}>{relativeTimeLabel(timestampValue)}</small> : null}
+          {status ? <span className="sui-card-status"><Status state={status} /></span> : null}
           {chips.length ? <div className="chips">{chips.map((chip) => <Status key={chip.value ?? chip} state={chip.value ?? chip} tooltip={chip.tooltip} icon={null} />)}</div> : null}
           {actions ? <div className="list-row-actions">{actions}</div> : null}
         </div> : null}

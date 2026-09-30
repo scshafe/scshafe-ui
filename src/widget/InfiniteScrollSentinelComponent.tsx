@@ -61,8 +61,8 @@ export function InfiniteScrollSentinel({ children, className, ...options }: Infi
   return (
     <div
       ref={sentinelRef}
-      className={["mc-infinite-sentinel", className].filter(Boolean).join(" ")}
-      data-mc-component="InfiniteScrollSentinel"
+      className={["sui-infinite-sentinel", className].filter(Boolean).join(" ")}
+      data-sui-component="InfiniteScrollSentinel"
       role="status"
       aria-live="polite"
     >

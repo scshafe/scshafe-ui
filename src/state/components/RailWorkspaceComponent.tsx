@@ -24,15 +24,15 @@ export interface RailWorkspaceProps {
   className?: string;
   /** "narrow" (default): column at ≤560px. "mobile": column at ≤880px. */
   stackAt?: "narrow" | "mobile";
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   ariaLabel?: string;
 }
 
-export function RailWorkspace({ children, className, stackAt = "narrow", dataMcComponent = "RailWorkspace", ariaLabel }: RailWorkspaceProps) {
-  const classes = ["mc-rail-workspace", stackAt === "mobile" ? "mc-rail-workspace--stack-mobile" : null, className]
+export function RailWorkspace({ children, className, stackAt = "narrow", dataSuiComponent = "RailWorkspace", ariaLabel }: RailWorkspaceProps) {
+  const classes = ["sui-rail-workspace", stackAt === "mobile" ? "sui-rail-workspace--stack-mobile" : null, className]
     .filter(Boolean).join(" ");
   return (
-    <div className={classes} data-mc-component={dataMcComponent} aria-label={ariaLabel}>
+    <div className={classes} data-sui-component={dataSuiComponent} aria-label={ariaLabel}>
       {children}
     </div>
   );

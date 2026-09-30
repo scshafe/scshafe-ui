@@ -27,7 +27,7 @@ export const Pane = React.forwardRef<HTMLElement, PaneProps>(function Pane(props
     bodyScroll = "auto",
     height = "fill",
     padding = "md",
-    dataMcComponent,
+    dataSuiComponent,
     id,
     role,
     data,
@@ -41,25 +41,25 @@ export const Pane = React.forwardRef<HTMLElement, PaneProps>(function Pane(props
       "aria-label": aria["aria-label"],
       "aria-labelledby": aria["aria-labelledby"],
       "aria-describedby": aria["aria-describedby"],
-      dataMcComponent,
+      dataSuiComponent,
       data,
     },
     "Pane",
   );
   const className = joinClasses(
-    "mc-pane",
-    `mc-pane-height--${height}`,
+    "sui-pane",
+    `sui-pane-height--${height}`,
   );
   const bodyClassName = joinClasses(
-    "mc-pane-body",
-    `mc-pane-body-scroll--${bodyScroll}`,
-    spaceClass("mc-pane-body-padding", padding),
+    "sui-pane-body",
+    `sui-pane-body-scroll--${bodyScroll}`,
+    spaceClass("sui-pane-body-padding", padding),
   );
   return (
     <Tag ref={ref} className={className} {...attrs}>
-      {header !== undefined ? <div className="mc-pane-header">{header}</div> : null}
+      {header !== undefined ? <div className="sui-pane-header">{header}</div> : null}
       <div className={bodyClassName}>{children}</div>
-      {footer !== undefined ? <div className="mc-pane-footer">{footer}</div> : null}
+      {footer !== undefined ? <div className="sui-pane-footer">{footer}</div> : null}
     </Tag>
   );
 });

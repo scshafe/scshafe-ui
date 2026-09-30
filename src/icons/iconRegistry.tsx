@@ -130,7 +130,7 @@ const REGISTRY: Record<IconName, IconComponent> = {
       missing.length ? `missing bindings: ${missing.join(", ")}` : null,
       extra.length ? `extra bindings (declare in iconNames.ts): ${extra.join(", ")}` : null
     ].filter(Boolean).join("; ");
-    throw new Error(`mc-ui/icons registry is out of sync with its names: ${detail}`);
+    throw new Error(`@scshafe/ui/icons registry is out of sync with its names: ${detail}`);
   }
 })();
 

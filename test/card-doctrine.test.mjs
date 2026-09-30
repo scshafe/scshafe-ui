@@ -16,7 +16,7 @@ const iconized = (element) => renderToStaticMarkup(React.createElement(DefaultIc
 test("iconized state renders only under a provider — providerless markup is unchanged", () => {
   const before = bare(React.createElement(Status, { state: "running" }));
   assert.doesNotMatch(before, /<svg/, "no provider → text-only chip (bucket pins hold)");
-  assert.match(before, /class="chip green"[^>]*data-mc-component="Status"/);
+  assert.match(before, /class="chip green"[^>]*data-sui-component="Status"/);
   const after = iconized(React.createElement(Status, { state: "running" }));
   assert.match(after, /<svg/, "provider → the state glyph renders");
   const optedOut = iconized(React.createElement(Status, { state: "running", icon: null }));
@@ -37,16 +37,16 @@ test("Card v2: status slot, chip cap with +N overflow, relative timestamp, meta 
     meta: [{ label: "id", value: "0123456789abcdef-full-uuid-never-truncated" }],
     children: "body",
   }));
-  assert.match(html, /class="mc-card-status"/, "the glanceable state has its own slot");
-  assert.match(html, /data-mc-component="Status"[^>]*data-mc-tone="orange"/);
+  assert.match(html, /class="sui-card-status"/, "the glanceable state has its own slot");
+  assert.match(html, /data-sui-component="Status"[^>]*data-sui-tone="orange"/);
   assert.ok(html.includes("infra") && html.includes("urgent"), "first two chips visible");
   assert.equal(html.includes(">ops<"), false, "third chip collapsed");
-  assert.match(html, /mc-card-chip-overflow[^>]*title="ops, q3"[^>]*>\+2</, "+N lists the hidden chips");
-  assert.match(html, /class="mc-card-timestamp"[^>]*title="[^"]+"[^>]*>2h ago</, "relative + absolute-on-hover");
-  assert.match(html, /class="mc-card-meta"/);
+  assert.match(html, /sui-card-chip-overflow[^>]*title="ops, q3"[^>]*>\+2</, "+N lists the hidden chips");
+  assert.match(html, /class="sui-card-timestamp"[^>]*title="[^"]+"[^>]*>2h ago</, "relative + absolute-on-hover");
+  assert.match(html, /class="sui-card-meta"/);
   assert.match(html, /0123456789abcdef-full-uuid-never-truncated/, "ids demoted, never truncated");
   const plain = bare(React.createElement(Card, { id: "c2", title: "T", children: "b" }));
-  assert.doesNotMatch(plain, /mc-card-status|mc-card-meta|mc-card-timestamp/, "all v2 slots are opt-in");
+  assert.doesNotMatch(plain, /sui-card-status|sui-card-meta|sui-card-timestamp/, "all v2 slots are opt-in");
 });
 
 test("ListRow gains the status slot and timestamp; chips stay text-only taxonomy", () => {
@@ -57,8 +57,8 @@ test("ListRow gains the status slot and timestamp; chips stay text-only taxonomy
     chips: ["retry_scheduled"],
     children: null,
   }));
-  assert.match(html, /class="mc-card-status"/);
-  assert.match(html, /data-mc-tone="red"/);
+  assert.match(html, /class="sui-card-status"/);
+  assert.match(html, /data-sui-tone="red"/);
   assert.match(html, /1m ago/);
   const chipsSection = html.slice(html.indexOf('class="chips"'));
   assert.doesNotMatch(chipsSection.slice(0, 200), /<svg/, "taxonomy chips render without glyphs");
@@ -66,12 +66,12 @@ test("ListRow gains the status slot and timestamp; chips stay text-only taxonomy
 
 test("EmptyState icon and StatCount pairing", () => {
   const empty = iconized(React.createElement(EmptyState, { message: "No runs yet", icon: "tab.runs" }));
-  assert.match(empty, /class="mc-empty-icon"/);
+  assert.match(empty, /class="sui-empty-icon"/);
   assert.match(empty, /<svg/);
   const pair = bare(React.createElement(StatCount, { state: "running", count: 4 }));
-  assert.match(pair, /class="mc-stat-count"[^>]*data-mc-component="StatCount"/);
-  assert.match(pair, /data-mc-component="Status"/);
-  assert.match(pair, /data-mc-component="StatCountValue"/);
+  assert.match(pair, /class="sui-stat-count"[^>]*data-sui-component="StatCount"/);
+  assert.match(pair, /data-sui-component="Status"/);
+  assert.match(pair, /data-sui-component="StatCountValue"/);
 });
 
 test("relativeTimeLabel buckets and directions", () => {

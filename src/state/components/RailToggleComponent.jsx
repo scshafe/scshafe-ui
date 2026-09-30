@@ -19,8 +19,8 @@ export function RailToggle({ surfaceId, title, tooltip }) {
     <button
       type="button"
       className="collapsible-list-rail-toggle panel-rail-toggle"
-      data-mc-component="RailToggle"
-      data-mc-action="toggle-list-rail"
+      data-sui-component="RailToggle"
+      data-sui-action="toggle-list-rail"
       data-surface-id={surfaceId}
       aria-pressed={!collapsed}
       aria-label={toggleLabel}

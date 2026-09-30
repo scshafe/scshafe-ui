@@ -8,7 +8,7 @@ import { createPersistMiddleware, readPersistedState } from "./createPersistMidd
 // ones MC already persisted, so existing localStorage carries over.
 // ============================================================================
 
-const STORAGE_KEY = "mc-pane-sizes";
+const STORAGE_KEY = "sui-pane-sizes";
 
 interface PaneSizesState {
   sizes: Record<string, number>;

@@ -26,7 +26,7 @@ export interface TabPanelHeaderProps {
   leading?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
 }
 
 export function TabPanelHeader({
@@ -38,24 +38,24 @@ export function TabPanelHeader({
   leading,
   actions,
   className,
-  dataMcComponent = "TabPanelHeader"
+  dataSuiComponent = "TabPanelHeader"
 }: TabPanelHeaderProps) {
   const renderIcon = useIcon();
   const Heading = `h${headingLevel}` as unknown as React.ElementType;
   return (
-    <div className={["mc-tab-panel-header", className].filter(Boolean).join(" ")} data-mc-component={dataMcComponent}>
-      <div className="mc-tab-panel-title-group">
+    <div className={["sui-tab-panel-header", className].filter(Boolean).join(" ")} data-sui-component={dataSuiComponent}>
+      <div className="sui-tab-panel-title-group">
         {leading}
         <Heading>{title}</Heading>
-        {aside ? <span className="mc-tab-panel-aside">{aside}</span> : null}
+        {aside ? <span className="sui-tab-panel-aside">{aside}</span> : null}
       </div>
-      <div className="mc-tab-panel-actions">
-        {statusLabel ? <span className="mc-tab-panel-status" role="status">{statusLabel}</span> : null}
+      <div className="sui-tab-panel-actions">
+        {statusLabel ? <span className="sui-tab-panel-status" role="status">{statusLabel}</span> : null}
         {actions}
         {refresh ? (
           <button
             type="button"
-            className="mc-button"
+            className="sui-button"
             disabled={refresh.disabled}
             onClick={refresh.onClick}
             aria-label={refresh.label ?? "Refresh"}

@@ -25,7 +25,7 @@ export function RecordMeta({ entries, tooltip }) {
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
       className="card-meta"
-      data-mc-component="RecordMeta"
+      data-sui-component="RecordMeta"
       aria-label="Record provenance"
     >
       {filtered.map((entry, index) => <span key={`${entry.label}:${index}`} className="meta-pill"><span>{entry.label}</span>{entry.value}</span>)}

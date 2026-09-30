@@ -49,19 +49,19 @@ export function Editor({
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <form
-      className="mc-editor"
+      className="sui-editor"
       onSubmit={handleSubmit}
-      data-mc-component="Editor"
+      data-sui-component="Editor"
     >
       {title || description ? (
-        <header className="mc-editor-header">
+        <header className="sui-editor-header">
           {title ? <Title level={titleLevel}>{title}</Title> : null}
           {description ? <Description>{description}</Description> : null}
         </header>
       ) : null}
-      <div className="mc-editor-body">{children}</div>
-      {error ? <p className="mc-editor-error" role="alert">{error}</p> : null}
-      <footer className="mc-editor-footer">
+      <div className="sui-editor-body">{children}</div>
+      {error ? <p className="sui-editor-error" role="alert">{error}</p> : null}
+      <footer className="sui-editor-footer">
         {secondaryAction ? (
           <Button
             variant={secondaryAction.variant ?? "ghost"}

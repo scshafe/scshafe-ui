@@ -5,4 +5,4 @@ lib/
 coverage/
 test/.state-optionality-*/
 .toolchain-fixture-*/
-.mc-testing-*/
+.sui-testing-*/

@@ -1,8 +1,8 @@
-// mc-ui/state — the OPTIONAL Redux Toolkit state layer (S1 of DESIGN-STATE-LAYER.md).
+// @scshafe/ui/state — the OPTIONAL Redux Toolkit state layer (S1 of DESIGN-STATE-LAYER.md).
 //
-// Import via the subpath: `import { createMcStore, Toasts } from "mc-ui/state"`.
+// Import via the subpath: `import { createSuiStore, Toasts } from "@scshafe/ui/state"`.
 // Consumers of the components alone never pull this graph: @reduxjs/toolkit and
-// react-redux are OPTIONAL peer dependencies, and the root "mc-ui" export does not
+// react-redux are OPTIONAL peer dependencies, and the root "@scshafe/ui" export does not
 // re-export this module (pinned by the no-RTK-leak test). Everything here honors the
 // no-reverse-import rule extended to data: the library never knows an endpoint, a
 // field name, or a store shape beyond its own slices — hosts inject fetchers.
@@ -27,9 +27,9 @@ export * from "./createRouteStateSlice.js";
 export * from "./createPersistMiddleware.js";
 
 // Store assembly + the app-root providers.
-export * from "./createMcStore.js";
+export * from "./createSuiStore.js";
 export * from "./RtkPopoverProvider.js";
-export * from "./McProviders.js";
+export * from "./SuiProviders.js";
 
 // State-coupled components (S3, Bucket E movers) — exported HERE, never from the
 // root barrel: the root stays RTK-free (the no-leak pin test enforces it). Each

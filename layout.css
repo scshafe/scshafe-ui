@@ -1,142 +1,142 @@
-/* mc-ui layout primitives — self-contained styles for the Stack / Grid / Inline / Pane /
+/* @scshafe/ui layout primitives — self-contained styles for the Stack / Grid / Inline / Pane /
  * Scroll components. Carved (copied) from Mission Control's web/public/styles.css so the
  * visuals travel with the package; MC keeps its own styles.css (this file is for standalone
  * consumers). The spacing tokens below are the package defaults — override :root to theme. */
 
 :root {
-  --mc-space-none: 0px;
-  --mc-space-xs: 4px;
-  --mc-space-sm: 8px;
-  --mc-space-md: 12px;
-  --mc-space-lg: 16px;
-  --mc-space-xl: 24px;
-  --mc-space-2xl: 32px;
+  --sui-space-none: 0px;
+  --sui-space-xs: 4px;
+  --sui-space-sm: 8px;
+  --sui-space-md: 12px;
+  --sui-space-lg: 16px;
+  --sui-space-xl: 24px;
+  --sui-space-2xl: 32px;
 }
 
-	.mc-stack { display: flex; flex-direction: column; min-width: 0; }
-	.mc-stack-gap--none { gap: 0; }
-	.mc-stack-gap--xs { gap: var(--mc-space-xs); }
-	.mc-stack-gap--sm { gap: var(--mc-space-sm); }
-	.mc-stack-gap--md { gap: var(--mc-space-md); }
-	.mc-stack-gap--lg { gap: var(--mc-space-lg); }
-	.mc-stack-gap--xl { gap: var(--mc-space-xl); }
-	.mc-stack-gap--2xl { gap: var(--mc-space-2xl); }
-	.mc-stack-align--start { align-items: flex-start; }
-	.mc-stack-align--center { align-items: center; }
-	.mc-stack-align--end { align-items: flex-end; }
-	.mc-stack-align--stretch { align-items: stretch; }
+	.sui-stack { display: flex; flex-direction: column; min-width: 0; }
+	.sui-stack-gap--none { gap: 0; }
+	.sui-stack-gap--xs { gap: var(--sui-space-xs); }
+	.sui-stack-gap--sm { gap: var(--sui-space-sm); }
+	.sui-stack-gap--md { gap: var(--sui-space-md); }
+	.sui-stack-gap--lg { gap: var(--sui-space-lg); }
+	.sui-stack-gap--xl { gap: var(--sui-space-xl); }
+	.sui-stack-gap--2xl { gap: var(--sui-space-2xl); }
+	.sui-stack-align--start { align-items: flex-start; }
+	.sui-stack-align--center { align-items: center; }
+	.sui-stack-align--end { align-items: flex-end; }
+	.sui-stack-align--stretch { align-items: stretch; }
 	/* Inline — horizontal flex */
-	.mc-inline { display: flex; flex-direction: row; min-width: 0; flex-wrap: nowrap; }
-	.mc-inline--wrap { flex-wrap: wrap; }
-	.mc-inline-gap--none { gap: 0; }
-	.mc-inline-gap--xs { gap: var(--mc-space-xs); }
-	.mc-inline-gap--sm { gap: var(--mc-space-sm); }
-	.mc-inline-gap--md { gap: var(--mc-space-md); }
-	.mc-inline-gap--lg { gap: var(--mc-space-lg); }
-	.mc-inline-gap--xl { gap: var(--mc-space-xl); }
-	.mc-inline-gap--2xl { gap: var(--mc-space-2xl); }
-	.mc-inline-align--start { align-items: flex-start; }
-	.mc-inline-align--center { align-items: center; }
-	.mc-inline-align--end { align-items: flex-end; }
-	.mc-inline-align--stretch { align-items: stretch; }
-	.mc-inline-align--baseline { align-items: baseline; }
-	.mc-inline-justify--start { justify-content: flex-start; }
-	.mc-inline-justify--center { justify-content: center; }
-	.mc-inline-justify--end { justify-content: flex-end; }
-	.mc-inline-justify--between { justify-content: space-between; }
-	.mc-inline-justify--around { justify-content: space-around; }
-	.mc-inline-justify--evenly { justify-content: space-evenly; }
+	.sui-inline { display: flex; flex-direction: row; min-width: 0; flex-wrap: nowrap; }
+	.sui-inline--wrap { flex-wrap: wrap; }
+	.sui-inline-gap--none { gap: 0; }
+	.sui-inline-gap--xs { gap: var(--sui-space-xs); }
+	.sui-inline-gap--sm { gap: var(--sui-space-sm); }
+	.sui-inline-gap--md { gap: var(--sui-space-md); }
+	.sui-inline-gap--lg { gap: var(--sui-space-lg); }
+	.sui-inline-gap--xl { gap: var(--sui-space-xl); }
+	.sui-inline-gap--2xl { gap: var(--sui-space-2xl); }
+	.sui-inline-align--start { align-items: flex-start; }
+	.sui-inline-align--center { align-items: center; }
+	.sui-inline-align--end { align-items: flex-end; }
+	.sui-inline-align--stretch { align-items: stretch; }
+	.sui-inline-align--baseline { align-items: baseline; }
+	.sui-inline-justify--start { justify-content: flex-start; }
+	.sui-inline-justify--center { justify-content: center; }
+	.sui-inline-justify--end { justify-content: flex-end; }
+	.sui-inline-justify--between { justify-content: space-between; }
+	.sui-inline-justify--around { justify-content: space-around; }
+	.sui-inline-justify--evenly { justify-content: space-evenly; }
 	/* Grid — CSS Grid (template columns set inline) */
-	.mc-grid { display: grid; min-width: 0; }
-	.mc-grid-gap--none { gap: 0; }
-	.mc-grid-gap--xs { gap: var(--mc-space-xs); }
-	.mc-grid-gap--sm { gap: var(--mc-space-sm); }
-	.mc-grid-gap--md { gap: var(--mc-space-md); }
-	.mc-grid-gap--lg { gap: var(--mc-space-lg); }
-	.mc-grid-gap--xl { gap: var(--mc-space-xl); }
-	.mc-grid-gap--2xl { gap: var(--mc-space-2xl); }
-	.mc-grid-row-gap--none { row-gap: 0; }
-	.mc-grid-row-gap--xs { row-gap: var(--mc-space-xs); }
-	.mc-grid-row-gap--sm { row-gap: var(--mc-space-sm); }
-	.mc-grid-row-gap--md { row-gap: var(--mc-space-md); }
-	.mc-grid-row-gap--lg { row-gap: var(--mc-space-lg); }
-	.mc-grid-row-gap--xl { row-gap: var(--mc-space-xl); }
-	.mc-grid-row-gap--2xl { row-gap: var(--mc-space-2xl); }
-	.mc-grid-col-gap--none { column-gap: 0; }
-	.mc-grid-col-gap--xs { column-gap: var(--mc-space-xs); }
-	.mc-grid-col-gap--sm { column-gap: var(--mc-space-sm); }
-	.mc-grid-col-gap--md { column-gap: var(--mc-space-md); }
-	.mc-grid-col-gap--lg { column-gap: var(--mc-space-lg); }
-	.mc-grid-col-gap--xl { column-gap: var(--mc-space-xl); }
-	.mc-grid-col-gap--2xl { column-gap: var(--mc-space-2xl); }
-	.mc-grid-align--start { align-items: start; }
-	.mc-grid-align--center { align-items: center; }
-	.mc-grid-align--end { align-items: end; }
-	.mc-grid-align--stretch { align-items: stretch; }
-	.mc-grid-justify--start { justify-items: start; }
-	.mc-grid-justify--center { justify-items: center; }
-	.mc-grid-justify--end { justify-items: end; }
-	.mc-grid-justify--stretch { justify-items: stretch; }
-	.mc-grid-row-height--2xs { grid-auto-rows: var(--mc-clamp-2xs); }
-	.mc-grid-row-height--xs { grid-auto-rows: var(--mc-clamp-xs); }
-	.mc-grid-row-height--sm { grid-auto-rows: var(--mc-clamp-sm); }
-	.mc-grid-row-height--md { grid-auto-rows: var(--mc-clamp-md); }
-	.mc-grid-row-height--lg { grid-auto-rows: var(--mc-clamp-lg); }
-	.mc-grid-row-height--xl { grid-auto-rows: var(--mc-clamp-xl); }
-	.mc-stack-item-height--2xs > * { height: var(--mc-clamp-2xs); min-height: var(--mc-clamp-2xs); }
-	.mc-stack-item-height--xs > * { height: var(--mc-clamp-xs); min-height: var(--mc-clamp-xs); }
-	.mc-stack-item-height--sm > * { height: var(--mc-clamp-sm); min-height: var(--mc-clamp-sm); }
-	.mc-stack-item-height--md > * { height: var(--mc-clamp-md); min-height: var(--mc-clamp-md); }
-	.mc-stack-item-height--lg > * { height: var(--mc-clamp-lg); min-height: var(--mc-clamp-lg); }
-	.mc-stack-item-height--xl > * { height: var(--mc-clamp-xl); min-height: var(--mc-clamp-xl); }
+	.sui-grid { display: grid; min-width: 0; }
+	.sui-grid-gap--none { gap: 0; }
+	.sui-grid-gap--xs { gap: var(--sui-space-xs); }
+	.sui-grid-gap--sm { gap: var(--sui-space-sm); }
+	.sui-grid-gap--md { gap: var(--sui-space-md); }
+	.sui-grid-gap--lg { gap: var(--sui-space-lg); }
+	.sui-grid-gap--xl { gap: var(--sui-space-xl); }
+	.sui-grid-gap--2xl { gap: var(--sui-space-2xl); }
+	.sui-grid-row-gap--none { row-gap: 0; }
+	.sui-grid-row-gap--xs { row-gap: var(--sui-space-xs); }
+	.sui-grid-row-gap--sm { row-gap: var(--sui-space-sm); }
+	.sui-grid-row-gap--md { row-gap: var(--sui-space-md); }
+	.sui-grid-row-gap--lg { row-gap: var(--sui-space-lg); }
+	.sui-grid-row-gap--xl { row-gap: var(--sui-space-xl); }
+	.sui-grid-row-gap--2xl { row-gap: var(--sui-space-2xl); }
+	.sui-grid-col-gap--none { column-gap: 0; }
+	.sui-grid-col-gap--xs { column-gap: var(--sui-space-xs); }
+	.sui-grid-col-gap--sm { column-gap: var(--sui-space-sm); }
+	.sui-grid-col-gap--md { column-gap: var(--sui-space-md); }
+	.sui-grid-col-gap--lg { column-gap: var(--sui-space-lg); }
+	.sui-grid-col-gap--xl { column-gap: var(--sui-space-xl); }
+	.sui-grid-col-gap--2xl { column-gap: var(--sui-space-2xl); }
+	.sui-grid-align--start { align-items: start; }
+	.sui-grid-align--center { align-items: center; }
+	.sui-grid-align--end { align-items: end; }
+	.sui-grid-align--stretch { align-items: stretch; }
+	.sui-grid-justify--start { justify-items: start; }
+	.sui-grid-justify--center { justify-items: center; }
+	.sui-grid-justify--end { justify-items: end; }
+	.sui-grid-justify--stretch { justify-items: stretch; }
+	.sui-grid-row-height--2xs { grid-auto-rows: var(--sui-clamp-2xs); }
+	.sui-grid-row-height--xs { grid-auto-rows: var(--sui-clamp-xs); }
+	.sui-grid-row-height--sm { grid-auto-rows: var(--sui-clamp-sm); }
+	.sui-grid-row-height--md { grid-auto-rows: var(--sui-clamp-md); }
+	.sui-grid-row-height--lg { grid-auto-rows: var(--sui-clamp-lg); }
+	.sui-grid-row-height--xl { grid-auto-rows: var(--sui-clamp-xl); }
+	.sui-stack-item-height--2xs > * { height: var(--sui-clamp-2xs); min-height: var(--sui-clamp-2xs); }
+	.sui-stack-item-height--xs > * { height: var(--sui-clamp-xs); min-height: var(--sui-clamp-xs); }
+	.sui-stack-item-height--sm > * { height: var(--sui-clamp-sm); min-height: var(--sui-clamp-sm); }
+	.sui-stack-item-height--md > * { height: var(--sui-clamp-md); min-height: var(--sui-clamp-md); }
+	.sui-stack-item-height--lg > * { height: var(--sui-clamp-lg); min-height: var(--sui-clamp-lg); }
+	.sui-stack-item-height--xl > * { height: var(--sui-clamp-xl); min-height: var(--sui-clamp-xl); }
 	/* Pane — bounded region with header/body/footer slots */
-	.mc-pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
-	.mc-pane-height--fill { height: 100%; }
-	.mc-pane-height--auto { height: auto; }
-	.mc-pane-header { flex: 0 0 auto; }
-	.mc-pane-footer { flex: 0 0 auto; }
-	.mc-pane-body { flex: 1 1 auto; min-height: 0; min-width: 0; }
-	.mc-pane-body-scroll--auto { overflow: auto; }
-	.mc-pane-body-scroll--always { overflow: scroll; scrollbar-gutter: stable; }
-	.mc-pane-body-scroll--never { overflow: hidden; }
-	.mc-pane-body-padding--none { padding: 0; }
-	.mc-pane-body-padding--xs { padding: var(--mc-space-xs); }
-	.mc-pane-body-padding--sm { padding: var(--mc-space-sm); }
-	.mc-pane-body-padding--md { padding: var(--mc-space-md); }
-	.mc-pane-body-padding--lg { padding: var(--mc-space-lg); }
-	.mc-pane-body-padding--xl { padding: var(--mc-space-xl); }
-	.mc-pane-body-padding--2xl { padding: var(--mc-space-2xl); }
+	.sui-pane { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+	.sui-pane-height--fill { height: 100%; }
+	.sui-pane-height--auto { height: auto; }
+	.sui-pane-header { flex: 0 0 auto; }
+	.sui-pane-footer { flex: 0 0 auto; }
+	.sui-pane-body { flex: 1 1 auto; min-height: 0; min-width: 0; }
+	.sui-pane-body-scroll--auto { overflow: auto; }
+	.sui-pane-body-scroll--always { overflow: scroll; scrollbar-gutter: stable; }
+	.sui-pane-body-scroll--never { overflow: hidden; }
+	.sui-pane-body-padding--none { padding: 0; }
+	.sui-pane-body-padding--xs { padding: var(--sui-space-xs); }
+	.sui-pane-body-padding--sm { padding: var(--sui-space-sm); }
+	.sui-pane-body-padding--md { padding: var(--sui-space-md); }
+	.sui-pane-body-padding--lg { padding: var(--sui-space-lg); }
+	.sui-pane-body-padding--xl { padding: var(--sui-space-xl); }
+	.sui-pane-body-padding--2xl { padding: var(--sui-space-2xl); }
 	/* Scroll — explicit scroll region */
-	.mc-scroll { min-width: 0; min-height: 0; }
-	.mc-scroll-axis--y { overflow-y: auto; overflow-x: hidden; }
-	.mc-scroll-axis--x { overflow-x: auto; overflow-y: hidden; }
-	.mc-scroll-axis--both { overflow: auto; }
-	.mc-scroll-height--fill { height: 100%; }
-	.mc-scroll-height--auto { height: auto; }
-	.mc-scroll-width--fill { width: 100%; }
-	.mc-scroll-width--auto { width: auto; }
+	.sui-scroll { min-width: 0; min-height: 0; }
+	.sui-scroll-axis--y { overflow-y: auto; overflow-x: hidden; }
+	.sui-scroll-axis--x { overflow-x: auto; overflow-y: hidden; }
+	.sui-scroll-axis--both { overflow: auto; }
+	.sui-scroll-height--fill { height: 100%; }
+	.sui-scroll-height--auto { height: auto; }
+	.sui-scroll-width--fill { width: 100%; }
+	.sui-scroll-width--auto { width: auto; }
 
 /* ============ L1 — the workspace frame contract ============
  * The contained-scroll chain MC proved as app CSS, as package classes: an
- * unbroken min-height:0 chain from the frame root to the leaf .mc-scroll.
- * Compose: .mc-app-frame > (chrome…, .mc-app-shell[--contained] > .mc-workspace
- * > (tab strip, .mc-focus-area > .mc-workspace-panel > (pinned…, ONE growing
- * child marked .mc-fill / .mc-scroll / .mc-rail-workspace))). */
+ * unbroken min-height:0 chain from the frame root to the leaf .sui-scroll.
+ * Compose: .sui-app-frame > (chrome…, .sui-app-shell[--contained] > .sui-workspace
+ * > (tab strip, .sui-focus-area > .sui-workspace-panel > (pinned…, ONE growing
+ * child marked .sui-fill / .sui-scroll / .sui-rail-workspace))). */
 
 /* The clipped column root (a document body's <main> or an app's main column). */
-.mc-app-frame { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.sui-app-frame { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 /* The shell scrolls like a document by default; --contained flips the page into
  * an app frame (the one-attribute switch, generalized as a modifier). */
-.mc-app-shell { flex: 1 1 auto; min-width: 0; min-height: 0; overflow: auto; }
-.mc-app-shell--contained { overflow: hidden; }
+.sui-app-shell { flex: 1 1 auto; min-width: 0; min-height: 0; overflow: auto; }
+.sui-app-shell--contained { overflow: hidden; }
 /* The single grid link: a pinned strip row + the growing focus row. */
-.mc-workspace { height: 100%; min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+.sui-workspace { height: 100%; min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
 /* The focus area renders ONE active focus; it fills and clips. */
-.mc-focus-area { min-height: 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
-.mc-focus-area > * { flex: 1 1 auto; min-height: 0; }
+.sui-focus-area { min-height: 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
+.sui-focus-area > * { flex: 1 1 auto; min-height: 0; }
 /* The panel: every child pinned except the one growing child. */
-.mc-workspace-panel { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; overflow: hidden; }
-.mc-workspace-panel > * { flex: 0 0 auto; }
-.mc-workspace-panel > .mc-scroll, .mc-workspace-panel > .mc-fill, .mc-workspace-panel > .mc-rail-workspace { flex: 1 1 0; min-height: 0; }
+.sui-workspace-panel { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; overflow: hidden; }
+.sui-workspace-panel > * { flex: 0 0 auto; }
+.sui-workspace-panel > .sui-scroll, .sui-workspace-panel > .sui-fill, .sui-workspace-panel > .sui-rail-workspace { flex: 1 1 0; min-height: 0; }
 /* The growing-child marker (generalizes MC's .project-tab-fill). */
-.mc-fill { flex: 1 1 0; min-height: 0; min-width: 0; }
+.sui-fill { flex: 1 1 0; min-height: 0; min-width: 0; }

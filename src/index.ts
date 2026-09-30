@@ -1,9 +1,9 @@
-// mc-ui — Mission Control's generic frontend component package.
+// @scshafe/ui — Mission Control's generic frontend component package.
 //
 // First layer (P0-B5): the LAYOUT PRIMITIVES. Framework-light React components over CSS
-// tokens (`--mc-space-*`), import-closed (react + this package only, zero domain coupling).
+// tokens (`--sui-space-*`), import-closed (react + this package only, zero domain coupling).
 // Later layers (the extraction arc) add primitives/widgets once their couplings drop — see
-// DESIGN-FRONTEND-COMPONENT-PACKAGE.md. Ship the styles with `import "mc-ui/layout.css"`.
+// DESIGN-FRONTEND-COMPONENT-PACKAGE.md. Ship the styles with `import "@scshafe/ui/layout.css"`.
 
 export * from "./layout/layoutShared.js";
 export * from "./layout/StackComponent.js";
@@ -14,7 +14,7 @@ export * from "./layout/ScrollComponent.js";
 
 // Second layer (C2): Bucket A — the import-closed generic components (react + npm only, zero
 // domain coupling). Kbd/Sheet/PinnedDataTable are react-only; MarkdownEditor adds @tiptap +
-// tiptap-markdown (package deps). Ship the styles with `import "mc-ui/components.css"`.
+// tiptap-markdown (package deps). Ship the styles with `import "@scshafe/ui/components.css"`.
 export * from "./primitive/KbdComponent.js";
 export * from "./primitive/MarkdownEditorComponent.js";
 export * from "./widget/SheetComponent.js";
@@ -23,7 +23,7 @@ export * from "./table/PinnedDataTableComponent.js";
 // Third layer (C3): the Tooltip render family + Bucket B. C0/C1 decoupled Tooltip/HoverCard/
 // Popover (via the injected PopoverController context) and the icon seam (IconContext); those
 // context/render modules move here so the package is SELF-CONTAINED (a package cannot reverse-
-// import the app). MC re-provides the live state through RtkPopoverProvider / McIconProvider,
+// import the app). MC re-provides the live state through RtkPopoverProvider / SuiIconProvider,
 // which now import the contexts back FROM this package (app -> package, fine). Bucket B (the
 // Tooltip-decoupled leaves + composites) resolves Tooltip from WITHIN the package.
 //
@@ -65,7 +65,7 @@ export * from "./widget/ReaderComponent.js";
 // family (Tooltip / useIcon) + Title / Description + sibling movers (Button / HoverButton).
 // Button/IconButton + Tab wrap Tooltip and resolve the icon renderer via useIcon (both internal
 // now); Editor composes Button + Title + Description; EditableName composes HoverButton. MC feeds
-// the live icon/popover state through McIconProvider / RtkPopoverProvider exactly as before —
+// the live icon/popover state through SuiIconProvider / RtkPopoverProvider exactly as before —
 // byte-identical.
 export * from "./primitive/ButtonComponent.js";
 export * from "./primitive/HoverButtonComponent.js";
@@ -76,7 +76,7 @@ export * from "./widget/EditableNameComponent.js";
 // Fifth layer (P1): the consumers-standalone additions. InfiniteScrollSentinel /
 // useInfiniteScroll bring host-owned-state pagination (the package observes, the host
 // fetches); "./format.js" carries the generic formatting helpers moved out of MC's
-// utils/format.js (also importable as the `mc-ui/format` subpath) so format-dependent
+// utils/format.js (also importable as the `@scshafe/ui/format` subpath) so format-dependent
 // components can extract without reverse-importing an app.
 export * from "./widget/InfiniteScrollSentinelComponent.js";
 export * from "./format.js";
@@ -96,7 +96,7 @@ export * from "./widget/RecordMetaComponent.js";
 // Seventh layer (L1): the workspace frame contract. FocusTabs (the model-driven
 // icon-first strip, moved from MC) and TabPanelHeader (the standardized panel
 // header with the single iconized-refresh convention); the frame CLASSES
-// (.mc-app-frame / .mc-app-shell[--contained] / .mc-workspace / .mc-focus-area /
-// .mc-workspace-panel / .mc-fill) ship in layout.css.
+// (.sui-app-frame / .sui-app-shell[--contained] / .sui-workspace / .sui-focus-area /
+// .sui-workspace-panel / .sui-fill) ship in layout.css.
 export * from "./widget/FocusTabsComponent.js";
 export * from "./widget/TabPanelHeaderComponent.js";

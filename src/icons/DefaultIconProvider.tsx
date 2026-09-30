@@ -2,11 +2,11 @@ import React from "react";
 import { IconContext, type IconRenderer } from "../widget/IconContext.js";
 import { Icon } from "./IconComponent.js";
 
-// L4 — the packaged answer to MC's McIconProvider: feed the shipped registry
+// L4 — the packaged answer to MC's SuiIconProvider: feed the shipped registry
 // into the IconContext seam so every icon-consuming component (Button / Tab /
 // HoverButton / ContextMenu / …) renders glyphs with zero host code.
 //
-//   <McProviders store={store} icons={renderDefaultIcon}>…</McProviders>
+//   <SuiProviders store={store} icons={renderDefaultIcon}>…</SuiProviders>
 //   // or, store-free:
 //   <DefaultIconProvider><App /></DefaultIconProvider>
 

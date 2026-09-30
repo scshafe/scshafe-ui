@@ -51,7 +51,7 @@ export function FocusTabs({ model, onSelect, wrapItem }: FocusTabsProps) {
     onSelect(item);
   };
   return <Tooltip tooltip={model?.tooltip} fallback={defaultTooltip} as="div">
-    <div className={model.className} data-mc-component="FocusTabsComponent" role={model.role} aria-label={model.ariaLabel} aria-orientation={model.ariaOrientation}>
+    <div className={model.className} data-sui-component="FocusTabsComponent" role={model.role} aria-label={model.ariaLabel} aria-orientation={model.ariaOrientation}>
       {model.items.map((item) => {
         const tabButton = <Tooltip tooltip={item.tooltip} side="bottom">
           <button type="button" className={item.className} data-project-tab={item.id} role="tab" aria-selected={item.ariaSelected} aria-controls={item.controlsId} aria-label={item.tooltip} disabled={item.disabled} onClick={() => selectTab(item)}>

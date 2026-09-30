@@ -29,20 +29,20 @@ export function List({ title = null, description = null, count = null, empty = n
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <section
-      className="mc-list"
-      data-mc-component="List"
+      className="sui-list"
+      data-sui-component="List"
     >
       {title || actions ? (
-        <header className="mc-list-header">
-          <div className="mc-list-heading">
+        <header className="sui-list-header">
+          <div className="sui-list-heading">
             {title ? <Title level={4}>{count !== null ? `${title} (${count})` : title}</Title> : null}
             {description ? <Description>{description}</Description> : null}
           </div>
-          {actions ? <div className="mc-list-actions">{actions}</div> : null}
+          {actions ? <div className="sui-list-actions">{actions}</div> : null}
         </header>
       ) : null}
       {hasItems ? (
-        <div className="mc-list-items">{children}</div>
+        <div className="sui-list-items">{children}</div>
       ) : empty ? (
         <EmptyState title={empty.title ?? "Empty"} description={empty.description ?? "Nothing to show yet."} />
       ) : null}

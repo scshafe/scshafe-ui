@@ -15,7 +15,7 @@ export interface PopoverProps {
   side?: Side;
   offset?: number;
   ariaLabel?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   children: React.ReactNode;
 }
 
@@ -26,14 +26,14 @@ export interface PopoverProps {
 // Wrapper components like HoverCard, ContextMenu, and Picker compose this
 // primitive with the appropriate trigger semantics (hover delay, right-click,
 // click).
-export function Popover({ id, side = "bottom", offset = 6, ariaLabel, dataMcComponent = "Popover", children }: PopoverProps) {
+export function Popover({ id, side = "bottom", offset = 6, ariaLabel, dataSuiComponent = "Popover", children }: PopoverProps) {
   const { openId, anchor } = usePopoverController();
   if (openId !== id || !anchor) return null;
   const style: React.CSSProperties = positionStyle(anchor, side, offset);
   return (
     <div
-      className={`mc-popover mc-popover-side--${side}`}
-      data-mc-component={dataMcComponent}
+      className={`sui-popover sui-popover-side--${side}`}
+      data-sui-component={dataSuiComponent}
       data-popover-id={id}
       role="dialog"
       aria-label={ariaLabel}

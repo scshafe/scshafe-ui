@@ -12,7 +12,7 @@ export interface StatCountProps {
 
 export function StatCount({ state, count, tooltip }: StatCountProps) {
   return (
-    <span className="mc-stat-count" data-mc-component="StatCount">
+    <span className="sui-stat-count" data-sui-component="StatCount">
       <Status state={state} tooltip={tooltip as any} />
       <Badge value={count} componentName="StatCountValue" />
     </span>

@@ -4,27 +4,27 @@ import { IconContext, type IconRenderer } from "../widget/IconContext.js";
 import { RtkPopoverProvider } from "./RtkPopoverProvider.js";
 
 // ============================================================================
-// McProviders — the one-mount app root for state-layer consumers: react-redux
+// SuiProviders — the one-mount app root for state-layer consumers: react-redux
 // Provider + RtkPopoverProvider (+ the icon seam when a renderer is supplied).
 //
-//   const store = createMcStore({ slices: [Toasts, Popovers, /* … */] });
-//   <McProviders store={store} icons={renderIcon}>
+//   const store = createSuiStore({ slices: [Toasts, Popovers, /* … */] });
+//   <SuiProviders store={store} icons={renderIcon}>
 //     <App />
-//   </McProviders>
+//   </SuiProviders>
 //
 // `icons` is optional — without it the IconContext default (render nothing)
 // stands, exactly like consuming the components alone. Requires the Popovers
-// slice in the store (createMcStore({ slices: [Popovers, …] })).
+// slice in the store (createSuiStore({ slices: [Popovers, …] })).
 // ============================================================================
 
-export interface McProvidersProps {
+export interface SuiProvidersProps {
   store: any;
   children: React.ReactNode;
   icons?: IconRenderer;
   devUxEnabled?: boolean;
 }
 
-export function McProviders({ store, children, icons, devUxEnabled = false }: McProvidersProps) {
+export function SuiProviders({ store, children, icons, devUxEnabled = false }: SuiProvidersProps) {
   const inner = <RtkPopoverProvider devUxEnabled={devUxEnabled}>{children}</RtkPopoverProvider>;
   return (
     <Provider store={store}>

@@ -1,5 +1,5 @@
-// S4 pin — mc-ui/build and mc-ui/testing, exercised for real:
-// buildWebApp bundles a scratch entry (preflight skipped — this repo IS mc-ui);
+// S4 pin — @scshafe/ui/build and @scshafe/ui/testing, exercised for real:
+// buildWebApp bundles a scratch entry (preflight skipped — this repo IS @scshafe/ui);
 // the testing harness bundles + renders in a child process and returns markup.
 import assert from "node:assert/strict";
 import test from "node:test";
@@ -9,20 +9,20 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
-const { buildWebApp, assertMcUiResolvable } = await import("../lib/build.js");
+const { buildWebApp, assertSuiResolvable } = await import("../lib/build.js");
 const { bundleEntry, runNodeChild, createSpaRenderHarness } = await import("../lib/testing.js");
 
 test("buildWebApp bundles an entry with the provenance banner; preflight fails loud", async () => {
-  const tmp = mkdtempSync(join(tmpdir(), "mc-build-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sui-build-"));
   try {
     const entry = join(tmp, "main.js");
     writeFileSync(entry, `document.title = "built";`);
     const outfile = join(tmp, "dist", "app.js");
     await buildWebApp({ entry, outfile, skipPreflight: true });
     const bundle = readFileSync(outfile, "utf8");
-    assert.match(bundle, /Built by mc-ui\/build/);
+    assert.match(bundle, /Built by @scshafe\/ui\/build/);
     assert.match(bundle, /document\.title = "built"/);
-    assert.throws(() => assertMcUiResolvable(tmp), /did not resolve/, "preflight names the private-repo fix");
+    assert.throws(() => assertSuiResolvable(tmp), /did not resolve/, "preflight names the registry fix");
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -50,14 +50,14 @@ process.stdout.write(JSON.stringify({ result: double(JSON.parse(data)) }), () =>
 
 test("createSpaRenderHarness renders a store-backed app from preloaded state", async () => {
   // Fixture app over the COMPILED state layer (plain react-redux Provider —
-  // "mc-ui" itself is not resolvable from inside this repo's node_modules).
+  // "@scshafe/ui" itself is not resolvable from inside this repo's node_modules).
   const fixtureDir = mkdtempSync(join(repoRoot, ".toolchain-fixture-"));
   const storeModule = join(fixtureDir, "store.js");
   const appModule = join(fixtureDir, "app.js");
   writeFileSync(storeModule, `
-import { createMcStore, Toasts } from ${JSON.stringify(join(repoRoot, "lib", "state", "index.js"))};
+import { createSuiStore, Toasts } from ${JSON.stringify(join(repoRoot, "lib", "state", "index.js"))};
 export function createFixtureStore({ preloadedState } = {}) {
-  return createMcStore({ slices: [Toasts], preloadedState });
+  return createSuiStore({ slices: [Toasts], preloadedState });
 }
 `);
   writeFileSync(appModule, `
@@ -75,7 +75,7 @@ export function FixtureApp() {
     storeExport: "createFixtureStore",
     appModule,
     appExport: "FixtureApp",
-    mcProviders: false,
+    suiProviders: false,
   });
   try {
     const html = await harness.renderApp({ Toasts: { items: [{ id: "a", kind: "success", message: "hello" }, { id: "b", kind: "info", message: "world" }] } });

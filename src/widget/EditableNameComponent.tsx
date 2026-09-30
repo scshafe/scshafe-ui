@@ -44,7 +44,7 @@ export function EditableName({
   onCancel,
 }: EditableNameProps) {
   // C1: icon-name strings resolve through the INJECTED renderer (byte-identical
-  // for MC via McIconProvider). Called unconditionally per the rules of hooks,
+  // for MC via SuiIconProvider). Called unconditionally per the rules of hooks,
   // even though the glyphs only appear in the editing branch below.
   const renderIcon = useIcon();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -64,13 +64,13 @@ export function EditableName({
   if (isEditing) {
     return (
       <form
-        className={`mc-editable-name mc-editable-name--editing ${className ?? ""}`}
+        className={`sui-editable-name sui-editable-name--editing ${className ?? ""}`}
         onSubmit={handleSubmit}
-        data-mc-component="EditableName"
+        data-sui-component="EditableName"
       >
         <input
           type="text"
-          className="mc-editable-name-input"
+          className="sui-editable-name-input"
           value={draft}
           aria-label={ariaLabel ?? "Edit name"}
           autoFocus
@@ -80,7 +80,7 @@ export function EditableName({
         />
         <button
           type="submit"
-          className="mc-editable-name-submit"
+          className="sui-editable-name-submit"
           disabled={!canSave || isSaving}
           aria-label="Save name"
           title="Save"
@@ -89,7 +89,7 @@ export function EditableName({
         </button>
         <button
           type="button"
-          className="mc-editable-name-cancel"
+          className="sui-editable-name-cancel"
           disabled={isSaving}
           onClick={onCancel}
           aria-label="Cancel edit"
@@ -97,19 +97,19 @@ export function EditableName({
         >
           {renderIcon("action.close", { size: 12, "aria-hidden": "true" })}
         </button>
-        {errorMessage ? <small className="mc-editable-name-error" role="alert">{errorMessage}</small> : null}
+        {errorMessage ? <small className="sui-editable-name-error" role="alert">{errorMessage}</small> : null}
       </form>
     );
   }
 
   return (
     <span
-      className={`mc-editable-name mc-hover-host ${className ?? ""}`}
-      data-mc-component="EditableName"
+      className={`sui-editable-name sui-hover-host ${className ?? ""}`}
+      data-sui-component="EditableName"
     >
       <button
         type="button"
-        className="mc-editable-name-text"
+        className="sui-editable-name-text"
         aria-label={ariaLabel ? `${ariaLabel}: ${value}` : value}
         onClick={onClick}
       >
@@ -120,7 +120,7 @@ export function EditableName({
         label={`Edit ${value}`}
         title="Edit name"
         onClick={onEditStart}
-        dataMcComponent="EditableNameEdit"
+        dataSuiComponent="EditableNameEdit"
       />
     </span>
   );

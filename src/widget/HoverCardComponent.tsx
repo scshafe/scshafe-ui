@@ -100,14 +100,14 @@ export function HoverCard({
     <Wrapper
       ref={wrapperRef}
       className={className}
-      data-mc-component="HoverCard"
-      data-mc-popover-anchor=""
+      data-sui-component="HoverCard"
+      data-sui-popover-anchor=""
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
       {children}
       <Popover id={id} side={side} ariaLabel={ariaLabel}>
-        <div className="mc-hover-card-content" onMouseEnter={handlePopoverEnter} onMouseLeave={handlePopoverLeave}>
+        <div className="sui-hover-card-content" onMouseEnter={handlePopoverEnter} onMouseLeave={handlePopoverLeave}>
           {content}
         </div>
       </Popover>

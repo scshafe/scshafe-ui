@@ -29,7 +29,7 @@ export interface BaseLayoutProps {
   "aria-label"?: string;
   "aria-labelledby"?: string;
   "aria-describedby"?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   data?: DataAttributes;
 }
 
@@ -39,12 +39,12 @@ export type ResolvedBaseAttrs = {
   "aria-label": string | undefined;
   "aria-labelledby": string | undefined;
   "aria-describedby": string | undefined;
-  "data-mc-component": string;
+  "data-sui-component": string;
 } & DataAttributes;
 
 export function resolveBaseAttrs(
   props: Omit<BaseLayoutProps, "children" | "as">,
-  defaultMcComponent: string,
+  defaultSuiComponent: string,
 ): ResolvedBaseAttrs {
   return {
     id: props.id,
@@ -52,7 +52,7 @@ export function resolveBaseAttrs(
     "aria-label": props["aria-label"],
     "aria-labelledby": props["aria-labelledby"],
     "aria-describedby": props["aria-describedby"],
-    "data-mc-component": props.dataMcComponent ?? defaultMcComponent,
+    "data-sui-component": props.dataSuiComponent ?? defaultSuiComponent,
     ...(props.data ?? {}),
   };
 }

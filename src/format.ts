@@ -2,8 +2,8 @@
 // Mission Control's web/src/utils/format.js so the format-dependent Bucket-D components
 // (Status / ChipList / RecordMeta) can live in this package without reverse-importing the
 // app. Only the DOMAIN-FREE helpers move; MC keeps its domain formatters (byRun / scopeLabel /
-// planBindingLabel / …) and re-exports these from "mc-ui/format" so its call sites are
-// unchanged. Import via the subpath (`import { timestamp } from "mc-ui/format"`) or the root.
+// planBindingLabel / …) and re-exports these from "@scshafe/ui/format" so its call sites are
+// unchanged. Import via the subpath (`import { timestamp } from "@scshafe/ui/format"`) or the root.
 import type { StatusTone } from "./layout/layoutShared.js";
 
 // The default workflow-state → tone vocabulary. Opinionated but generic: hosts with their own

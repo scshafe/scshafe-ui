@@ -34,9 +34,9 @@ export function Identifier({ value, kind = "id", truncate: truncateMode = null, 
   };
   return <Tooltip tooltip={effectiveTooltip} fallback={defaultTooltip}>
     <code
-      className={`mc-identifier mc-identifier-${resolvedKind}`}
-      data-mc-component="Identifier"
-      data-mc-kind={resolvedKind}
+      className={`sui-identifier sui-identifier-${resolvedKind}`}
+      data-sui-component="Identifier"
+      data-sui-kind={resolvedKind}
     >{displayed}</code>
   </Tooltip>;
 }

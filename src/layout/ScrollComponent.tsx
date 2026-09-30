@@ -21,7 +21,7 @@ export const Scroll = React.forwardRef<HTMLElement, ScrollProps>(function Scroll
     axis = "y",
     height = "fill",
     width = "fill",
-    dataMcComponent,
+    dataSuiComponent,
     id,
     role,
     data,
@@ -35,16 +35,16 @@ export const Scroll = React.forwardRef<HTMLElement, ScrollProps>(function Scroll
       "aria-label": aria["aria-label"],
       "aria-labelledby": aria["aria-labelledby"],
       "aria-describedby": aria["aria-describedby"],
-      dataMcComponent,
+      dataSuiComponent,
       data,
     },
     "Scroll",
   );
   const className = joinClasses(
-    "mc-scroll",
-    `mc-scroll-axis--${axis}`,
-    `mc-scroll-height--${height}`,
-    `mc-scroll-width--${width}`,
+    "sui-scroll",
+    `sui-scroll-axis--${axis}`,
+    `sui-scroll-height--${height}`,
+    `sui-scroll-width--${width}`,
   );
   return (
     <Tag ref={ref} className={className} {...attrs}>

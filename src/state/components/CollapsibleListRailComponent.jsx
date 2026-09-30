@@ -92,7 +92,7 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <aside
       className={railClassName}
-      data-mc-component="CollapsibleListRail"
+      data-sui-component="CollapsibleListRail"
       data-surface-id={surfaceId}
       data-collapsed={collapsed ? "true" : "false"}
       aria-label={ariaLabel ?? title}
@@ -102,7 +102,7 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
         <button
           type="button"
           className="collapsible-list-rail-toggle"
-          data-mc-action="toggle-list-rail"
+          data-sui-action="toggle-list-rail"
           aria-pressed={!collapsed}
           aria-label={toggleLabel}
           title={toggleLabel}
@@ -119,7 +119,7 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
           aria-orientation="vertical"
           aria-label={`Resize ${title}`}
           title="Drag to resize. Double-click to reset."
-          data-mc-component="CollapsibleListRailResize"
+          data-sui-component="CollapsibleListRailResize"
           onPointerDown={handleResizePointerDown}
           onPointerMove={handleResizePointerMove}
           onPointerUp={handleResizePointerEnd}

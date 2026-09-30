@@ -10,7 +10,7 @@ import { useIcon } from "./IconContext.js";
  * composition.
  *
  * Props:
- *  - id: identifier for the tab (forwarded to data-mc-tab-id and onSelect)
+ *  - id: identifier for the tab (forwarded to data-sui-tab-id and onSelect)
  *  - label: display text
  *  - icon: optional icon name from icons/icon-names.js
  *  - active: whether this tab is the currently selected one
@@ -21,7 +21,7 @@ import { useIcon } from "./IconContext.js";
  */
 export function Tab({ id, label, icon = null, active = false, disabled = false, badge = null, onSelect = null, tooltip = null }) {
   // C1: icon-name string resolves through the INJECTED renderer (byte-identical
-  // for MC via McIconProvider).
+  // for MC via SuiIconProvider).
   const renderIcon = useIcon();
   const defaultTooltip = {
     component: "Tab",
@@ -36,17 +36,17 @@ export function Tab({ id, label, icon = null, active = false, disabled = false, 
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <button
       type="button"
-      className={`mc-tab ${active ? "mc-tab-active" : ""}`.trim()}
+      className={`sui-tab ${active ? "sui-tab-active" : ""}`.trim()}
       aria-pressed={active}
       aria-disabled={disabled || undefined}
       disabled={disabled}
       onClick={handleClick}
-      data-mc-component="Tab"
-      data-mc-tab-id={id}
+      data-sui-component="Tab"
+      data-sui-tab-id={id}
     >
       {icon ? renderIcon(icon, { size: 14, "aria-hidden": "true" }) : null}
-      <span className="mc-tab-label">{label}</span>
-      {badge !== null && badge !== undefined ? <span className="mc-tab-badge">{badge}</span> : null}
+      <span className="sui-tab-label">{label}</span>
+      {badge !== null && badge !== undefined ? <span className="sui-tab-badge">{badge}</span> : null}
     </button>
   </Tooltip>;
 }

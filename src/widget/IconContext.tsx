@@ -10,7 +10,7 @@ import React from "react";
 // against the MC-SPECIFIC registry. Moving them into the standalone package
 // would drag MC's whole icon set with them. They now call an INJECTED render
 // function read from React context. Two states supply it:
-//   - McIconProvider (MC): renders MC's EXISTING <Icon name={...}/> so every
+//   - SuiIconProvider (MC): renders MC's EXISTING <Icon name={...}/> so every
 //     glyph / size / aria attribute is BYTE-IDENTICAL to before.
 //   - the context DEFAULT (no provider): a no-op that renders nothing, so a
 //     standalone consumer that injects no icon set degrades GRACEFULLY (shows
@@ -43,9 +43,9 @@ export type IconRenderer = (name: string, props?: IconRenderProps) => React.Reac
 
 // Default = a no-op renderer that renders NOTHING. A primitive rendered with NO
 // provider simply shows no icon rather than crashing — the graceful-degrade
-// closed state for standalone consumers. MC ALWAYS mounts McIconProvider at the
+// closed state for standalone consumers. MC ALWAYS mounts SuiIconProvider at the
 // app root, so MC never hits this path (its icons are always the registry ones).
-// (Latent: a FUTURE MC render root/portal outside McIconProvider would drop
+// (Latent: a FUTURE MC render root/portal outside SuiIconProvider would drop
 // glyphs silently — same inert-default class as C0's PopoverControllerContext;
 // a loud-over-silent hardening pass could dev-warn in BOTH fallbacks together.)
 const NOOP_ICON_RENDERER: IconRenderer = () => null;

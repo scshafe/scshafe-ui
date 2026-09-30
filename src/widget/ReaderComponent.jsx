@@ -27,19 +27,19 @@ export function Reader({ title = null, titleLevel = 3, description = null, actio
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <section
-      className="mc-reader"
-      data-mc-component="Reader"
+      className="sui-reader"
+      data-sui-component="Reader"
     >
       {title || actions ? (
-        <header className="mc-reader-header">
-          <div className="mc-reader-heading">
+        <header className="sui-reader-header">
+          <div className="sui-reader-heading">
             {title ? <Title level={titleLevel}>{title}</Title> : null}
             {description ? <Description>{description}</Description> : null}
           </div>
-          {actions ? <div className="mc-reader-actions">{actions}</div> : null}
+          {actions ? <div className="sui-reader-actions">{actions}</div> : null}
         </header>
       ) : null}
-      <div className="mc-reader-body">{children}</div>
+      <div className="sui-reader-body">{children}</div>
     </section>
   </Tooltip>;
 }

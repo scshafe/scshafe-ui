@@ -53,7 +53,7 @@ function cssNameToken(value: string): string {
 }
 
 function liveWidthVariableName(tableId: string, columnId: string): string {
-  return `--mc-data-table-${cssNameToken(tableId)}-${cssNameToken(columnId)}-width`;
+  return `--sui-data-table-${cssNameToken(tableId)}-${cssNameToken(columnId)}-width`;
 }
 
 function columnStyle<Row>(column: PinnedDataTableColumn<Row>, tableId?: string): DataTableCellStyle | undefined {
@@ -63,14 +63,14 @@ function columnStyle<Row>(column: PinnedDataTableColumn<Row>, tableId?: string):
   const lineClamp = typeof column.lineClamp === "number" && Number.isFinite(column.lineClamp) && column.lineClamp > 0
     ? String(Math.round(column.lineClamp))
     : undefined;
-  const liveWidth = tableId ? `var(${liveWidthVariableName(tableId, column.id)}, var(--mc-data-table-width, var(--mc-data-table-max-width, auto)))` : undefined;
+  const liveWidth = tableId ? `var(${liveWidthVariableName(tableId, column.id)}, var(--sui-data-table-width, var(--sui-data-table-max-width, auto)))` : undefined;
   if (!minWidth && !width && !maxWidth && !lineClamp && !liveWidth) return undefined;
   return {
-    "--mc-data-table-min-width": minWidth,
-    "--mc-data-table-width": width,
-    "--mc-data-table-max-width": maxWidth,
-    "--mc-data-table-line-clamp": lineClamp,
-    "--mc-data-table-live-width": liveWidth
+    "--sui-data-table-min-width": minWidth,
+    "--sui-data-table-width": width,
+    "--sui-data-table-max-width": maxWidth,
+    "--sui-data-table-line-clamp": lineClamp,
+    "--sui-data-table-live-width": liveWidth
   };
 }
 
@@ -205,7 +205,7 @@ export function PinnedDataTable<Row>({
     };
     return (
       <span
-        className="mc-data-table-resize-handle"
+        className="sui-data-table-resize-handle"
         role="separator"
         tabIndex={0}
         aria-orientation="vertical"
@@ -226,8 +226,8 @@ export function PinnedDataTable<Row>({
     );
   };
   return (
-    <div className={joinClasses("mc-data-table-scroll", className)} data-mc-component="PinnedDataTable" role="region" aria-label={ariaLabel} tabIndex={0}>
-      <table className={joinClasses("mc-data-table", tableClassName)} data-table-id={tableId}>
+    <div className={joinClasses("sui-data-table-scroll", className)} data-sui-component="PinnedDataTable" role="region" aria-label={ariaLabel} tabIndex={0}>
+      <table className={joinClasses("sui-data-table", tableClassName)} data-table-id={tableId}>
         <thead>
           <tr>
             {columns.map((column) => (
@@ -243,8 +243,8 @@ export function PinnedDataTable<Row>({
                 aria-label={column.ariaLabel}
                 style={columnStyle(column, tableId)}
               >
-                <span className="mc-data-table-header-cell">
-                  <span className="mc-data-table-cell-content">{column.header}</span>
+                <span className="sui-data-table-header-cell">
+                  <span className="sui-data-table-cell-content">{column.header}</span>
                   {resizeHandleFor(column)}
                 </span>
               </th>
@@ -270,7 +270,7 @@ export function PinnedDataTable<Row>({
                       data-align={column.align}
                       style={columnStyle(column, tableId)}
                     >
-                      <span className="mc-data-table-cell-content">{column.render(row, rowIndex)}</span>
+                      <span className="sui-data-table-cell-content">{column.render(row, rowIndex)}</span>
                     </Cell>
                   );
                 })}

@@ -1,11 +1,11 @@
-// S4 — mc-ui/testing: the test harness both consumers copied, as library imports.
+// S4 — @scshafe/ui/testing: the test harness both consumers copied, as library imports.
 // Node-only (test-time); esbuild resolves from the consumer's devDependencies.
 //
 // Two primitives, extracted from the copies in MC's bucket tests and
 // voice-journey's web-spa test:
 //
 //   bundleEntry   — write an inline entry source into a temp dir INSIDE the app
-//                   root (so node_modules resolution finds the app's react/mc-ui)
+//                   root (so node_modules resolution finds the app's react/@scshafe/ui)
 //                   and bundle it; returns the bundle path + a cleanup fn.
 //
 //   runNodeChild  — run a script in a CHILD node process, feeding `input` on
@@ -37,7 +37,7 @@ export interface BundledEntry {
 
 export async function bundleEntry({ appRoot, source, external, esbuild: extra = {} }: BundleEntryOptions): Promise<BundledEntry> {
   const { build } = await import("esbuild");
-  const tmp = mkdtempSync(join(appRoot, ".mc-testing-"));
+  const tmp = mkdtempSync(join(appRoot, ".sui-testing-"));
   const entryPath = join(tmp, "entry.mjs");
   const bundlePath = join(tmp, "entry.bundle.mjs");
   writeFileSync(entryPath, source);
@@ -100,20 +100,20 @@ export interface SpaRenderHarnessOptions {
   appRoot: string;
   /** Absolute path to the module exporting the store factory. */
   storeModule: string;
-  /** Export name of the store factory taking { preloadedState } (default "createMcStore"-style factories accept it). */
+  /** Export name of the store factory taking { preloadedState } (default "createSuiStore"-style factories accept it). */
   storeExport: string;
   /** Absolute path to the module exporting the root component. */
   appModule: string;
   /** Export name of the root component. */
   appExport: string;
-  /** Wrap in McProviders (default true; set false for a plain react-redux Provider). */
-  mcProviders?: boolean;
+  /** Wrap in SuiProviders (default true; set false for a plain react-redux Provider). */
+  suiProviders?: boolean;
 }
 
-export async function createSpaRenderHarness({ appRoot, storeModule, storeExport, appModule, appExport, mcProviders = true }: SpaRenderHarnessOptions) {
-  const providerImport = mcProviders
-    ? `import { McProviders } from "mc-ui/state";`
-    : `import { Provider as McProviders } from "react-redux";`;
+export async function createSpaRenderHarness({ appRoot, storeModule, storeExport, appModule, appExport, suiProviders = true }: SpaRenderHarnessOptions) {
+  const providerImport = suiProviders
+    ? `import { SuiProviders } from "@scshafe/ui/state";`
+    : `import { Provider as SuiProviders } from "react-redux";`;
   const { bundlePath, cleanup } = await bundleEntry({
     appRoot,
     source: `
@@ -125,7 +125,7 @@ import { ${appExport} } from ${JSON.stringify(appModule)};
 export function renderApp(preloadedState) {
   const store = ${storeExport}({ preloadedState });
   return renderToStaticMarkup(
-    React.createElement(McProviders, { store },
+    React.createElement(SuiProviders, { store },
       React.createElement(${appExport}, null)));
 }
 `

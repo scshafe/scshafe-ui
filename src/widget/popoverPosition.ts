@@ -17,7 +17,7 @@ import type React from "react";
 // the panel is clamped so it stays inside a [8px, viewport-8px] safe box
 // HORIZONTALLY (both edges reserved); the VERTICAL clamp pins only the panel's
 // leading edge and relies on the CSS `max-height: calc(100vh - 16px)` +
-// `overflow:auto` (styles.css `.mc-popover`) to bound a tall panel's trailing
+// `overflow:auto` (styles.css `.sui-popover`) to bound a tall panel's trailing
 // edge. The phone/small-tablet edge-trap is what the clamp targets.
 
 export type PopoverAnchor = { x: number; y: number };
@@ -34,7 +34,7 @@ const EDGE_MARGIN = 8;
 export const MOBILE_CLAMP_MAX_WIDTH = 880;
 
 // The CSS width cap the stylesheet enforces
-// (`.mc-popover { max-width: min(360px, calc(100vw - 16px)) }`). The real DOM
+// (`.sui-popover { max-width: min(360px, calc(100vw - 16px)) }`). The real DOM
 // width is unknown at position-compute time (the panel isn't mounted yet), so
 // the cap is used as the panel's worst-case width. Consequence: a NARROW popover
 // anchored within ~half-the-cap of an edge shifts inward slightly more than
