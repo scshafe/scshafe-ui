@@ -9,11 +9,14 @@ const root = resolve(fileURLToPath(new URL("../", import.meta.url)));
 const scratch = await mkdtemp(join(tmpdir(), "sui-clone-"));
 const clone = join(scratch, "candidate");
 
+let storeEnv = {};
+
 async function run(command, args, options = {}) {
   const child = spawn(command, args, {
     cwd: options.cwd ?? root,
     env: {
       ...process.env,
+      ...storeEnv,
       npm_config_offline: "true",
       npm_config_audit: "false",
       npm_config_fund: "false"
@@ -50,8 +53,11 @@ try {
   await run("git", ["checkout", "--detach", commit], { cwd: clone });
   // The scratch clone may sit on another filesystem than the candidate
   // (tmpdir), where pnpm would pick a different, empty store; reuse the
-  // candidate's store so the offline install sees the same packages.
+  // candidate's store so the offline install sees the same packages. The
+  // store is also exported to every nested pnpm (the packed-install check
+  // inside verify installs a scratch consumer offline from the same store).
   const storeDir = (await run("pnpm", ["store", "path"])).trim();
+  storeEnv = { npm_config_store_dir: storeDir };
   await run(
     "pnpm",
     [
