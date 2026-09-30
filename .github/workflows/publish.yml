@@ -228,7 +228,9 @@ jobs:
           cd "$consumer"
           printf '{\n  "private": true,\n  "type": "module"\n}\n' > package.json
           printf '@scshafe:registry=%s\n' "$REGISTRY" > .npmrc
-          pnpm add --save-exact --ignore-scripts "${peers[@]}" "@scshafe/ui@$VERSION"
+          # pnpm 10 auto-installs optional peers too (auto-install-peers=true), which
+          # would bring the tiptap packages in and defeat the no-editor proof (0.3.0).
+          pnpm add --config.auto-install-peers=false --save-exact --ignore-scripts "${peers[@]}" "@scshafe/ui@$VERSION"
 
       # Compares @scshafe/ui only; the peers are other projects' releases. The
       # check strips pnpm's resolved-peer suffix (`0.2.0(react@...)(...)`).

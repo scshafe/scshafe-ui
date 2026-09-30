@@ -5,6 +5,17 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.3.1 — 2026-10-01
+
+Release-tooling fix; the library is unchanged from 0.3.0 apart from `package.json`'s version,
+this changelog and the README note below.
+
+- The release's install-back installs the base consumer with `--config.auto-install-peers=false`.
+  pnpm 10 auto-installs optional peers too, so 0.3.0's base consumer received the tiptap packages
+  and the "root works without the editor peers" smoke failed after publishing: 0.3.0 is on the
+  registry but has no GitHub Release. Use 0.3.1.
+- README: how to keep the optional tiptap peers out of a pnpm project (`auto-install-peers=false`).
+
 ## 0.3.0 — 2026-09-30
 
 Meets the SCSHAFE app standard's frontend requirements (WP-09A step 2):
