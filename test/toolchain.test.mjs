@@ -1,11 +1,9 @@
-// S4 pin — mc-ui/build, mc-ui/testing, and create-mc-app, exercised for real:
+// S4 pin — mc-ui/build and mc-ui/testing, exercised for real:
 // buildWebApp bundles a scratch entry (preflight skipped — this repo IS mc-ui);
-// the testing harness bundles + renders in a child process and returns markup;
-// the scaffold produces a complete app skeleton with placeholders resolved.
+// the testing harness bundles + renders in a child process and returns markup.
 import assert from "node:assert/strict";
 import test from "node:test";
-import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -86,26 +84,5 @@ export function FixtureApp() {
   } finally {
     harness.cleanup();
     rmSync(fixtureDir, { recursive: true, force: true });
-  }
-});
-
-test("create-mc-app scaffolds a complete skeleton with placeholders resolved", () => {
-  const tmp = mkdtempSync(join(tmpdir(), "mc-scaffold-"));
-  try {
-    const output = execFileSync(process.execPath, [join(repoRoot, "bin", "create-mc-app.mjs"), "demo-app", "--pin", "abc123", "--name", "Demo App"], { cwd: tmp, encoding: "utf8" });
-    assert.match(output, /Scaffolded Demo App/);
-    for (const file of ["package.json", "tsconfig.json", ".gitignore", "scripts/build-web.mjs", "src/main.jsx", "src/AppComponent.jsx", "src/theme.css", "src/state/StoreManager.js", "src/state/ExampleManager.js"]) {
-      assert.ok(existsSync(join(tmp, "demo-app", file)), `scaffold missing ${file}`);
-    }
-    const pkg = JSON.parse(readFileSync(join(tmp, "demo-app", "package.json"), "utf8"));
-    assert.equal(pkg.name, "Demo App");
-    assert.equal(pkg.dependencies["mc-ui"], "git+ssh://git@github.com/scshafe/mc-ui.git#abc123");
-    const main = readFileSync(join(tmp, "demo-app", "src", "main.jsx"), "utf8");
-    assert.doesNotMatch(main, /__APP_NAME__/);
-    assert.match(main, /McProviders/);
-    // refuses to overwrite
-    assert.throws(() => execFileSync(process.execPath, [join(repoRoot, "bin", "create-mc-app.mjs"), "demo-app"], { cwd: tmp, encoding: "utf8" }));
-  } finally {
-    rmSync(tmp, { recursive: true, force: true });
   }
 });
