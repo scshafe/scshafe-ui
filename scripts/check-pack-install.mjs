@@ -67,6 +67,9 @@ async function packAndInstall(peers) {
   const storeDir = await pnpmStoreDir();
   await run("pnpm", [
     "add",
+    // pnpm 10 auto-installs optional peers too; the base consumer must not
+    // receive the editor's tiptap peers (0.3.0's release smoke found this).
+    "--config.auto-install-peers=false",
     "--ignore-scripts",
     "--prefer-offline",
     "--store-dir",

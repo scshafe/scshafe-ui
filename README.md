@@ -41,6 +41,11 @@ Install the peers you use as direct dependencies of your app. The package has no
 dependencies. The root export and every subpath except `/editor` pull in no Redux, no icon
 library and no tiptap (pinned by `test/state-optionality.test.mjs` and `test/editor.test.mjs`).
 
+**pnpm installs optional peers by default.** pnpm 10's `auto-install-peers=true` also installs
+optional peers, so a plain `pnpm add @scshafe/ui` brings in the tiptap packages even if you never
+import `/editor`. To keep them out, add `auto-install-peers=false` to the project's `.npmrc` (and
+install the peers you use explicitly, as the tables above list).
+
 ## Usage
 
 ```tsx
