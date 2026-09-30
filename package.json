@@ -50,8 +50,13 @@
       "types": "./lib/testing.d.ts",
       "default": "./lib/testing.js"
     },
+    "./tokens": {
+      "types": "./lib/tokens.d.ts",
+      "default": "./lib/tokens.js"
+    },
     "./layout.css": "./layout.css",
     "./components.css": "./components.css",
+    "./tokens.css": "./tokens.css",
     "./*": {
       "types": "./lib/*.d.ts",
       "default": "./lib/*.js"
@@ -63,6 +68,7 @@
     "lib",
     "layout.css",
     "components.css",
+    "tokens.css",
     "README.md",
     "docs"
   ],

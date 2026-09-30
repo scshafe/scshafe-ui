@@ -1,0 +1,66 @@
+/* @scshafe/ui token registry — every theme custom property the package reads,
+ * with its default. The same list is exported as SUI_TOKENS from
+ * "@scshafe/ui/tokens". layout.css and components.css declare the same defaults
+ * for the tokens they use, so importing tokens.css is optional; import it when
+ * you theme from the full list. Re-declare any token after the package
+ * stylesheets to theme. */
+
+:root {
+  /* Text and accent colours */
+  --sui-text: #eff6ff;
+  --sui-text-strong: #f8fbff;
+  --sui-muted: #9fb0c8;
+  --sui-blue: #6cb6ff;
+  --sui-accent: var(--sui-blue);
+  --sui-accent-hover: #8cc8ff;
+  --sui-accent-subtle: rgba(108, 182, 255, 0.11);
+  --sui-green: #52d273;
+  --sui-ok: var(--sui-green);
+  --sui-ok-subtle: rgba(82, 210, 115, 0.08);
+
+  /* Surfaces */
+  --sui-bg: #08111f;
+  --sui-panel: #111d2f;
+  --sui-card: rgba(17, 29, 47, 0.82);
+  --sui-bg-elevated: rgba(18, 31, 50, 0.72);
+  --sui-bg-hover: rgba(108, 182, 255, 0.06);
+  --sui-surface-2: var(--sui-bg-elevated);
+  --sui-popover: rgba(8, 17, 31, 0.96);
+
+  /* Hairlines and borders */
+  --sui-line: rgba(183, 203, 231, 0.18);
+  --sui-border: var(--sui-line);
+  --sui-border-strong: rgba(183, 203, 231, 0.28);
+  --sui-border-hover: rgba(108, 182, 255, 0.36);
+
+  /* Floating layers */
+  --sui-shadow: 0 10px 34px rgba(0,0,0,0.22);
+  --sui-shadow-lg: 0 16px 40px rgba(0,0,0,0.34);
+
+  /* Corners */
+  --sui-radius-sm: 6px;
+  --sui-radius-md: 8px;
+  --sui-radius: var(--sui-radius-md);
+  --sui-radius-lg: 10px;
+
+  /* Type */
+  --sui-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sui-chat-text-size: 13px;
+
+  /* Card body clamps */
+  --sui-clamp-2xs: 80px;
+  --sui-clamp-xs: 120px;
+  --sui-clamp-sm: 160px;
+  --sui-clamp-md: 200px;
+  --sui-clamp-lg: 280px;
+  --sui-clamp-xl: 360px;
+
+  /* Layout spacing */
+  --sui-space-none: 0px;
+  --sui-space-xs: 4px;
+  --sui-space-sm: 8px;
+  --sui-space-md: 12px;
+  --sui-space-lg: 16px;
+  --sui-space-xl: 24px;
+  --sui-space-2xl: 32px;
+}
