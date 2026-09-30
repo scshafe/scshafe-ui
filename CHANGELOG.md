@@ -83,6 +83,22 @@ Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
   `@scshafe/ui/editor` and add the seven tiptap packages to the app's
   dependencies (README "Editor").
 
+- **`/identity` takes the end-session URL from configuration.**
+  `buildSignOutUrl(config, location?)` replaces `buildSignOutUrl(location?)`:
+  the identity provider's end-session endpoint comes from a `SignOutConfig`
+  (`endSessionEndpoint`, optional `postLogoutRedirectUri`,
+  `proxySignOutPath` — default `/oauth2/sign_out` — and `idTokenHint`,
+  default true) instead of being derived as `id.<suffix>` from the browser's
+  hostname. `UserMenu` takes it as the `signOut` prop, from the new
+  `IdentityConfigProvider`, or from `SuiProviders`' `identity` option. There
+  is deliberately no default endpoint: without configuration `UserMenu` shows
+  no Sign out link. Endpoints must be `https:` (plain `http:` only on a
+  loopback host), without credentials; the proxy path must be same-origin.
+  *Migration:* pass the provider's end-session URL, e.g.
+  `<SuiProviders identity={{ signOut: { endSessionEndpoint: "https://id.<your-tailnet>/api/oidc/end-session" } }}>`
+  (the URL 0.2.0 derived), or `<UserMenu signOut={…} />`; callers of
+  `buildSignOutUrl(location)` call `buildSignOutUrl({ endSessionEndpoint }, location)`.
+
 #### Class and marker renames
 
 | Before (0.2.0) | After (0.3.0) |

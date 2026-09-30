@@ -91,7 +91,7 @@ export const CATALOG = [
   { name: "FocusSelectionList", focus: "button", render: () => withStore(undefined, h(state.FocusSelectionList, { surfaceId: "chats", title: "Chats", count: 2, refresh: { onClick: noop, label: "Refresh chats" }, add: { onClick: noop, label: "New chat" } }, h("p", null, "rows"))) },
   { name: "RailWorkspace", render: () => h(state.RailWorkspace, { ariaLabel: "Plans workspace" }, h("p", null, "detail")) },
   // Identity
-  { name: "UserMenu", focus: "a", render: () => h(identity.UserMenu, { identity: { status: "identified", user: "subject-1", email: "person@example.test" }, location: { hostname: "inbox.example.ts.net", origin: "https://inbox.example.ts.net" } }) }
+  { name: "UserMenu", focus: "a", render: () => h(identity.UserMenu, { identity: { status: "identified", user: "subject-1", email: "person@example.test" }, signOut: { endSessionEndpoint: "https://id.example.ts.net/api/oidc/end-session" }, location: { hostname: "inbox.example.ts.net", origin: "https://inbox.example.ts.net" } }) }
 ];
 
 /** Wrap an entry for rendering: the default icon layer, so icons render. */
