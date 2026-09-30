@@ -21,7 +21,7 @@ const CASES = [
   ["Pane", h(ui.Pane, null, "a"), /class="sui-pane[^"]*"/],
   ["Scroll", h(ui.Scroll, { axis: "y" }, "a"), /class="sui-scroll[^"]*"/],
   // Navigation
-  ["FocusTabsComponent", h(ui.FocusTabs, { model: { role: "tablist", items: [{ key: "a", id: "a", icon: "tab.plans", ariaSelected: true }] } }), /role="tablist"/],
+  ["FocusTabs", h(ui.FocusTabs, { model: { role: "tablist", items: [{ key: "a", id: "a", icon: "tab.plans", ariaSelected: true }] } }), /role="tablist"/],
   ["Tab", h(ui.Tab, { id: "t", label: "Plans", active: true }), /class="sui-tab[^"]*"/],
   // Form
   ["InputField", h(ui.InputField, { id: "name", label: "Name", value: "", onChange() {} }), /<input/],
@@ -29,7 +29,7 @@ const CASES = [
   ["TextAreaField", h(ui.TextAreaField, { id: "note", label: "Note", value: "", onChange() {} }), /<textarea/],
   ["Button", h(ui.Button, { label: "Save", variant: "primary" }), /class="sui-button[^"]*"/],
   // Status
-  ["Status", h(ui.Status, { state: "running" }), /class="chip green"/],
+  ["Status", h(ui.Status, { state: "running" }), /class="sui-badge sui-badge--green"/],
   ["StatCount", h(ui.StatCount, { state: "running", count: 3 }), /3/],
   ["Kbd", h(ui.Kbd, { keys: ["Ctrl", "K"] }), /sui-kbd/],
   // Empty state

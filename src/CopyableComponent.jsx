@@ -19,7 +19,7 @@ import { Tooltip } from "./widget/TooltipComponent.js";
  *  - className: extra classes forwarded to the button.
  *  - title: tooltip override; defaults to `Click to copy · <value>`.
  *
- * Feedback: on click, the click handler sets data-copied="true" on the DOM
+ * Feedback: on click, the click handler sets data-sui-copied="true" on the DOM
  * node for ~700ms and removes it after the timeout. CSS animates the
  * transient confirmation flash. No React state — keeps the affordance
  * compatible with the "render directly from RTK" rule for everything else.
@@ -57,9 +57,9 @@ export function Copyable({
     if (clipboard?.writeText) void clipboard.writeText(text);
     const element = event.currentTarget;
     if (element) {
-      element.dataset.copied = "true";
+      element.dataset.suiCopied = "true";
       setTimeout(() => {
-        if (element.dataset.copied === "true") delete element.dataset.copied;
+        if (element.dataset.suiCopied === "true") delete element.dataset.suiCopied;
       }, 700);
     }
   };
@@ -74,7 +74,7 @@ export function Copyable({
     <span
       role="button"
       tabIndex={nested ? -1 : 0}
-      className={`copyable copyable-${kind}${className ? ` ${className}` : ""}`}
+      className={`sui-copyable sui-copyable-${kind}${className ? ` ${className}` : ""}`}
       data-sui-component="Copyable"
       aria-label={ariaLabel ?? `Copy ${kind} ${value}`}
       onClick={onClick}

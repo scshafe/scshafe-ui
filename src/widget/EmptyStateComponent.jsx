@@ -3,18 +3,18 @@ import { Tooltip } from "./TooltipComponent.js";
 import { useIcon } from "./IconContext.js";
 
 /** @param {{ children?: any, message?: any, className?: string, componentName?: string, role?: string, tooltip?: any, [extra: string]: any }} props */
-export function EmptyState({ children, message, className = "empty", componentName = "EmptyState", role, tooltip, icon = null, ...rest }) {
+export function EmptyState({ children, message, className, componentName = "EmptyState", role, tooltip, icon = null, ...rest }) {
   const renderIcon = useIcon();
   const content = children ?? message;
   const defaultTooltip = {
     component: componentName,
     layer: "widget",
     description: "Reusable empty, loading, or unavailable-state message.",
-    values: { className, role: role ?? "none", message: typeof content === "string" ? content : "custom content" }
+    values: { className: className ?? "none", role: role ?? "none", message: typeof content === "string" ? content : "custom content" }
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
-      className={className}
+      className={["sui-empty-state", className].filter(Boolean).join(" ")}
       data-sui-component={componentName}
       role={role}
       {...rest}

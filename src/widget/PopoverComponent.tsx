@@ -33,7 +33,7 @@ export function Popover({ id, side = "bottom", offset = 6, ariaLabel, dataSuiCom
     <div
       className={`sui-popover sui-popover-side--${side}`}
       data-sui-component={dataSuiComponent}
-      data-popover-id={id}
+      data-sui-popover-id={id}
       role="dialog"
       aria-label={ariaLabel}
       style={style}

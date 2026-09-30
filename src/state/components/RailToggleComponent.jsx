@@ -18,10 +18,10 @@ export function RailToggle({ surfaceId, title, tooltip }) {
   return <Tooltip tooltip={tooltip ?? toggleLabel} fallback={defaultTooltip}>
     <button
       type="button"
-      className="collapsible-list-rail-toggle panel-rail-toggle"
+      className="sui-collapsible-list-rail-toggle sui-rail-toggle"
       data-sui-component="RailToggle"
       data-sui-action="toggle-list-rail"
-      data-surface-id={surfaceId}
+      data-sui-surface-id={surfaceId}
       aria-pressed={!collapsed}
       aria-label={toggleLabel}
       onClick={() => dispatch(surfaceListCollapseToggled(surfaceId))}

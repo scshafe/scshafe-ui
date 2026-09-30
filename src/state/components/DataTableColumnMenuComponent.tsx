@@ -53,7 +53,7 @@ export function DataTableColumnMenu<Row>({
     dispatch(popoverOpened({ id: popoverId, anchor: { x: rect.right, y: rect.bottom } }));
   };
   return (
-    <span className="data-table-column-menu" data-sui-component="DataTableColumnMenu" data-table-column-menu={tableId} data-sui-popover-anchor="">
+    <span className="sui-data-table-column-menu" data-sui-component="DataTableColumnMenu" data-sui-table-column-menu={tableId} data-sui-popover-anchor="">
       <IconButton
         label={label}
         icon="action.settings"
@@ -61,26 +61,26 @@ export function DataTableColumnMenu<Row>({
         onClick={openMenu}
       />
       <Popover id={popoverId} side="bottom" ariaLabel={label}>
-        <div className="data-table-column-menu-panel">
-          <div className="data-table-column-menu-header">
+        <div className="sui-data-table-column-menu-panel">
+          <div className="sui-data-table-column-menu-header">
             <strong>Columns</strong>
             <button
               type="button"
               className="sui-button sui-button-secondary sui-button-mini"
-              data-table-preferences-reset={tableId}
+              data-sui-table-preferences-reset={tableId}
               onClick={() => dispatch(dataTablePreferencesReset({ tableId }))}
             >
               Reset all
             </button>
           </div>
-          <div className="data-table-column-menu-list" role="list">
+          <div className="sui-data-table-column-menu-list" role="list">
             {configuredColumns.map((column, index) => {
               const columnLabel = headerLabel(column);
               const hidden = hiddenColumnIds.has(column.id);
               const widthValue = widthsByColumnId[column.id] ?? "";
               return (
-                <div className="data-table-column-menu-row" role="listitem" key={column.id} data-table-column-menu-row={column.id}>
-                  <label className="data-table-column-visibility">
+                <div className="sui-data-table-column-menu-row" role="listitem" key={column.id} data-sui-table-column-menu-row={column.id}>
+                  <label className="sui-data-table-column-visibility">
                     <input
                       type="checkbox"
                       checked={!hidden}
@@ -90,7 +90,7 @@ export function DataTableColumnMenu<Row>({
                   </label>
                   <button
                     type="button"
-                    className="data-table-column-order-button"
+                    className="sui-data-table-column-order-button"
                     aria-label={`Move ${columnLabel} up`}
                     disabled={index === 0}
                     onClick={() => dispatch(dataTableColumnMoved({ tableId, columnId: column.id, direction: "up", columnIds: configuredColumnIds }))}
@@ -99,7 +99,7 @@ export function DataTableColumnMenu<Row>({
                   </button>
                   <button
                     type="button"
-                    className="data-table-column-order-button"
+                    className="sui-data-table-column-order-button"
                     aria-label={`Move ${columnLabel} down`}
                     disabled={index === configuredColumns.length - 1}
                     onClick={() => dispatch(dataTableColumnMoved({ tableId, columnId: column.id, direction: "down", columnIds: configuredColumnIds }))}
@@ -107,7 +107,7 @@ export function DataTableColumnMenu<Row>({
                     {renderIcon("action.expand", { size: 12, "aria-hidden": "true" })}
                   </button>
                   <input
-                    className="data-table-column-width-input"
+                    className="sui-data-table-column-width-input"
                     type="number"
                     min={48}
                     max={1200}
@@ -126,7 +126,7 @@ export function DataTableColumnMenu<Row>({
                   />
                   <button
                     type="button"
-                    className="data-table-column-order-button"
+                    className="sui-data-table-column-order-button"
                     aria-label={`Reset ${columnLabel} width`}
                     onClick={() => dispatch(dataTableColumnWidthReset({ tableId, columnId: column.id }))}
                   >

@@ -24,11 +24,11 @@ export function RecordMeta({ entries, tooltip }) {
   if (filtered.length === 0) return null;
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
-      className="card-meta"
+      className="sui-record-meta"
       data-sui-component="RecordMeta"
       aria-label="Record provenance"
     >
-      {filtered.map((entry, index) => <span key={`${entry.label}:${index}`} className="meta-pill"><span>{entry.label}</span>{entry.value}</span>)}
+      {filtered.map((entry, index) => <span key={`${entry.label}:${index}`} className="sui-record-meta-pill"><span>{entry.label}</span>{entry.value}</span>)}
     </div>
   </Tooltip>;
 }

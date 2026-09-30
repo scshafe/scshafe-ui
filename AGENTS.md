@@ -14,7 +14,10 @@ changes.
   and keep the old names.
 - The `data-sui-component` markers and class names are the render contract
   hosts pin. Changing one is a breaking change (a minor bump while 0.x) with a
-  changelog entry; `test/markers.test.mjs` pins the core set.
+  changelog entry; `test/markers.test.mjs` pins the core set, and
+  `test/namespace.test.mjs` fails on any rendered class that is not `sui-*`,
+  any data attribute that is not `data-sui-*`, and any such selector in the
+  stylesheets. A new component goes into `test/support/catalog.mjs`.
 - Every theme value is a registered `--sui-*` token. A new token goes into
   `src/tokens.ts`, `tokens.css` and the `:root` block of the stylesheet that
   uses it, in one commit; `test/tokens.test.mjs` enforces this.

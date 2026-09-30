@@ -27,7 +27,7 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
   const effectiveWidth = typeof storedWidth === "number" ? storedWidth : defaultWidth;
   const toggle = () => dispatch(surfaceListCollapseToggled(surfaceId));
   const toggleLabel = collapsed ? `Expand ${title}` : `Collapse ${title}`;
-  const railClassName = ["collapsible-list-rail", collapsed ? "is-collapsed" : "", showHeader ? "" : "no-header", resizable && !collapsed ? "is-resizable" : "", className].filter(Boolean).join(" ");
+  const railClassName = ["sui-collapsible-list-rail", collapsed ? "sui-collapsible-list-rail--collapsed" : "", showHeader ? "" : "sui-collapsible-list-rail--no-header", resizable && !collapsed ? "sui-collapsible-list-rail--resizable" : "", className].filter(Boolean).join(" ");
   const defaultTooltip = {
     component: "CollapsibleListRail",
     layer: "layout",
@@ -39,46 +39,46 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
     if (event.button !== undefined && event.button !== 0) return;
     event.preventDefault();
     const handleEl = event.currentTarget;
-    const railElement = handleEl.closest(".collapsible-list-rail");
+    const railElement = handleEl.closest(".sui-collapsible-list-rail");
     if (!railElement) return;
     handleEl.setPointerCapture(event.pointerId);
-    handleEl.dataset.startX = String(event.clientX);
-    handleEl.dataset.startWidth = String(railElement.getBoundingClientRect().width);
-    handleEl.dataset.lastWidth = handleEl.dataset.startWidth;
-    railElement.dataset.resizing = "true";
+    handleEl.dataset.suiStartX = String(event.clientX);
+    handleEl.dataset.suiStartWidth = String(railElement.getBoundingClientRect().width);
+    handleEl.dataset.suiLastWidth = handleEl.dataset.suiStartWidth;
+    railElement.dataset.suiResizing = "true";
   }, [collapsed]);
 
   const handleResizePointerMove = useCallback((event) => {
     const handleEl = event.currentTarget;
     if (!handleEl.hasPointerCapture(event.pointerId)) return;
-    const startX = parseFloat(handleEl.dataset.startX ?? "");
-    const startWidth = parseFloat(handleEl.dataset.startWidth ?? "");
+    const startX = parseFloat(handleEl.dataset.suiStartX ?? "");
+    const startWidth = parseFloat(handleEl.dataset.suiStartWidth ?? "");
     if (!Number.isFinite(startX) || !Number.isFinite(startWidth)) return;
-    const railElement = handleEl.closest(".collapsible-list-rail");
+    const railElement = handleEl.closest(".sui-collapsible-list-rail");
     if (!railElement) return;
     const dx = event.clientX - startX;
     const next = Math.max(minWidth, Math.min(maxWidth, startWidth + dx));
     railElement.style.width = `${next}px`;
     railElement.style.flexBasis = `${next}px`;
-    handleEl.dataset.lastWidth = String(next);
+    handleEl.dataset.suiLastWidth = String(next);
   }, [minWidth, maxWidth]);
 
   const handleResizePointerEnd = useCallback((event) => {
     const handleEl = event.currentTarget;
     if (handleEl.hasPointerCapture(event.pointerId)) handleEl.releasePointerCapture(event.pointerId);
-    const lastWidth = parseFloat(handleEl.dataset.lastWidth ?? "");
-    const railElement = handleEl.closest(".collapsible-list-rail");
-    if (railElement) delete railElement.dataset.resizing;
-    delete handleEl.dataset.startX;
-    delete handleEl.dataset.startWidth;
-    delete handleEl.dataset.lastWidth;
+    const lastWidth = parseFloat(handleEl.dataset.suiLastWidth ?? "");
+    const railElement = handleEl.closest(".sui-collapsible-list-rail");
+    if (railElement) delete railElement.dataset.suiResizing;
+    delete handleEl.dataset.suiStartX;
+    delete handleEl.dataset.suiStartWidth;
+    delete handleEl.dataset.suiLastWidth;
     if (Number.isFinite(lastWidth) && lastWidth > 0) {
       dispatch(paneSizeSet({ paneId: `rail:${surfaceId}`, size: lastWidth }));
     }
   }, [dispatch, surfaceId]);
 
   const handleResizeDoubleClick = useCallback((event) => {
-    const railElement = event.currentTarget.closest(".collapsible-list-rail");
+    const railElement = event.currentTarget.closest(".sui-collapsible-list-rail");
     if (railElement) {
       railElement.style.width = `${defaultWidth}px`;
       railElement.style.flexBasis = `${defaultWidth}px`;
@@ -93,28 +93,28 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
     <aside
       className={railClassName}
       data-sui-component="CollapsibleListRail"
-      data-surface-id={surfaceId}
-      data-collapsed={collapsed ? "true" : "false"}
+      data-sui-surface-id={surfaceId}
+      data-sui-collapsed={collapsed ? "true" : "false"}
       aria-label={ariaLabel ?? title}
       style={inlineStyle}
     >
-      {showHeader ? <div className="collapsible-list-rail-header">
+      {showHeader ? <div className="sui-collapsible-list-rail-header">
         <button
           type="button"
-          className="collapsible-list-rail-toggle"
+          className="sui-collapsible-list-rail-toggle"
           data-sui-action="toggle-list-rail"
           aria-pressed={!collapsed}
           aria-label={toggleLabel}
           title={toggleLabel}
           onClick={toggle}
         >{collapsed ? renderIcon("action.chevron-right", { size: 12 }) : renderIcon("action.chevron-left", { size: 12 })}</button>
-        {collapsed ? null : <span className="collapsible-list-rail-title">{title}</span>}
-        {collapsed || !actions ? null : <span className="collapsible-list-rail-actions">{actions}</span>}
+        {collapsed ? null : <span className="sui-collapsible-list-rail-title">{title}</span>}
+        {collapsed || !actions ? null : <span className="sui-collapsible-list-rail-actions">{actions}</span>}
       </div> : null}
-      {collapsed ? null : <div className="collapsible-list-rail-body">{children}</div>}
+      {collapsed ? null : <div className="sui-collapsible-list-rail-body">{children}</div>}
       {resizable && !collapsed ? (
         <div
-          className="collapsible-list-rail-resize-handle"
+          className="sui-collapsible-list-rail-resize-handle"
           role="separator"
           aria-orientation="vertical"
           aria-label={`Resize ${title}`}

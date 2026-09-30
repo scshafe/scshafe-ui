@@ -9,6 +9,63 @@ are never deleted, replaced or reused.
 
 Meets the SCSHAFE app standard's frontend requirements (WP-09A step 2).
 
+### Breaking changes
+
+Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
+
+- **Every public class is `sui-*` and every rendered data attribute is
+  `data-sui-*`.** 0.2.0 renamed only the `mc-` names; 69 unprefixed classes,
+  17 data attributes and the `FocusTabsComponent` marker remained, some with
+  application-specific names. They are renamed below, and
+  `test/namespace.test.mjs` now fails on any unprefixed class or data
+  attribute in rendered markup or in the stylesheets.
+  *Migration:* replace the old names in host CSS, selectors and tests using the
+  table below (a find-and-replace per row; the longer names first).
+- **`className` adds to a component's base class instead of replacing it** for
+  `EmptyState` (`sui-empty-state`), `Panel` (`sui-panel`), `PanelHeader`
+  (`sui-panel-header`), `ListRow` (`sui-list-row`) and `MarkdownContent`
+  (`sui-markdown`), as it already did elsewhere. *Migration:* a host that passed
+  `className` to drop the package styling restyles `.sui-<component>` instead.
+- **`FocusTabs` renders its own `sui-focus-tabs` strip and `sui-focus-tab`
+  button classes** (styled in `components.css`) before the model's classes, and
+  its marker is `data-sui-component="FocusTabs"`. *Migration:* host rules for
+  the strip keep working through the model classes; tests that pinned
+  `FocusTabsComponent` pin `FocusTabs`.
+
+#### Class and marker renames
+
+| Before (0.2.0) | After (0.3.0) |
+| --- | --- |
+| `chip` + tone class `green` `yellow` `orange` `red` `purple` `blue` (Badge, Status, Card overflow chip) | `sui-badge` + `sui-badge--<tone>` |
+| `count-pill-label` | `sui-badge-label` (`count-pill` was never rendered and is gone) |
+| `text-area-field` | `sui-text-area-field` |
+| `sr-only` (TextAreaField label) | `sui-visually-hidden`, now styled by the package |
+| `project-chat-composer-context project-chat-composer-context-control` (SelectField) | `sui-select-field`, now styled by the package |
+| `copyable`, `copyable-{name,slug,id,value,code}` | `sui-copyable`, `sui-copyable-{name,slug,id,value,code}` |
+| `empty` (EmptyState) | `sui-empty-state` |
+| `panel`, `panel-header` | `sui-panel`, `sui-panel-header` |
+| `task-row` (ListRow), `card-top`, `chips`, `list-row-{media,content,aside,actions}` | `sui-list-row`, `sui-list-row-top`, `sui-list-row-chips`, `sui-list-row-{media,content,aside,actions}` |
+| `metric` (MetricCard) | `sui-metric-card` |
+| `card-meta`, `meta-pill` (RecordMeta) | `sui-record-meta`, `sui-record-meta-pill` |
+| `project-chat-message`, `project-chat-message-<role>`, `project-chat-message-final` (MessageBubble) | `sui-message`, `sui-message--<role>`, `sui-message--final` |
+| `project-chat-message-{avatar,bubble,toolbar,toolbar-actions,parts,part,part-label}` | `sui-message-{avatar,bubble,toolbar,toolbar-actions,parts,part,part-label}` |
+| `project-chat-markdown` | `sui-message-markdown` |
+| `markdown-content` (MarkdownContent default), `markdown-code-block` | `sui-markdown`, `sui-markdown-code-block` |
+| `collapsible-list-rail`, `collapsible-list-rail-{header,toggle,title,actions,body,resize-handle}` | `sui-collapsible-list-rail`, `sui-collapsible-list-rail-{header,toggle,title,actions,body,resize-handle}` |
+| `is-collapsed`, `no-header`, `is-resizable` (on the rail) | `sui-collapsible-list-rail--collapsed`, `--no-header`, `--resizable` |
+| `panel-rail-toggle` (RailToggle) | `sui-rail-toggle` |
+| `data-table-column-menu`, `data-table-column-menu-{panel,header,list,row}`, `data-table-column-{visibility,order-button,width-input}` | the same names with the `sui-` prefix |
+| `project-tab-icon`, `project-tab-counts`, `project-tab-count`, `project-tab-divider` (FocusTabs) | `sui-focus-tab-icon`, `sui-focus-tab-counts`, `sui-focus-tab-count`, `sui-focus-tabs-divider` |
+| `.sui-button-tab.active` (host-applied `active`) | `.sui-button-tab.sui-button-active` |
+| marker `data-sui-component="FocusTabsComponent"` | `data-sui-component="FocusTabs"` |
+| `data-project-tab` (FocusTabs buttons) | `data-sui-focus-tab` |
+| `data-field` (SelectField), `data-copied` (Copyable) | `data-sui-field`, `data-sui-copied` |
+| `data-surface-id`, `data-collapsed`, `data-resizing` (rails) | `data-sui-surface-id`, `data-sui-collapsed`, `data-sui-resizing` |
+| `data-table-id`, `data-column-id`, `data-pinned-column`, `data-cell-wrap`, `data-line-clamp`, `data-align`, `data-column-resize-handle` (PinnedDataTable) | `data-sui-table-id`, `data-sui-column-id`, `data-sui-pinned-column`, `data-sui-cell-wrap`, `data-sui-line-clamp`, `data-sui-align`, `data-sui-column-resize-handle` |
+| `data-table-column-menu`, `data-table-column-menu-row`, `data-table-preferences-reset` (DataTableColumnMenu) | `data-sui-table-column-menu`, `data-sui-table-column-menu-row`, `data-sui-table-preferences-reset` |
+| `data-popover-id` (Popover) | `data-sui-popover-id` |
+| transient drag state `data-start-x`, `data-start-width`, `data-last-width` | `data-sui-start-x`, `data-sui-start-width`, `data-sui-last-width` |
+
 ## 0.2.0 — 2026-09-30
 
 First published version, on GitHub Packages. The package was `mc-ui` 0.1.0

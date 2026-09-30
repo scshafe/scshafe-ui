@@ -102,7 +102,7 @@ export function Card(props: CardProps) {
                   <Status key={chip.label} state={chip.status ?? chip.label} icon={null} />
                 ))}
                 {overflowChips.length > 0 ? (
-                  <span className="sui-card-chip-overflow chip blue" title={overflowChips.map((chip) => chip.label).join(", ")}>+{overflowChips.length}</span>
+                  <span className="sui-card-chip-overflow sui-badge sui-badge--blue" title={overflowChips.map((chip) => chip.label).join(", ")}>+{overflowChips.length}</span>
                 ) : null}
                 {timestampValue ? <small className="sui-card-timestamp" title={timestampLabel(timestampValue)}>{relativeTimeLabel(timestampValue)}</small> : null}
                 {actions}
@@ -165,7 +165,7 @@ export interface MetricCardProps {
 export function MetricCard(props: MetricCardProps) {
   const { label, value, detail, dataSuiComponent = "MetricCard" } = props;
   return (
-    <article className="metric" data-sui-component={dataSuiComponent}>
+    <article className="sui-metric-card" data-sui-component={dataSuiComponent}>
       <span>{label}</span>
       <strong>{value}</strong>
       {detail ? <small>{detail}</small> : null}

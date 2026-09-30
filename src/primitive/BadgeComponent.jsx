@@ -39,14 +39,14 @@ export function Badge({ value, label = null, tone = "blue", emphasis = null, too
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <span
-      className={`chip ${resolvedTone}`}
+      className={`sui-badge sui-badge--${resolvedTone}`}
       data-sui-component={componentName}
       data-sui-tone={resolvedTone}
       aria-label={showLabel ? `${text} ${label}` : undefined}
     >
       {icon ? renderIcon(icon, { size: 11, "aria-hidden": "true" }) : null}
       {wrapInStrong ? <strong>{text}</strong> : text}
-      {showLabel ? <span className="count-pill-label">{label}</span> : null}
+      {showLabel ? <span className="sui-badge-label">{label}</span> : null}
     </span>
   </Tooltip>;
 }

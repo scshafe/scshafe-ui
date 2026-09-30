@@ -23,12 +23,12 @@ test("layout.css carries the full contained-scroll chain", () => {
 test("FocusTabs renders the model contract with injected icons", () => {
   assert.equal(FocusTabs, FocusTabsComponent, "the *Component export name aliases the same component");
   const model = {
-    className: "project-tabs",
+    className: "host-tabs",
     role: "tablist",
     ariaLabel: "Project focus",
     items: [
-      { key: "a", id: "overview", icon: "tab.overview", tooltip: "Overview", className: "project-tab", ariaSelected: true, countBadges: [{ label: "open", value: 3 }] },
-      { key: "b", id: "runs", icon: "tab.runs", tooltip: "Runs", className: "project-tab", dividerBefore: true, disabled: true },
+      { key: "a", id: "overview", icon: "tab.overview", tooltip: "Overview", className: "host-tab", ariaSelected: true, countBadges: [{ label: "open", value: 3 }] },
+      { key: "b", id: "runs", icon: "tab.runs", tooltip: "Runs", className: "host-tab", dividerBefore: true, disabled: true },
     ],
   };
   const selections = [];
@@ -36,11 +36,11 @@ test("FocusTabs renders the model contract with injected icons", () => {
     React.createElement(DefaultIconProvider, null,
       React.createElement(FocusTabs, { model, onSelect: (item) => selections.push(item.id) }))
   );
-  assert.match(html, /data-sui-component="FocusTabsComponent"[^>]*role="tablist"/);
-  assert.match(html, /data-project-tab="overview"[^>]*aria-selected="true"/);
-  assert.match(html, /class="project-tab-icon"[^>]*><svg/, "icons render through the seam");
-  assert.match(html, /class="project-tab-count"[^>]*aria-label="3 open"[^>]*>3</);
-  assert.match(html, /class="project-tab-divider"[^>]*role="separator"/);
+  assert.match(html, /class="sui-focus-tabs host-tabs"[^>]*data-sui-component="FocusTabs"[^>]*role="tablist"/);
+  assert.match(html, /class="sui-focus-tab host-tab"[^>]*data-sui-focus-tab="overview"[^>]*aria-selected="true"/);
+  assert.match(html, /class="sui-focus-tab-icon"[^>]*><svg/, "icons render through the seam");
+  assert.match(html, /class="sui-focus-tab-count"[^>]*aria-label="3 open"[^>]*>3</);
+  assert.match(html, /class="sui-focus-tabs-divider"[^>]*role="separator"/);
   assert.equal(renderToStaticMarkup(React.createElement(FocusTabs, { model: null })), "", "null model renders nothing");
 });
 
