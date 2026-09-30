@@ -25,7 +25,7 @@ export const Inline = React.forwardRef<HTMLElement, InlineProps>(function Inline
     align = "center",
     justify = "start",
     wrap = false,
-    dataMcComponent,
+    dataSuiComponent,
     id,
     role,
     data,
@@ -39,17 +39,17 @@ export const Inline = React.forwardRef<HTMLElement, InlineProps>(function Inline
       "aria-label": aria["aria-label"],
       "aria-labelledby": aria["aria-labelledby"],
       "aria-describedby": aria["aria-describedby"],
-      dataMcComponent,
+      dataSuiComponent,
       data,
     },
     "Inline",
   );
   const className = joinClasses(
-    "mc-inline",
-    spaceClass("mc-inline-gap", gap),
-    `mc-inline-align--${align}`,
-    `mc-inline-justify--${justify}`,
-    wrap ? "mc-inline--wrap" : null,
+    "sui-inline",
+    spaceClass("sui-inline-gap", gap),
+    `sui-inline-align--${align}`,
+    `sui-inline-justify--${justify}`,
+    wrap ? "sui-inline--wrap" : null,
   );
   return (
     <Tag ref={ref} className={className} {...attrs}>

@@ -1,8 +1,7 @@
 import React from "react";
 // C0: the open id + anchor now come from the injected PopoverController context
-// instead of a direct useSelector on the Popovers slice. MC's RtkPopoverProvider
-// feeds the exact selectOpenPopoverId / selectPopoverAnchor values in, so this
-// renders byte-identically; the domain menus (ContextMenu et al.) that dispatch
+// instead of a direct useSelector on the Popovers slice. RtkPopoverProvider
+// feeds the exact selectOpenPopoverId / selectPopoverAnchor values in; the menus (ContextMenu et al.) that dispatch
 // to the slice directly still drive this Popover through that same live state.
 import { usePopoverController } from "./PopoverControllerContext.js";
 import { popoverStyleForViewport } from "./popoverPosition.js";
@@ -15,7 +14,7 @@ export interface PopoverProps {
   side?: Side;
   offset?: number;
   ariaLabel?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   children: React.ReactNode;
 }
 
@@ -26,14 +25,14 @@ export interface PopoverProps {
 // Wrapper components like HoverCard, ContextMenu, and Picker compose this
 // primitive with the appropriate trigger semantics (hover delay, right-click,
 // click).
-export function Popover({ id, side = "bottom", offset = 6, ariaLabel, dataMcComponent = "Popover", children }: PopoverProps) {
+export function Popover({ id, side = "bottom", offset = 6, ariaLabel, dataSuiComponent = "Popover", children }: PopoverProps) {
   const { openId, anchor } = usePopoverController();
   if (openId !== id || !anchor) return null;
   const style: React.CSSProperties = positionStyle(anchor, side, offset);
   return (
     <div
-      className={`mc-popover mc-popover-side--${side}`}
-      data-mc-component={dataMcComponent}
+      className={`sui-popover sui-popover-side--${side}`}
+      data-sui-component={dataSuiComponent}
       data-popover-id={id}
       role="dialog"
       aria-label={ariaLabel}

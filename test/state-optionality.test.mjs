@@ -1,6 +1,6 @@
 // S1 pin — THE OPTIONALITY CONTRACT. Consumers of the components alone must stay
-// exactly as light as before the state layer existed: bundling the root "mc-ui"
-// export must reference NO Redux machinery, while the "mc-ui/state" subpath must
+// exactly as light as before the state layer existed: bundling the root "@scshafe/ui"
+// export must reference NO Redux machinery, while the "@scshafe/ui/state" subpath must
 // (positive control — proves the probe would catch a leak). Also pins the
 // package.json wiring that keeps npm from auto-installing the optional peers.
 import assert from "node:assert/strict";

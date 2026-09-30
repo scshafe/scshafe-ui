@@ -1,4 +1,8 @@
 node_modules/
+lib/
+*.tgz
+.DS_Store
+coverage/
 test/.state-optionality-*/
 .toolchain-fixture-*/
-.mc-testing-*/
+.sui-testing-*/

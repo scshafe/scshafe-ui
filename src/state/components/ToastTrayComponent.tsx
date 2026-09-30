@@ -13,17 +13,17 @@ export function ToastTray() {
   const dispatch = useDispatch();
   if (!items.length) return null;
   return (
-    <ol className="mc-toast-tray" aria-live="polite" data-mc-component="ToastTray">
+    <ol className="sui-toast-tray" aria-live="polite" data-sui-component="ToastTray">
       {items.map((toast) => (
         <li
           key={toast.id}
-          className={`mc-toast mc-toast--${toast.kind}`}
+          className={`sui-toast sui-toast--${toast.kind}`}
           role={toast.kind === "error" ? "alert" : "status"}
         >
-          <span className="mc-toast-message">{toast.message}</span>
+          <span className="sui-toast-message">{toast.message}</span>
           <button
             type="button"
-            className="mc-toast-dismiss"
+            className="sui-toast-dismiss"
             aria-label="Dismiss"
             onClick={() => dispatch(toastDismissed({ id: toast.id }))}
           >

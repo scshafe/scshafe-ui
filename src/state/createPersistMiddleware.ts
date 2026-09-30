@@ -1,7 +1,6 @@
 // ============================================================================
 // createPersistMiddleware + readPersistedState — the localStorage persistence
-// pattern MC hand-rolled three times (ChatReadReceipts, ProjectPins, PaneSizes),
-// written once.
+// pattern (read receipts, pins, pane sizes, ...), written once.
 //
 // The middleware saves `select(getState())` under `key` after any matching
 // action; `readPersistedState` hydrates a slice's initialState (with a
@@ -9,9 +8,9 @@
 // version of the app). Storage failures are swallowed — persistence is an
 // enhancement, never a crash.
 //
-//   const initialState = readPersistedState("mc.paneSizes", normalize, { sizes: {} });
+//   const initialState = readPersistedState("sui.paneSizes", normalize, { sizes: {} });
 //   const persistPaneSizes = createPersistMiddleware({
-//     key: "mc.paneSizes",
+//     key: "sui.paneSizes",
 //     select: (state) => state.PaneSizes,
 //     matches: "PaneSizes/",            // or: [paneSizeSet, paneSizeCleared]
 //   });

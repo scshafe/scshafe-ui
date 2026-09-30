@@ -3,7 +3,7 @@ import { useIcon } from "./IconContext.js";
 
 // L1 — the standardized focus-tab panel header: title group (with an optional
 // leading slot for a RailToggle), an aside, a status line, and THE refresh
-// convention — one icon+label button (ending MC's icon-only-vs-text split).
+// convention — one icon+label button (never icon-only in one panel, text in the next).
 // Pure props; the host owns the refresh thunk/gesture behind `onRefresh`.
 //
 //   <TabPanelHeader title="Implementation plans" aside="12 open"
@@ -26,7 +26,7 @@ export interface TabPanelHeaderProps {
   leading?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
 }
 
 export function TabPanelHeader({
@@ -38,24 +38,24 @@ export function TabPanelHeader({
   leading,
   actions,
   className,
-  dataMcComponent = "TabPanelHeader"
+  dataSuiComponent = "TabPanelHeader"
 }: TabPanelHeaderProps) {
   const renderIcon = useIcon();
   const Heading = `h${headingLevel}` as unknown as React.ElementType;
   return (
-    <div className={["mc-tab-panel-header", className].filter(Boolean).join(" ")} data-mc-component={dataMcComponent}>
-      <div className="mc-tab-panel-title-group">
+    <div className={["sui-tab-panel-header", className].filter(Boolean).join(" ")} data-sui-component={dataSuiComponent}>
+      <div className="sui-tab-panel-title-group">
         {leading}
         <Heading>{title}</Heading>
-        {aside ? <span className="mc-tab-panel-aside">{aside}</span> : null}
+        {aside ? <span className="sui-tab-panel-aside">{aside}</span> : null}
       </div>
-      <div className="mc-tab-panel-actions">
-        {statusLabel ? <span className="mc-tab-panel-status" role="status">{statusLabel}</span> : null}
+      <div className="sui-tab-panel-actions">
+        {statusLabel ? <span className="sui-tab-panel-status" role="status">{statusLabel}</span> : null}
         {actions}
         {refresh ? (
           <button
             type="button"
-            className="mc-button"
+            className="sui-button"
             disabled={refresh.disabled}
             onClick={refresh.onClick}
             aria-label={refresh.label ?? "Refresh"}

@@ -1,9 +1,7 @@
-// P1 (consumers-standalone track) — generic formatting helpers, carved (moved) from
-// Mission Control's web/src/utils/format.js so the format-dependent Bucket-D components
-// (Status / ChipList / RecordMeta) can live in this package without reverse-importing the
-// app. Only the DOMAIN-FREE helpers move; MC keeps its domain formatters (byRun / scopeLabel /
-// planBindingLabel / …) and re-exports these from "mc-ui/format" so its call sites are
-// unchanged. Import via the subpath (`import { timestamp } from "mc-ui/format"`) or the root.
+// P1 — generic formatting helpers, so the format-dependent Bucket-D components
+// (Status / ChipList / RecordMeta) can live in this package without reverse-importing an
+// app. Only DOMAIN-FREE helpers live here; hosts keep their domain formatters beside them
+// and may re-export these from "@scshafe/ui/format". Import via the subpath (`import { timestamp } from "@scshafe/ui/format"`) or the root.
 import type { StatusTone } from "./layout/layoutShared.js";
 
 // The default workflow-state → tone vocabulary. Opinionated but generic: hosts with their own

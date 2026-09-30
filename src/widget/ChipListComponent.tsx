@@ -11,7 +11,7 @@ export interface ChipListItem {
 
 export interface ChipListProps {
   items: ReadonlyArray<ChipListItem>;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
 }
 
 function chipTone(status: string | undefined): StatusTone | undefined {
@@ -21,16 +21,16 @@ function chipTone(status: string | undefined): StatusTone | undefined {
 }
 
 export function ChipList(props: ChipListProps) {
-  const { items, dataMcComponent = "ChipList" } = props;
+  const { items, dataSuiComponent = "ChipList" } = props;
   return (
-    <Inline wrap gap="xs" dataMcComponent={dataMcComponent}>
+    <Inline wrap gap="xs" dataSuiComponent={dataSuiComponent}>
       {items.map((item) => {
         const tone = chipTone(item.status);
         return (
           <code
             key={item.label}
-            className="mc-chip"
-            data-mc-chip-tone={tone}
+            className="sui-chip"
+            data-sui-chip-tone={tone}
             title={item.tooltip}
           >
             {item.label}

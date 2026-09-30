@@ -14,7 +14,7 @@ export function MessageBubble({ message, tooltip }) {
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <article
       className={`project-chat-message project-chat-message-${role}${message.isFinal ? " project-chat-message-final" : ""}`}
-      data-mc-component="MessageBubble"
+      data-sui-component="MessageBubble"
     >
       <span className="project-chat-message-avatar" aria-hidden="true">{message.avatar ?? role.slice(0, 2).toUpperCase()}</span>
       <div className="project-chat-message-bubble">

@@ -2,12 +2,11 @@ import React from "react";
 import { Tooltip } from "./TooltipComponent.js";
 import { useIcon } from "./IconContext.js";
 
-// L1 — the icon-first focus tab strip, moved from MC (it was already model-driven
-// and app-agnostic: every outer class, aria attribute, and behavior arrives on the
-// model; the host builds the model in its selectors). Icons resolve through the
-// injected renderer. Inner class names (project-tab-icon / -counts / -count /
-// -divider) are kept verbatim as the frozen render contract from MC; their styles
-// ship in components.css.
+// L1 — the icon-first focus tab strip. Model-driven and app-agnostic: every
+// outer class, aria attribute, and behavior arrives on the model (the host
+// builds the model in its selectors). Icons resolve through the injected renderer. Inner class names (project-tab-icon / -counts / -count /
+// -divider) are a frozen render contract (namespacing them is tracked for 0.3.0);
+// their styles ship in components.css.
 
 export interface FocusTabItemModel {
   key: string;
@@ -51,7 +50,7 @@ export function FocusTabs({ model, onSelect, wrapItem }: FocusTabsProps) {
     onSelect(item);
   };
   return <Tooltip tooltip={model?.tooltip} fallback={defaultTooltip} as="div">
-    <div className={model.className} data-mc-component="FocusTabsComponent" role={model.role} aria-label={model.ariaLabel} aria-orientation={model.ariaOrientation}>
+    <div className={model.className} data-sui-component="FocusTabsComponent" role={model.role} aria-label={model.ariaLabel} aria-orientation={model.ariaOrientation}>
       {model.items.map((item) => {
         const tabButton = <Tooltip tooltip={item.tooltip} side="bottom">
           <button type="button" className={item.className} data-project-tab={item.id} role="tab" aria-selected={item.ariaSelected} aria-controls={item.controlsId} aria-label={item.tooltip} disabled={item.disabled} onClick={() => selectTab(item)}>
@@ -69,5 +68,5 @@ export function FocusTabs({ model, onSelect, wrapItem }: FocusTabsProps) {
   </Tooltip>;
 }
 
-// MC's historical export name for the same component.
+// Also exported under the file's *Component name.
 export { FocusTabs as FocusTabsComponent };

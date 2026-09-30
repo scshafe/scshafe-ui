@@ -28,9 +28,9 @@ export function Title({ children, level = 3, tooltip = null }) {
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <Tag
-      className={`mc-title mc-title-h${level}`}
-      data-mc-component="Title"
-      data-mc-level={level}
+      className={`sui-title sui-title-h${level}`}
+      data-sui-component="Title"
+      data-sui-level={level}
     >{children}</Tag>
   </Tooltip>;
 }

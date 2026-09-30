@@ -15,7 +15,7 @@ export function Panel({ children, className = "panel", componentName = "Panel", 
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <Tag
       className={className}
-      data-mc-component={componentName}
+      data-sui-component={componentName}
       {...rest}
     >{children}</Tag>
   </Tooltip>;
@@ -32,7 +32,7 @@ export function PanelHeader({ title, description, aside, children, className = "
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
       className={className}
-      data-mc-component={componentName}
+      data-sui-component={componentName}
       {...rest}
     >
       <div>

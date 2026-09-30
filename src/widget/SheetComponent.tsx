@@ -5,7 +5,7 @@ interface SheetProps {
   onClose: () => void;
   side?: "right" | "center";
   ariaLabel?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   children: React.ReactNode;
 }
 
@@ -14,7 +14,7 @@ interface SheetProps {
 // slice for confirms); this component just owns the imperative showModal /
 // close on the underlying DOM element. When closed, the entire dialog (and
 // its subtree) unmounts — tearing down hidden DOM per the project rule.
-export function Sheet({ open, onClose, side = "right", ariaLabel, dataMcComponent = "Sheet", children }: SheetProps) {
+export function Sheet({ open, onClose, side = "right", ariaLabel, dataSuiComponent = "Sheet", children }: SheetProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export function Sheet({ open, onClose, side = "right", ariaLabel, dataMcComponen
   return (
     <dialog
       ref={dialogRef}
-      className={`mc-sheet mc-sheet--${side}`}
-      data-mc-component={dataMcComponent}
+      className={`sui-sheet sui-sheet--${side}`}
+      data-sui-component={dataSuiComponent}
       aria-label={ariaLabel}
       onClose={onClose}
       onCancel={(event) => {
@@ -48,17 +48,17 @@ interface SheetHeaderProps { title: string; description?: string; }
 
 export function SheetHeader({ title, description }: SheetHeaderProps) {
   return (
-    <header className="mc-sheet__header">
-      <h2 className="mc-sheet__title">{title}</h2>
-      {description ? <p className="mc-sheet__description">{description}</p> : null}
+    <header className="sui-sheet__header">
+      <h2 className="sui-sheet__title">{title}</h2>
+      {description ? <p className="sui-sheet__description">{description}</p> : null}
     </header>
   );
 }
 
 export function SheetBody({ children }: { children: React.ReactNode }) {
-  return <div className="mc-sheet__body">{children}</div>;
+  return <div className="sui-sheet__body">{children}</div>;
 }
 
 export function SheetFooter({ children }: { children: React.ReactNode }) {
-  return <footer className="mc-sheet__footer">{children}</footer>;
+  return <footer className="sui-sheet__footer">{children}</footer>;
 }

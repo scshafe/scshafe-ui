@@ -3,9 +3,8 @@ import { createSlice, type Dispatch } from "@reduxjs/toolkit";
 // ============================================================================
 // createRouteStateSlice — URL ↔ store sync, both proven strategies.
 //
-// MC runs a hash router (`#view=…&project=…`); voice-journey runs a pathname
-// router (the server owns /, /journey, /referee as HTML routes). Same shape
-// either way: `parse(location)` derives route state, `write(state)` serializes
+// A hash router (`#view=…&project=…`) or a pathname router (the server owns
+// the HTML routes). Same shape either way: `parse(location)` derives route state, `write(state)` serializes
 // it back, `navigateThunk(partial)` merges + pushState + dispatches, and
 // `attach(store)` installs the popstate listener so back/forward re-parse.
 // The host owns vocabulary (views, params); the factory owns the sync.

@@ -39,7 +39,7 @@ export interface FocusSelectionListProps {
 //
 // Add-button clicks pass the React event through so callers can position
 // follow-up popovers against the button's bounding rect (the rendered
-// IconButton is already a data-mc-popover-anchor so outside-click won't
+// IconButton is already a data-sui-popover-anchor so outside-click won't
 // close such popovers when re-clicking the trigger).
 export function FocusSelectionList({
   surfaceId,
@@ -85,7 +85,7 @@ export function FocusSelectionList({
           tooltip={add.tooltip}
           disabled={add.disabled}
           onClick={add.onClick}
-          data-mc-popover-anchor=""
+          data-sui-popover-anchor=""
         />
       ) : null}
     </>

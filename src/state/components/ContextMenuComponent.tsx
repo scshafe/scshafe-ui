@@ -38,7 +38,7 @@ export interface ContextMenuProps {
 // divider in between.
 //
 // The wrapper uses `display: contents` so it doesn't alter layout — the
-// child element keeps its natural box. closest('[data-mc-popover-anchor]')
+// child element keeps its natural box. closest('[data-sui-popover-anchor]')
 // still finds the wrapper through the DOM tree, which is what the global
 // outside-click listener relies on to suppress accidental closes.
 export function ContextMenu({ id, items = [], panel, payload, ariaLabel, className, children }: ContextMenuProps) {
@@ -55,24 +55,24 @@ export function ContextMenu({ id, items = [], panel, payload, ariaLabel, classNa
     <>
       <div
         className={className}
-        data-mc-component="ContextMenuAnchor"
-        data-mc-popover-anchor=""
+        data-sui-component="ContextMenuAnchor"
+        data-sui-popover-anchor=""
         style={{ display: "contents" }}
         onContextMenu={handleContextMenu}
       >
         {children}
       </div>
       <Popover id={id} side="bottom" ariaLabel={ariaLabel}>
-        {panel !== undefined ? <div className="mc-context-menu-panel">{panel}</div> : null}
-        {panel !== undefined && items.length > 0 ? <div className="mc-context-menu-divider" role="separator" /> : null}
+        {panel !== undefined ? <div className="sui-context-menu-panel">{panel}</div> : null}
+        {panel !== undefined && items.length > 0 ? <div className="sui-context-menu-divider" role="separator" /> : null}
         {items.length > 0 ? (
-          <ul className="mc-context-menu" role="menu">
+          <ul className="sui-context-menu" role="menu">
             {items.map((item, index) => (
               <li key={`${item.label}:${index}`} role="none">
                 <button
                   type="button"
                   role="menuitem"
-                  className={`mc-context-menu-item${item.danger ? " mc-context-menu-item--danger" : ""}`}
+                  className={`sui-context-menu-item${item.danger ? " sui-context-menu-item--danger" : ""}`}
                   disabled={item.disabled}
                   onClick={(event) => {
                     event.stopPropagation();
@@ -85,8 +85,8 @@ export function ContextMenu({ id, items = [], panel, payload, ariaLabel, classNa
                   }}
                 >
                   {item.icon ? renderIcon(item.icon, { size: 12, "aria-hidden": "true" }) : null}
-                  <span className="mc-context-menu-item-label">{item.label}</span>
-                  {item.kbd ? <span className="mc-context-menu-item-kbd">{item.kbd}</span> : null}
+                  <span className="sui-context-menu-item-label">{item.label}</span>
+                  {item.kbd ? <span className="sui-context-menu-item-kbd">{item.kbd}</span> : null}
                 </button>
               </li>
             ))}

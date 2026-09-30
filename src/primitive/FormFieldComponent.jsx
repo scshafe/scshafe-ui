@@ -16,7 +16,7 @@ export function SelectField({ id, field, label, value, options = [], disabled = 
       className={`project-chat-composer-context project-chat-composer-context-control${className ? ` ${className}` : ""}`}
       data-field={field}
       htmlFor={id}
-      data-mc-component="SelectField"
+      data-sui-component="SelectField"
     >
       <span>{label}</span>
       <select
@@ -43,11 +43,11 @@ export function InputField({ id, label, value, placeholder, type = "text", input
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <label
-      className={`mc-input-field${className ? ` ${className}` : ""}`}
+      className={`sui-input-field${className ? ` ${className}` : ""}`}
       htmlFor={id}
-      data-mc-component="InputField"
+      data-sui-component="InputField"
     >
-      <span className="mc-input-field-label">{label}{required ? <span className="mc-input-field-required" aria-hidden="true"> *</span> : null}</span>
+      <span className="sui-input-field-label">{label}{required ? <span className="sui-input-field-required" aria-hidden="true"> *</span> : null}</span>
       <input
         id={id}
         type={type}
@@ -77,7 +77,7 @@ export function TextAreaField({ id, label, value, placeholder, rows = 3, disable
     <label
       className={`text-area-field${className ? ` ${className}` : ""}`}
       htmlFor={id}
-      data-mc-component="TextAreaField"
+      data-sui-component="TextAreaField"
     >
       <span className="sr-only">{label}</span>
       <textarea

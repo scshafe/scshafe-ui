@@ -1,8 +1,8 @@
 import React from "react";
 // C0: devUxEnabled + the open-popover id now arrive via the injected
-// PopoverController context, not a direct useSelector on the DevUxManager /
-// Popovers slices. MC's RtkPopoverProvider feeds those exact slices in, so this
-// is byte-identical; a standalone consumer gets LocalPopoverProvider.
+// PopoverController context, not a direct useSelector on a store.
+// RtkPopoverProvider feeds the Popovers slice in; a store-free consumer mounts
+// LocalPopoverProvider.
 import { useDevUxEnabled, usePopoverController } from "./PopoverControllerContext.js";
 import { tooltipText } from "../tooltip.js";
 import { HoverCard } from "./HoverCardComponent.js";
@@ -66,7 +66,7 @@ export function Tooltip({
       ariaLabel={text}
       className={tooltipWrapperClassName(className, as)}
       as={as}
-      content={<span className="mc-tooltip-text">{text}</span>}
+      content={<span className="sui-tooltip-text">{text}</span>}
     >
       {children}
     </HoverCard>
@@ -74,5 +74,5 @@ export function Tooltip({
 }
 
 function tooltipWrapperClassName(extra?: string, as: "span" | "div" = "span"): string {
-  return ["mc-tooltip", as === "div" ? "mc-tooltip-block" : null, extra].filter(Boolean).join(" ");
+  return ["sui-tooltip", as === "div" ? "sui-tooltip-block" : null, extra].filter(Boolean).join(" ");
 }

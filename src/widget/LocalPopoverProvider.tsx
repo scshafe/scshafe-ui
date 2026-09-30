@@ -6,21 +6,17 @@ import {
   type PopoverController
 } from "./PopoverControllerContext.js";
 
-// C0 (components-standalone track) — the PACKAGE-DEFAULT popover controller for
-// STANDALONE consumers: a fully self-contained single-open controller with zero
-// external wiring, so a consumer that just mounts <LocalPopoverProvider> gets
-// working tooltips / hover-cards / popovers out of the box. devUxEnabled is
-// always false (dev-ux is an MC-specific concept).
+// C0 — the PACKAGE-DEFAULT popover controller: a fully self-contained
+// single-open controller with zero external wiring, so a consumer that just
+// mounts <LocalPopoverProvider> gets working tooltips / hover-cards / popovers
+// out of the box. devUxEnabled is always false.
 //
-// MC does NOT use this — MC mounts RtkPopoverProvider so its existing
-// Popovers / DevUxManager slices + AppLifecycleListeners stay the single source
-// of truth (byte-identical).
+// Hosts with a Redux store mount RtkPopoverProvider (through SuiProviders)
+// instead, so the Popovers slice stays the single source of truth.
 //
 // HOUSE-RULE NOTE: the useReducer below is the PACKAGE's OWN internal,
-// self-contained controller state — NOT app/MC state. The MC store remains the
-// source of truth for MC (render-from-RTK); this local reducer exists only for
-// consumers that have no store at all. (This file lives in the widget dir for
-// now; it MOVES to the standalone package in a later slice.)
+// self-contained controller state — NOT app state. It exists only for
+// consumers that have no store at all.
 
 type LocalPopoverState = { openId: string | null; anchor: PopoverAnchor | null; payload: unknown };
 

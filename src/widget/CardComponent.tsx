@@ -34,14 +34,14 @@ export interface CardProps {
   tone?: StatusTone;
   children: ReactNode;
   as?: CardTag;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   data?: DataAttributes;
 }
 
 function detectOverflowRef(node: HTMLElement | null) {
   if (!node) return;
   const measure = () => {
-    node.dataset.mcOverflowing = String(node.scrollHeight > node.clientHeight);
+    node.dataset.suiOverflowing = String(node.scrollHeight > node.clientHeight);
   };
   measure();
   if (typeof ResizeObserver === "undefined") return;
@@ -66,7 +66,7 @@ export function Card(props: CardProps) {
     tone,
     children,
     as = "article",
-    dataMcComponent = "Card",
+    dataSuiComponent = "Card",
     data,
   } = props;
   const Tag = as as React.ElementType;
@@ -75,36 +75,36 @@ export function Card(props: CardProps) {
   const overflowChips = chips.slice(Math.max(0, maxChips));
   const popoverId = `${id}-detail`;
   const cardClassName = [
-    "mc-card",
-    maxHeight ? `mc-card-clamp--${maxHeight}` : null,
-    tone ? `mc-card-tone--${tone}` : null,
+    "sui-card",
+    maxHeight ? `sui-card-clamp--${maxHeight}` : null,
+    tone ? `sui-card-tone--${tone}` : null,
   ].filter(Boolean).join(" ");
   return (
     <>
       <Tag
         id={id}
         className={cardClassName}
-        data-mc-component={dataMcComponent}
+        data-sui-component={dataSuiComponent}
         {...(data ?? {})}
       >
         {hasHeader ? (
-          <header className="mc-card-header">
-            {status ? <span className="mc-card-status"><Status state={status} /></span> : null}
+          <header className="sui-card-header">
+            {status ? <span className="sui-card-status"><Status state={status} /></span> : null}
             {(title || subtitle) ? (
-              <div className="mc-card-header-title">
+              <div className="sui-card-header-title">
                 {title ? <Title level={titleLevel}>{title}</Title> : null}
                 {subtitle ? <Description>{subtitle}</Description> : null}
               </div>
             ) : null}
             {(visibleChips.length > 0 || overflowChips.length > 0 || actions || timestampValue) ? (
-              <div className="mc-card-header-actions">
+              <div className="sui-card-header-actions">
                 {visibleChips.map((chip) => (
                   <Status key={chip.label} state={chip.status ?? chip.label} icon={null} />
                 ))}
                 {overflowChips.length > 0 ? (
-                  <span className="mc-card-chip-overflow chip blue" title={overflowChips.map((chip) => chip.label).join(", ")}>+{overflowChips.length}</span>
+                  <span className="sui-card-chip-overflow chip blue" title={overflowChips.map((chip) => chip.label).join(", ")}>+{overflowChips.length}</span>
                 ) : null}
-                {timestampValue ? <small className="mc-card-timestamp" title={timestampLabel(timestampValue)}>{relativeTimeLabel(timestampValue)}</small> : null}
+                {timestampValue ? <small className="sui-card-timestamp" title={timestampLabel(timestampValue)}>{relativeTimeLabel(timestampValue)}</small> : null}
                 {actions}
               </div>
             ) : null}
@@ -112,20 +112,20 @@ export function Card(props: CardProps) {
         ) : null}
         <div
           ref={maxHeight ? detectOverflowRef : null}
-          className={maxHeight ? "mc-card-body mc-card-body--clamped" : "mc-card-body"}
+          className={maxHeight ? "sui-card-body sui-card-body--clamped" : "sui-card-body"}
         >
           {children}
         </div>
         {meta?.some(Boolean) ? (
-          <div className="mc-card-meta">
+          <div className="sui-card-meta">
             <RecordMeta entries={meta as any} />
           </div>
         ) : null}
         {maxHeight ? (
-          <footer className="mc-card-footer">
+          <footer className="sui-card-footer">
             <button
               type="button"
-              className="mc-card-show-full"
+              className="sui-card-show-full"
               popoverTarget={popoverId}
               aria-label={title ? `Show full ${title}` : "Show full details"}
             >
@@ -135,12 +135,12 @@ export function Card(props: CardProps) {
         ) : null}
       </Tag>
       {maxHeight ? (
-        <div id={popoverId} className="mc-card-detail-popover" popover="auto">
-          <header className="mc-card-detail-popover-header">
+        <div id={popoverId} className="sui-card-detail-popover" popover="auto">
+          <header className="sui-card-detail-popover-header">
             {title ? <Title level={titleLevel}>{title}</Title> : <span>Details</span>}
             <button
               type="button"
-              className="mc-card-detail-close"
+              className="sui-card-detail-close"
               popoverTarget={popoverId}
               popoverTargetAction="hide"
               aria-label="Hide details"
@@ -148,7 +148,7 @@ export function Card(props: CardProps) {
               ×
             </button>
           </header>
-          <div className="mc-card-detail-popover-body">{children}</div>
+          <div className="sui-card-detail-popover-body">{children}</div>
         </div>
       ) : null}
     </>
@@ -159,13 +159,13 @@ export interface MetricCardProps {
   label: string;
   value: string | number;
   detail?: string;
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
 }
 
 export function MetricCard(props: MetricCardProps) {
-  const { label, value, detail, dataMcComponent = "MetricCard" } = props;
+  const { label, value, detail, dataSuiComponent = "MetricCard" } = props;
   return (
-    <article className="metric" data-mc-component={dataMcComponent}>
+    <article className="metric" data-sui-component={dataSuiComponent}>
       <span>{label}</span>
       <strong>{value}</strong>
       {detail ? <small>{detail}</small> : null}

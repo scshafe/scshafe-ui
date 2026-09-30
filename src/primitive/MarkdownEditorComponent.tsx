@@ -66,7 +66,7 @@ export function MarkdownEditor({
     editorProps: {
       attributes: {
         ...(id ? { id } : {}),
-        class: "mc-markdown-editor-content",
+        class: "sui-markdown-editor-content",
         ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
       },
       handleKeyDown: (_view, event) => {
@@ -101,7 +101,7 @@ export function MarkdownEditor({
   );
 
   return (
-    <section className="mc-markdown-editor" data-mc-component="MarkdownEditor">
+    <section className="sui-markdown-editor" data-sui-component="MarkdownEditor">
       <EditorContent editor={editor} />
     </section>
   );

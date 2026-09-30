@@ -15,9 +15,9 @@ function IdentityChip({ identity, location, className }: UserMenuProps & { ident
   const label = identity.email || identity.preferredUsername || identity.user;
   const href = buildSignOutUrl(location);
   return (
-    <div className={["mc-user-menu", className].filter(Boolean).join(" ")} data-mc-component="UserMenu">
-      <span className="mc-user-menu-identity" title={label}>{label}</span>
-      {href ? <a className="mc-button mc-button-secondary mc-button-mini" href={href}>Sign out</a> : null}
+    <div className={["sui-user-menu", className].filter(Boolean).join(" ")} data-sui-component="UserMenu">
+      <span className="sui-user-menu-identity" title={label}>{label}</span>
+      {href ? <a className="sui-button sui-button-secondary sui-button-mini" href={href}>Sign out</a> : null}
     </div>
   );
 }

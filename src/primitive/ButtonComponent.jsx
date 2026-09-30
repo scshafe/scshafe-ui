@@ -4,18 +4,18 @@ import { useIcon } from "../widget/IconContext.js";
 
 function buttonClassName({ variant = "secondary", size = null, iconOnly = false, className = null } = {}) {
   return [
-    "mc-button",
-    variant ? `mc-button-${variant}` : null,
-    size === "mini" ? "mc-button-mini" : null,
-    iconOnly ? "mc-button-icon" : null,
+    "sui-button",
+    variant ? `sui-button-${variant}` : null,
+    size === "mini" ? "sui-button-mini" : null,
+    iconOnly ? "sui-button-icon" : null,
     className
   ].filter(Boolean).join(" ");
 }
 
 /** @param {{ label?: any, children?: any, icon?: any, variant?: string, size?: any, tooltip?: any, className?: any, disabled?: boolean, type?: string, [extra: string]: any }} props */
 export function Button({ label, children, icon, variant = "secondary", size, tooltip, className, disabled = false, type = "button", ...rest }) {
-  // C1: icon-name strings resolve through the INJECTED renderer (MC → its
-  // registry; standalone → its own set / nothing). Byte-identical for MC.
+  // C1: icon-name strings resolve through the INJECTED renderer (the host's
+  // icon set, or nothing under the default).
   const renderIcon = useIcon();
   const renderedLabel = children ?? label;
   const defaultTooltip = {
@@ -29,7 +29,7 @@ export function Button({ label, children, icon, variant = "secondary", size, too
       type={type}
       className={buttonClassName({ variant, size, className })}
       disabled={disabled}
-      data-mc-component="Button"
+      data-sui-component="Button"
       {...rest}
     >
       {icon ? renderIcon(icon, { size: 14, "aria-hidden": "true" }) : null}
@@ -53,7 +53,7 @@ export function IconButton({ label, icon, variant = "ghost", size, tooltip, clas
       className={buttonClassName({ variant, size, iconOnly: true, className })}
       disabled={disabled}
       aria-label={label}
-      data-mc-component="IconButton"
+      data-sui-component="IconButton"
       {...rest}
     >
       {children ?? renderIcon(icon, { size: 14, "aria-hidden": "true" })}

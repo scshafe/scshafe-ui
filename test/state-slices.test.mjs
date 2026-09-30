@@ -12,7 +12,7 @@ const {
   createRouteStateSlice,
   createPersistMiddleware,
   readPersistedState,
-  createMcStore,
+  createSuiStore,
   Toasts, toastShown, toastDismissed, showToastThunk, selectToasts,
   Popovers, popoverOpened, popoverClosed, popoverClosedIfCurrent, selectOpenPopoverId, selectPopoverAnchor,
   ConfirmDialog, confirmActionThunk, resolveConfirmThunk, selectConfirmDialog, _isResolverPending,
@@ -32,7 +32,7 @@ test("createResourceSlice: lifecycle, condition guard, invalidated re-arm, failu
     name: "Thing",
     fetch: async () => { calls += 1; if (calls === 3) throw new Error("boom"); return { n: calls }; },
   });
-  const store = createMcStore({ slices: [resource] });
+  const store = createSuiStore({ slices: [resource] });
   assert.equal(resource.select(store.getState()).status, "idle");
   await store.dispatch(resource.fetchThunk());
   assert.deepEqual(resource.select(store.getState()), { status: "loaded", error: null, data: { n: 1 } });
@@ -65,7 +65,7 @@ test("createPagedListSlice: accumulation, hasMore, filter reset, stale-page drop
       return gate.promise;
     },
   });
-  const store = createMcStore({ slices: [list] });
+  const store = createSuiStore({ slices: [list] });
 
   // page 1
   const p1 = store.dispatch(list.fetchPageThunk());
@@ -131,7 +131,7 @@ test("createDetailSlice: open, stale-response drop, closed", async () => {
       return gate.promise;
     },
   });
-  const store = createMcStore({ slices: [detail] });
+  const store = createSuiStore({ slices: [detail] });
 
   const openA = store.dispatch(detail.openThunk({ id: "a" }));
   const openB = store.dispatch(detail.openThunk({ id: "b" })); // replaces A while A is in flight
@@ -177,7 +177,7 @@ test("createRouteStateSlice: pathname pushState, replaceState sync, popstate att
       parse: (location) => ({ view: location.pathname === "/journey" ? "journey" : "corpus" }),
       write: (state) => (state.view === "journey" ? "/journey" : "/"),
     });
-    const store = createMcStore({ slices: [nav] });
+    const store = createSuiStore({ slices: [nav] });
     assert.equal(nav.select(store.getState()).view, "journey", "initial state parses the live location");
 
     store.dispatch(nav.navigateThunk({ view: "corpus" }));
@@ -204,7 +204,7 @@ test("createRouteStateSlice: pathname pushState, replaceState sync, popstate att
       parse: (location) => ({ view: location.hash.replace(/^#view=/, "") || "dashboard" }),
       write: (state) => (state.view === "dashboard" ? "" : `view=${state.view}`),
     });
-    const hashStore = createMcStore({ slices: [hashNav] });
+    const hashStore = createSuiStore({ slices: [hashNav] });
     hashStore.dispatch(hashNav.navigateThunk({ view: "settings" }));
     assert.equal(pushes.at(-1), "/app?x=1#view=settings");
   } finally {
@@ -235,7 +235,7 @@ test("createPersistMiddleware + readPersistedState: save on match, hydrate with 
       select: (state) => state.PaneSizes,
       matches: "PaneSizes/",
     });
-    const store = createMcStore({ slices: [sizes], middleware: [persist] });
+    const store = createSuiStore({ slices: [sizes], middleware: [persist] });
     store.dispatch({ type: "PaneSizes/set", payload: { id: "rail", size: 240 } });
     assert.equal(backing.get("test.paneSizes"), JSON.stringify({ sizes: { rail: 240 } }));
     store.dispatch({ type: "Other/action" });
@@ -252,7 +252,7 @@ test("createPersistMiddleware + readPersistedState: save on match, hydrate with 
     // action-creator array matching
     const creator = Object.assign(() => ({ type: "X/did" }), { type: "X/did" });
     const persistByAction = createPersistMiddleware({ key: "test.x", select: () => "x", matches: [creator] });
-    const store2 = createMcStore({ reducers: { X: (s = {}) => s }, middleware: [persistByAction] });
+    const store2 = createSuiStore({ reducers: { X: (s = {}) => s }, middleware: [persistByAction] });
     store2.dispatch({ type: "X/did" });
     assert.equal(backing.get("test.x"), JSON.stringify("x"));
   } finally {
@@ -261,7 +261,7 @@ test("createPersistMiddleware + readPersistedState: save on match, hydrate with 
 });
 
 test("Toasts: shown/dismissed, thunk auto-dismiss for success, errors persist", async () => {
-  const store = createMcStore({ slices: [Toasts] });
+  const store = createSuiStore({ slices: [Toasts] });
   store.dispatch(toastShown({ id: "t1", kind: "error", message: "bad" }));
   assert.deepEqual(selectToasts(store.getState()), [{ id: "t1", kind: "error", message: "bad" }]);
   store.dispatch(toastDismissed({ id: "t1" }));
@@ -279,7 +279,7 @@ test("Toasts: shown/dismissed, thunk auto-dismiss for success, errors persist", 
 });
 
 test("Popovers: single-open preemption and scoped close", () => {
-  const store = createMcStore({ slices: [Popovers] });
+  const store = createSuiStore({ slices: [Popovers] });
   store.dispatch(popoverOpened({ id: "a", anchor: { x: 1, y: 2 } }));
   store.dispatch(popoverOpened({ id: "b", anchor: { x: 3, y: 4 } }));
   assert.equal(selectOpenPopoverId(store.getState()), "b", "second open preempts the first");
@@ -293,7 +293,7 @@ test("Popovers: single-open preemption and scoped close", () => {
 });
 
 test("ConfirmDialog: promise resolution, preemption cancels the first ask", async () => {
-  const store = createMcStore({ slices: [ConfirmDialog] });
+  const store = createSuiStore({ slices: [ConfirmDialog] });
   const first = store.dispatch(confirmActionThunk({ title: "Delete?", kind: "danger" }));
   assert.equal(selectConfirmDialog(store.getState()).open, true);
   assert.equal(selectConfirmDialog(store.getState()).prompt.kind, "danger");
@@ -306,7 +306,7 @@ test("ConfirmDialog: promise resolution, preemption cancels the first ask", asyn
 });
 
 test("DataTablePreferences: widths, hidden toggle, merge helper", () => {
-  const store = createMcStore({ slices: [DataTablePreferences] });
+  const store = createSuiStore({ slices: [DataTablePreferences] });
   store.dispatch(dataTableColumnWidthSet({ tableId: "corpus", columnId: "filename", width: 260.4 }));
   store.dispatch(dataTableColumnHiddenToggled({ tableId: "corpus", columnId: "year" }));
   const prefs = selectDataTablePreferencesForTable(store.getState(), "corpus");
@@ -320,10 +320,10 @@ test("DataTablePreferences: widths, hidden toggle, merge helper", () => {
   assert.equal(selectDataTablePreferencesForTable(store.getState(), "corpus"), null, "empty preferences prune away");
 });
 
-test("createMcStore: mixes factory results and raw slices, rejects duplicates", () => {
+test("createSuiStore: mixes factory results and raw slices, rejects duplicates", () => {
   const resource = createResourceSlice({ name: "R", fetch: async () => 1 });
-  const store = createMcStore({ slices: [resource, Toasts] });
+  const store = createSuiStore({ slices: [resource, Toasts] });
   assert.deepEqual(Object.keys(store.getState()).sort(), ["R", "Toasts"]);
-  assert.throws(() => createMcStore({ slices: [Toasts, Toasts] }), /duplicate slice name "Toasts"/);
-  assert.throws(() => createMcStore({ slices: [{}] }), /needs \{name, reducer\}/);
+  assert.throws(() => createSuiStore({ slices: [Toasts, Toasts] }), /duplicate slice name "Toasts"/);
+  assert.throws(() => createSuiStore({ slices: [{}] }), /needs \{name, reducer\}/);
 });

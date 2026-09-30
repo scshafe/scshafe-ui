@@ -12,16 +12,16 @@ const { DefaultIconProvider } = await import("../lib/icons/index.js");
 
 test("layout.css carries the full contained-scroll chain", () => {
   const css = readFileSync(new URL("../layout.css", import.meta.url), "utf8");
-  for (const selector of [".mc-app-frame", ".mc-app-shell", ".mc-app-shell--contained", ".mc-workspace", ".mc-focus-area", ".mc-workspace-panel", ".mc-fill"]) {
+  for (const selector of [".sui-app-frame", ".sui-app-shell", ".sui-app-shell--contained", ".sui-workspace", ".sui-focus-area", ".sui-workspace-panel", ".sui-fill"]) {
     assert.ok(css.includes(selector + " "), `layout.css missing ${selector}`);
   }
-  assert.match(css, /\.mc-workspace \{[^}]*minmax\(0, 1fr\)/, "the grid link uses minmax(0,1fr)");
-  assert.match(css, /\.mc-workspace-panel > \* \{ flex: 0 0 auto; \}/, "panel children pin by default");
-  assert.match(css, /\.mc-workspace-panel > \.mc-scroll, \.mc-workspace-panel > \.mc-fill, \.mc-workspace-panel > \.mc-rail-workspace \{ flex: 1 1 0; min-height: 0; \}/);
+  assert.match(css, /\.sui-workspace \{[^}]*minmax\(0, 1fr\)/, "the grid link uses minmax(0,1fr)");
+  assert.match(css, /\.sui-workspace-panel > \* \{ flex: 0 0 auto; \}/, "panel children pin by default");
+  assert.match(css, /\.sui-workspace-panel > \.sui-scroll, \.sui-workspace-panel > \.sui-fill, \.sui-workspace-panel > \.sui-rail-workspace \{ flex: 1 1 0; min-height: 0; \}/);
 });
 
 test("FocusTabs renders the model contract with injected icons", () => {
-  assert.equal(FocusTabs, FocusTabsComponent, "MC's historical export name aliases the same component");
+  assert.equal(FocusTabs, FocusTabsComponent, "the *Component export name aliases the same component");
   const model = {
     className: "project-tabs",
     role: "tablist",
@@ -36,7 +36,7 @@ test("FocusTabs renders the model contract with injected icons", () => {
     React.createElement(DefaultIconProvider, null,
       React.createElement(FocusTabs, { model, onSelect: (item) => selections.push(item.id) }))
   );
-  assert.match(html, /data-mc-component="FocusTabsComponent"[^>]*role="tablist"/);
+  assert.match(html, /data-sui-component="FocusTabsComponent"[^>]*role="tablist"/);
   assert.match(html, /data-project-tab="overview"[^>]*aria-selected="true"/);
   assert.match(html, /class="project-tab-icon"[^>]*><svg/, "icons render through the seam");
   assert.match(html, /class="project-tab-count"[^>]*aria-label="3 open"[^>]*>3</);
@@ -56,13 +56,13 @@ test("TabPanelHeader unifies the iconized-refresh convention", () => {
         leading: React.createElement("span", { "data-leading": "rail-toggle" }),
       }))
   );
-  assert.match(html, /class="mc-tab-panel-header"[^>]*data-mc-component="TabPanelHeader"/);
+  assert.match(html, /class="sui-tab-panel-header"[^>]*data-sui-component="TabPanelHeader"/);
   assert.match(html, /<h4>Implementation plans<\/h4>/);
-  assert.match(html, /class="mc-tab-panel-aside">12 open</);
-  assert.match(html, /class="mc-tab-panel-status"[^>]*role="status"[^>]*>refreshed 2m ago</);
+  assert.match(html, /class="sui-tab-panel-aside">12 open</);
+  assert.match(html, /class="sui-tab-panel-status"[^>]*role="status"[^>]*>refreshed 2m ago</);
   assert.match(html, /aria-label="Refresh plans"[^>]*><svg/, "refresh is icon + label");
   assert.match(html, /Refresh<\/button>/);
   assert.match(html, /data-leading="rail-toggle"/);
   const bare = renderToStaticMarkup(React.createElement(TabPanelHeader, { title: "T" }));
-  assert.doesNotMatch(bare, /mc-tab-panel-status|button/, "status and refresh are opt-in");
+  assert.doesNotMatch(bare, /sui-tab-panel-status|button/, "status and refresh are opt-in");
 });

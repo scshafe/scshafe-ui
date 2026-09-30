@@ -1,5 +1,5 @@
-// L4 — the single seam binding icon-library choices to the semantic names
-// (moved from MC's web/src/icons/icon-registry.jsx). NO other file in the package
+// L4 — the single seam binding icon-library choices to the semantic names.
+// NO other file in the package
 // or a host imports an icon library directly — call sites use names via <Icon/>.
 // Today's binding: iconoir-react (regular weight), an OPTIONAL peer resolved from
 // the consumer. Swap the imports below to switch libraries; everything else keeps
@@ -130,7 +130,7 @@ const REGISTRY: Record<IconName, IconComponent> = {
       missing.length ? `missing bindings: ${missing.join(", ")}` : null,
       extra.length ? `extra bindings (declare in iconNames.ts): ${extra.join(", ")}` : null
     ].filter(Boolean).join("; ");
-    throw new Error(`mc-ui/icons registry is out of sync with its names: ${detail}`);
+    throw new Error(`@scshafe/ui/icons registry is out of sync with its names: ${detail}`);
   }
 })();
 

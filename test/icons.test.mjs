@@ -1,4 +1,4 @@
-// L4 pin — mc-ui/icons: the registry invariant, the Icon render contract, the
+// L4 pin — @scshafe/ui/icons: the registry invariant, the Icon render contract, the
 // default provider feeding the IconContext seam, and the state→glyph map.
 // Tested against the committed lib artifact. Optionality (root pulls no
 // iconoir) is pinned in state-optionality.test.mjs alongside the RTK probe.
@@ -20,7 +20,7 @@ test("the registry is closed, exhaustive, and includes the L4 additions", () => 
   assert.equal(new Set(ICON_NAMES).size, ICON_NAMES.length, "no duplicate names");
   assert.deepEqual(iconRegistryKeys().sort(), [...ICON_NAMES].sort(), "names ↔ bindings exhaustive");
   for (const fixed of ["tab.git", "tab.delete"]) {
-    assert.ok(isIconName(fixed), `${fixed} declared (was a silent QuestionMark fallback in MC)`);
+    assert.ok(isIconName(fixed), `${fixed} declared (once a silent QuestionMark fallback)`);
     assert.notEqual(iconComponentFor(fixed), null);
   }
   assert.ok(ICON_NAMES.filter((n) => n.startsWith("state.")).length >= 10, "state.* section present");
@@ -48,7 +48,7 @@ test("DefaultIconProvider makes package components render glyphs with zero host 
       React.createElement(Button, { label: "Go", icon: "action.send" }))
   );
   assert.match(provided, /<svg/, "provider → the glyph renders inside the Button");
-  assert.match(provided, /data-mc-component="Button"/);
+  assert.match(provided, /data-sui-component="Button"/);
   assert.equal(typeof renderDefaultIcon, "function");
 });
 

@@ -7,17 +7,17 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const {
-  McProviders, createMcStore, Popovers,
+  SuiProviders, createSuiStore, Popovers,
   Layout, viewportChanged, surfaceListCollapseToggled, selectIsMobile, selectSurfaceListCollapsed, attachViewportSync,
   PaneSizes, paneSizeSet, paneSizesPersistMiddleware, selectPaneSize,
   CollapsibleListRail, RailToggle, FocusSelectionList, RailWorkspace,
 } = await import("../lib/state/index.js");
 
 function storeWith(preloadedState) {
-  return createMcStore({ slices: [Layout, PaneSizes, Popovers], preloadedState });
+  return createSuiStore({ slices: [Layout, PaneSizes, Popovers], preloadedState });
 }
 
-const render = (store, element) => renderToStaticMarkup(React.createElement(McProviders, { store }, element));
+const render = (store, element) => renderToStaticMarkup(React.createElement(SuiProviders, { store }, element));
 
 test("Layout slice: viewport + surface collapse; attachViewportSync drives isMobile", () => {
   const store = storeWith();
@@ -48,10 +48,10 @@ test("PaneSizes slice persists through the package middleware and hydrates", () 
   const backing = new Map();
   globalThis.localStorage = { getItem: (k) => backing.get(k) ?? null, setItem: (k, v) => backing.set(k, v) };
   try {
-    const store = createMcStore({ slices: [Layout, PaneSizes, Popovers], middleware: [paneSizesPersistMiddleware] });
+    const store = createSuiStore({ slices: [Layout, PaneSizes, Popovers], middleware: [paneSizesPersistMiddleware] });
     store.dispatch(paneSizeSet({ paneId: "rail:plans", size: 321.6 }));
     assert.equal(selectPaneSize("rail:plans")(store.getState()), 322, "sizes round");
-    assert.equal(backing.get("mc-pane-sizes"), JSON.stringify({ sizes: { "rail:plans": 322 } }), "persists under MC's existing key");
+    assert.equal(backing.get("sui-pane-sizes"), JSON.stringify({ sizes: { "rail:plans": 322 } }), "persists under the sui-pane-sizes key");
   } finally {
     delete globalThis.localStorage;
   }
@@ -60,10 +60,10 @@ test("PaneSizes slice persists through the package middleware and hydrates", () 
 test("CollapsibleListRail renders width from PaneSizes, collapses from Layout, and drops inline width on mobile", () => {
   const open = storeWith({ PaneSizes: { sizes: { "rail:plans": 300 } } });
   const html = render(open, React.createElement(CollapsibleListRail, { surfaceId: "plans", title: "Plans", children: "rows" }));
-  assert.match(html, /data-mc-component="CollapsibleListRail"[^>]*data-surface-id="plans"[^>]*data-collapsed="false"/);
+  assert.match(html, /data-sui-component="CollapsibleListRail"[^>]*data-surface-id="plans"[^>]*data-collapsed="false"/);
   assert.match(html, /style="width:300px;flex-basis:300px"/, "persisted width renders inline on desktop");
   assert.match(html, /collapsible-list-rail-body/);
-  assert.match(html, /data-mc-component="CollapsibleListRailResize"/);
+  assert.match(html, /data-sui-component="CollapsibleListRailResize"/);
 
   const collapsed = storeWith({ Layout: { isMobile: false, collapsedListsBySurface: { plans: true } } });
   const collapsedHtml = render(collapsed, React.createElement(CollapsibleListRail, { surfaceId: "plans", title: "Plans", children: "rows" }));
@@ -82,7 +82,7 @@ test("CollapsibleListRail renders width from PaneSizes, collapses from Layout, a
 test("RailToggle + FocusSelectionList + RailWorkspace render their contracts", () => {
   const store = storeWith();
   const toggle = render(store, React.createElement(RailToggle, { surfaceId: "plans", title: "Plans" }));
-  assert.match(toggle, /data-mc-component="RailToggle"[^>]*data-surface-id="plans"/);
+  assert.match(toggle, /data-sui-component="RailToggle"[^>]*data-surface-id="plans"/);
 
   const list = render(store, React.createElement(FocusSelectionList, {
     surfaceId: "plans", title: "Plans", count: 12,
@@ -95,15 +95,15 @@ test("RailToggle + FocusSelectionList + RailWorkspace render their contracts", (
   assert.match(list, /aria-label="New plan"/);
 
   const workspace = renderToStaticMarkup(React.createElement(RailWorkspace, { className: "project-tab-fill", children: "x" }));
-  assert.match(workspace, /class="mc-rail-workspace project-tab-fill"[^>]*data-mc-component="RailWorkspace"/);
+  assert.match(workspace, /class="sui-rail-workspace project-tab-fill"[^>]*data-sui-component="RailWorkspace"/);
   const stacked = renderToStaticMarkup(React.createElement(RailWorkspace, { stackAt: "mobile", children: "x" }));
-  assert.match(stacked, /mc-rail-workspace--stack-mobile/);
+  assert.match(stacked, /sui-rail-workspace--stack-mobile/);
 });
 
 test("the carved rail + workspace styles travel in components.css", async () => {
   const { readFileSync } = await import("node:fs");
   const css = readFileSync(new URL("../components.css", import.meta.url), "utf8");
-  for (const selector of [".mc-rail-workspace", ".collapsible-list-rail", ".collapsible-list-rail-body", ".collapsible-list-rail-resize-handle", "max-width: 560px"]) {
+  for (const selector of [".sui-rail-workspace", ".collapsible-list-rail", ".collapsible-list-rail-body", ".collapsible-list-rail-resize-handle", "max-width: 560px"]) {
     assert.ok(css.includes(selector), `components.css missing ${selector}`);
   }
   assert.doesNotMatch(css, /!important\s*[;}]/, "the mobile rail rules need no !important");

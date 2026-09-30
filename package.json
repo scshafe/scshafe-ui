@@ -1,9 +1,28 @@
 {
-  "name": "mc-ui",
-  "version": "0.1.0",
-  "description": "Mission Control's generic frontend component package. First layer: the layout primitives (Stack / Grid / Inline / Pane / Scroll) \u2014 framework-light React components over CSS tokens, import-closed (react + itself, zero domain coupling). graphpaper is the sibling diagram library.",
+  "name": "@scshafe/ui",
+  "version": "0.2.0",
+  "description": "The SCSHAFE standard frontend library: framework-light React components, layout primitives and a token-driven stylesheet, with optional state, icon, identity, build and testing subpaths.",
   "type": "module",
   "license": "MIT",
+  "author": "scshafe-ui contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scshafe/scshafe-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/scshafe/scshafe-ui/issues"
+  },
+  "homepage": "https://github.com/scshafe/scshafe-ui#readme",
+  "keywords": [
+    "react",
+    "components",
+    "design-tokens",
+    "ui"
+  ],
+  "engines": {
+    "node": ">=22.22.0 <23 || >=24.18.0 <25"
+  },
+  "packageManager": "pnpm@10.34.5",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
@@ -31,8 +50,13 @@
       "types": "./lib/testing.d.ts",
       "default": "./lib/testing.js"
     },
+    "./tokens": {
+      "types": "./lib/tokens.d.ts",
+      "default": "./lib/tokens.js"
+    },
     "./layout.css": "./layout.css",
     "./components.css": "./components.css",
+    "./tokens.css": "./tokens.css",
     "./*": {
       "types": "./lib/*.d.ts",
       "default": "./lib/*.js"
@@ -44,36 +68,45 @@
     "lib",
     "layout.css",
     "components.css",
-    "README.md",
-    "bin",
-    "templates",
-    "docs"
+    "tokens.css",
+    "docs/FRONTEND-DOCTRINE.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "sideEffects": [
     "*.css"
   ],
+  "scripts": {
+    "build": "pnpm run clean && tsc -p tsconfig.json",
+    "clean": "node scripts/clean.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --test-force-exit test/*.test.mjs",
+    "test:payload": "node scripts/check-package-payload.mjs",
+    "test:release-artifact": "node scripts/check-release-artifact.mjs",
+    "test:install": "node scripts/check-pack-install.mjs",
+    "test:fresh-clone": "node scripts/check-fresh-clone.mjs",
+    "check": "pnpm run typecheck && pnpm run build && pnpm run test && pnpm run test:payload && pnpm run test:release-artifact && pnpm run test:install",
+    "verify": "pnpm run clean && pnpm run check",
+    "prepack": "pnpm run build",
+    "prepublishOnly": "pnpm run verify",
+    "release:manifest": "node scripts/write-release-manifest.mjs"
+  },
   "peerDependencies": {
     "react": ">=18",
+    "react-dom": ">=18",
     "@reduxjs/toolkit": ">=2",
     "react-redux": ">=9",
     "esbuild": ">=0.20",
     "iconoir-react": ">=7"
   },
-  "dependencies": {
-    "@tiptap/core": "^3.23.6",
-    "@tiptap/pm": "^3.23.6",
-    "@tiptap/react": "^3.23.6",
-    "@tiptap/starter-kit": "^3.23.6",
-    "@tiptap/extension-link": "^3.23.6",
-    "@tiptap/extension-placeholder": "^3.23.6",
-    "tiptap-markdown": "^0.9.0"
-  },
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf lib",
-    "test": "node --test --test-force-exit test/*.test.mjs"
-  },
   "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
     "@reduxjs/toolkit": {
       "optional": true
     },
@@ -87,18 +120,24 @@
       "optional": true
     }
   },
-  "devDependencies": {
-    "@reduxjs/toolkit": "^2.12.0",
-    "@types/react": "^19.2.14",
-    "esbuild": "^0.28.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-redux": "^9.3.0",
-    "typescript": "5.8.3",
-    "@types/node": "^22.0.0",
-    "iconoir-react": "^7.11.0"
+  "dependencies": {
+    "@tiptap/core": "^3.23.6",
+    "@tiptap/pm": "^3.23.6",
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
+    "@tiptap/extension-link": "^3.23.6",
+    "@tiptap/extension-placeholder": "^3.23.6",
+    "tiptap-markdown": "^0.9.0"
   },
-  "bin": {
-    "create-mc-app": "./bin/create-mc-app.mjs"
+  "devDependencies": {
+    "@reduxjs/toolkit": "2.13.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "19.3.0",
+    "esbuild": "0.28.2",
+    "iconoir-react": "7.12.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-redux": "9.3.0",
+    "typescript": "5.8.3"
   }
 }

@@ -1,5 +1,5 @@
 // L4 — the state → glyph vocabulary behind iconized Status (L3): a curated map
-// from the workflow-state words in mc-ui/format's toneByState onto the eleven
+// from the workflow-state words in @scshafe/ui/format's toneByState onto the eleven
 // `state.*` glyphs. Lifecycle words map; KIND words (patch, handoff, artifact,
 // policy, …) deliberately return null — they are categories, not states, and a
 // wrong glyph is worse than none. Hosts extend the same way they extend

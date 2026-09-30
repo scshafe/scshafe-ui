@@ -46,7 +46,7 @@ export const Grid = React.forwardRef<HTMLElement, GridProps>(function Grid(props
     rowHeight,
     align = "stretch",
     justify = "stretch",
-    dataMcComponent,
+    dataSuiComponent,
     id,
     role,
     data,
@@ -60,18 +60,18 @@ export const Grid = React.forwardRef<HTMLElement, GridProps>(function Grid(props
       "aria-label": aria["aria-label"],
       "aria-labelledby": aria["aria-labelledby"],
       "aria-describedby": aria["aria-describedby"],
-      dataMcComponent,
+      dataSuiComponent,
       data,
     },
     "Grid",
   );
   const className = joinClasses(
-    "mc-grid",
-    rowGap ? spaceClass("mc-grid-row-gap", rowGap) : spaceClass("mc-grid-gap", gap),
-    columnGap ? spaceClass("mc-grid-col-gap", columnGap) : spaceClass("mc-grid-gap", gap),
-    `mc-grid-align--${align}`,
-    `mc-grid-justify--${justify}`,
-    rowHeight ? `mc-grid-row-height--${rowHeight}` : null,
+    "sui-grid",
+    rowGap ? spaceClass("sui-grid-row-gap", rowGap) : spaceClass("sui-grid-gap", gap),
+    columnGap ? spaceClass("sui-grid-col-gap", columnGap) : spaceClass("sui-grid-gap", gap),
+    `sui-grid-align--${align}`,
+    `sui-grid-justify--${justify}`,
+    rowHeight ? `sui-grid-row-height--${rowHeight}` : null,
   );
   return (
     <Tag

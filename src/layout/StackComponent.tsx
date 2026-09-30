@@ -23,7 +23,7 @@ export const Stack = React.forwardRef<HTMLElement, StackProps>(function Stack(pr
     gap = "md",
     align = "stretch",
     itemHeight,
-    dataMcComponent,
+    dataSuiComponent,
     id,
     role,
     data,
@@ -37,16 +37,16 @@ export const Stack = React.forwardRef<HTMLElement, StackProps>(function Stack(pr
       "aria-label": aria["aria-label"],
       "aria-labelledby": aria["aria-labelledby"],
       "aria-describedby": aria["aria-describedby"],
-      dataMcComponent,
+      dataSuiComponent,
       data,
     },
     "Stack",
   );
   const className = joinClasses(
-    "mc-stack",
-    spaceClass("mc-stack-gap", gap),
-    `mc-stack-align--${align}`,
-    itemHeight ? `mc-stack-item-height--${itemHeight}` : null,
+    "sui-stack",
+    spaceClass("sui-stack-gap", gap),
+    `sui-stack-align--${align}`,
+    itemHeight ? `sui-stack-item-height--${itemHeight}` : null,
   );
   return (
     <Tag ref={ref} className={className} {...attrs}>

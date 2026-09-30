@@ -9,7 +9,7 @@ import { Tooltip } from "./widget/TooltipComponent.js";
  * Usage:
  *   <Copyable value="agent-server" kind="slug">agent-server</Copyable>
  *   <Copyable value="b9b787e1-…" kind="id">b9b787e1…</Copyable>
- *   <Copyable value="Mission Control demo" kind="name">Mission Control demo</Copyable>
+ *   <Copyable value="Example workspace" kind="name">Example workspace</Copyable>
  *
  * Props:
  *  - value (string): the text written to the clipboard on click.
@@ -75,7 +75,7 @@ export function Copyable({
       role="button"
       tabIndex={nested ? -1 : 0}
       className={`copyable copyable-${kind}${className ? ` ${className}` : ""}`}
-      data-mc-component="Copyable"
+      data-sui-component="Copyable"
       aria-label={ariaLabel ?? `Copy ${kind} ${value}`}
       onClick={onClick}
       onKeyDown={onKeyDown}

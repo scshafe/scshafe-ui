@@ -2,8 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PopoverAnchor } from "../widget/PopoverControllerContext.js";
 
 // ============================================================================
-// Popovers — single in-flight popover anchored at viewport coordinates (moved
-// from MC's web/src/state/Popovers.js; behavior unchanged).
+// Popovers — single in-flight popover anchored at viewport coordinates.
 //
 // Single-open by design: opening a second popover preempts the first. `anchor`
 // carries viewport coords so the Popover primitive can render the floating

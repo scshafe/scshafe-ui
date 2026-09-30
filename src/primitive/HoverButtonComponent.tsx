@@ -18,7 +18,7 @@ export interface HoverButtonProps {
   ariaControls?: string;
   popoverTarget?: string;
   popoverTargetAction?: "show" | "hide" | "toggle";
-  dataMcComponent?: string;
+  dataSuiComponent?: string;
   /** Additional attributes (typically `data-*`) spread onto the button. Use the full attribute name as the key (e.g. `{ "data-workspace-refresh": "home" }`). */
   data?: Record<string, string>;
 }
@@ -27,11 +27,11 @@ const ICON_SIZE: Record<HoverButtonSize, number> = { sm: 10, md: 12, lg: 14 };
 
 /**
  * Small icon-only button that stays invisible until its parent container is
- * hovered or focused. Parent must carry the `mc-hover-host` class. The
+ * hovered or focused. Parent must carry the `sui-hover-host` class. The
  * button itself has a circular tinted hover background.
  *
  * Usage:
- *   <div className="mc-hover-host">
+ *   <div className="sui-hover-host">
  *     <span>Some name</span>
  *     <HoverButton icon="action.edit" label="Rename" onClick={...} />
  *   </div>
@@ -50,11 +50,11 @@ export function HoverButton({
   ariaControls,
   popoverTarget,
   popoverTargetAction,
-  dataMcComponent = "HoverButton",
+  dataSuiComponent = "HoverButton",
   data,
 }: HoverButtonProps) {
-  // C1: icon-name string resolves through the INJECTED renderer (byte-identical
-  // for MC via McIconProvider; graceful no-op glyph for standalone consumers).
+  // C1: icon-name string resolves through the INJECTED renderer (the host's
+  // icon set; graceful no-op glyph when no provider is mounted).
   const renderIcon = useIcon();
   const handle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -64,7 +64,7 @@ export function HoverButton({
   return (
     <button
       type={type}
-      className={`mc-hover-button mc-hover-button--${variant} mc-hover-button--size-${size}`}
+      className={`sui-hover-button sui-hover-button--${variant} sui-hover-button--size-${size}`}
       aria-label={label}
       title={title ?? label}
       disabled={disabled}
@@ -73,7 +73,7 @@ export function HoverButton({
       aria-controls={ariaControls}
       popoverTarget={popoverTarget}
       popoverTargetAction={popoverTargetAction}
-      data-mc-component={dataMcComponent}
+      data-sui-component={dataSuiComponent}
       {...extraDataAttrs}
       onClick={handle}
     >

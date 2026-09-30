@@ -1,8 +1,7 @@
 import React from "react";
 import { FALLBACK_ICON_COMPONENT, iconComponentFor } from "./iconRegistry.js";
 
-// L4 — render a semantic icon by name (moved from MC's web/src/icons/Icon.jsx,
-// behavior unchanged). Without `aria-label` the icon is aria-hidden so screen
+// L4 — render a semantic icon by name. Without `aria-label` the icon is aria-hidden so screen
 // readers fall through to the surrounding button label / text.
 //
 //   <Icon name="nav.home" size={16} className="sidebar-nav-icon" />

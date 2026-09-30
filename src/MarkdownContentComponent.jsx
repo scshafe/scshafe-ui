@@ -215,7 +215,7 @@ export function MarkdownContent({ value, className = "markdown-content", tooltip
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
       className={className}
-      data-mc-component="MarkdownContent"
+      data-sui-component="MarkdownContent"
     >{blocks.map((block, index) => <MarkdownBlock key={`markdown-block:${index}`} block={block} index={index} />)}</div>
   </Tooltip>;
 }

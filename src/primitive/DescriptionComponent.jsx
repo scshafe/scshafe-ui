@@ -20,8 +20,8 @@ export function Description({ children, tone = "muted", tooltip = null }) {
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <p
-      className={`mc-description mc-description-${tone}`}
-      data-mc-component="Description"
+      className={`sui-description sui-description-${tone}`}
+      data-sui-component="Description"
     >{children}</p>
   </Tooltip>;
 }

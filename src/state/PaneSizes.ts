@@ -2,13 +2,12 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { createPersistMiddleware, readPersistedState } from "./createPersistMiddleware.js";
 
 // ============================================================================
-// PaneSizes — persisted drag-resize widths keyed by paneId (L2; moved from
-// MC's state/PaneSizes.js, now built on the package's own persistence factory).
-// The slice name keeps MC's store key, and the storage key + shape are the
-// ones MC already persisted, so existing localStorage carries over.
+// PaneSizes — persisted drag-resize widths keyed by paneId (L2), built on the
+// package's own persistence factory. Stored under the "sui-pane-sizes"
+// localStorage key.
 // ============================================================================
 
-const STORAGE_KEY = "mc-pane-sizes";
+const STORAGE_KEY = "sui-pane-sizes";
 
 interface PaneSizesState {
   sizes: Record<string, number>;

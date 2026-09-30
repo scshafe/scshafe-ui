@@ -22,11 +22,11 @@ export function Label({ htmlFor = null, children, required = false, tooltip = nu
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <label
       htmlFor={htmlFor ?? undefined}
-      className="mc-label"
-      data-mc-component="Label"
+      className="sui-label"
+      data-sui-component="Label"
     >
       {children}
-      {required ? <span className="mc-label-required" aria-hidden="true"> *</span> : null}
+      {required ? <span className="sui-label-required" aria-hidden="true"> *</span> : null}
     </label>
   </Tooltip>;
 }
