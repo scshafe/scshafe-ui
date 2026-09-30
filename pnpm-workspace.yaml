@@ -1,0 +1,6 @@
+strictDepBuilds: true
+# Reviewed build scripts (LIB-04, LIB-12c). esbuild's postinstall only
+# re-checks the platform binary that its optional @esbuild/* dependency
+# already installed; the build and tests work without it, so it stays off.
+allowBuilds:
+  esbuild: false

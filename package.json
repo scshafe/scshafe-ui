@@ -4,6 +4,10 @@
   "description": "Mission Control's generic frontend component package. First layer: the layout primitives (Stack / Grid / Inline / Pane / Scroll) — framework-light React components over CSS tokens, import-closed (react + itself, zero domain coupling). graphpaper is the sibling diagram library.",
   "type": "module",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.22.0 <23 || >=24.18.0 <25"
+  },
+  "packageManager": "pnpm@10.34.5",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
@@ -67,8 +71,8 @@
     "tiptap-markdown": "^0.9.0"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf lib",
+    "build": "pnpm run clean && tsc -p tsconfig.json",
+    "clean": "node scripts/clean.mjs",
     "test": "node --test --test-force-exit test/*.test.mjs"
   },
   "peerDependenciesMeta": {
