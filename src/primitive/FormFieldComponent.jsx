@@ -13,8 +13,8 @@ export function SelectField({ id, field, label, value, options = [], disabled = 
   const valueProps = onChange ? { value: value ?? "" } : { defaultValue: value ?? "" };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <label
-      className={`project-chat-composer-context project-chat-composer-context-control${className ? ` ${className}` : ""}`}
-      data-field={field}
+      className={`sui-select-field${className ? ` ${className}` : ""}`}
+      data-sui-field={field}
       htmlFor={id}
       data-sui-component="SelectField"
     >
@@ -75,11 +75,11 @@ export function TextAreaField({ id, label, value, placeholder, rows = 3, disable
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip}>
     <label
-      className={`text-area-field${className ? ` ${className}` : ""}`}
+      className={`sui-text-area-field${className ? ` ${className}` : ""}`}
       htmlFor={id}
       data-sui-component="TextAreaField"
     >
-      <span className="sr-only">{label}</span>
+      <span className="sui-visually-hidden">{label}</span>
       <textarea
         id={id}
         value={value ?? ""}

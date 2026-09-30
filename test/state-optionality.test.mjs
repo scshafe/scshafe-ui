@@ -38,11 +38,12 @@ async function bundleEntry(source) {
   }
 }
 
-test("the root export pulls zero Redux machinery and zero icon library", async () => {
+test("the root export pulls zero Redux machinery, zero icon library and no editor", async () => {
   const bundle = await bundleEntry(`export * from ${JSON.stringify(join(repoRoot, "lib", "index.js"))};`);
   assert.doesNotMatch(bundle, /@reduxjs\/toolkit/, "root bundle must not import @reduxjs/toolkit");
   assert.doesNotMatch(bundle, /react-redux/, "root bundle must not import react-redux");
   assert.doesNotMatch(bundle, /iconoir-react/, "root bundle must not import iconoir-react (L4 optional peer)");
+  assert.doesNotMatch(bundle, /@tiptap|tiptap-markdown/, "root bundle must not import tiptap (editor subpath)");
 });
 
 test("the icons subpath imports iconoir (positive control for the probe)", async () => {

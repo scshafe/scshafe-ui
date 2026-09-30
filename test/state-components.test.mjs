@@ -91,16 +91,16 @@ test("DataTableColumnMenu renders rows from merged preferences via the DataTable
     ],
     preferences,
   }));
-  assert.match(html, /data-sui-component="DataTableColumnMenu"[^>]*data-table-column-menu="corpus"/);
-  assert.match(html, /data-table-column-menu-row="filename"/);
+  assert.match(html, /data-sui-component="DataTableColumnMenu"[^>]*data-sui-table-column-menu="corpus"/);
+  assert.match(html, /data-sui-table-column-menu-row="filename"/);
   assert.match(html, /value="260"/, "the stored width fills the input");
-  assert.match(html, /data-table-preferences-reset="corpus"/);
+  assert.match(html, /data-sui-table-preferences-reset="corpus"/);
 });
 
 test("the carved Bucket E styles travel in components.css", async () => {
   const { readFileSync } = await import("node:fs");
   const css = readFileSync(new URL("../components.css", import.meta.url), "utf8");
-  for (const selector of [".sui-toast-tray", ".sui-toast--error", ".sui-context-menu-item", ".sui-context-menu-divider", ".data-table-column-menu-row", ".data-table-column-width-input"]) {
+  for (const selector of [".sui-toast-tray", ".sui-toast--error", ".sui-context-menu-item", ".sui-context-menu-divider", ".sui-data-table-column-menu-row", ".sui-data-table-column-width-input"]) {
     assert.ok(css.includes(selector), `components.css missing ${selector}`);
   }
 });

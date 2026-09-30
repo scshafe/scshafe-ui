@@ -86,7 +86,7 @@ function findClosestElement(element: HTMLElement | null, selector: string): HTML
 function resizeStartWidth(handleEl: HTMLElement, headerCell: HTMLElement | null): number {
   const measuredWidth = headerCell?.getBoundingClientRect?.().width;
   if (typeof measuredWidth === "number" && Number.isFinite(measuredWidth) && measuredWidth > 0) return measuredWidth;
-  return numberFromData(handleEl.dataset.startWidth) ?? 120;
+  return numberFromData(handleEl.dataset.suiStartWidth) ?? 120;
 }
 
 const MIN_RESIZABLE_COLUMN_WIDTH = 72;
@@ -136,35 +136,35 @@ export function PinnedDataTable<Row>({
       const headerCell = findClosestElement(handleEl, "th");
       const startWidth = resizeStartWidth(handleEl, headerCell);
       handleEl.setPointerCapture?.(event.pointerId);
-      handleEl.dataset.resizing = "true";
-      handleEl.dataset.startX = String(event.clientX);
-      handleEl.dataset.startWidth = String(startWidth);
-      handleEl.dataset.lastWidth = String(startWidth);
+      handleEl.dataset.suiResizing = "true";
+      handleEl.dataset.suiStartX = String(event.clientX);
+      handleEl.dataset.suiStartWidth = String(startWidth);
+      handleEl.dataset.suiLastWidth = String(startWidth);
       announceResizeWidth(handleEl, clampResizableColumnWidth(startWidth));
     };
     const handlePointerMove = (event: React.PointerEvent<HTMLSpanElement>) => {
       const handleEl = event.currentTarget;
-      if (handleEl.dataset.resizing !== "true") return;
+      if (handleEl.dataset.suiResizing !== "true") return;
       if (handleEl.hasPointerCapture && !handleEl.hasPointerCapture(event.pointerId)) return;
-      const startX = numberFromData(handleEl.dataset.startX);
-      const startWidth = numberFromData(handleEl.dataset.startWidth);
+      const startX = numberFromData(handleEl.dataset.suiStartX);
+      const startWidth = numberFromData(handleEl.dataset.suiStartWidth);
       if (startX === null || startWidth === null) return;
       const nextWidth = Math.max(MIN_RESIZABLE_COLUMN_WIDTH, Math.min(MAX_RESIZABLE_COLUMN_WIDTH, startWidth + event.clientX - startX));
       const tableElement = findClosestElement(handleEl, "table");
       tableElement?.style.setProperty(liveWidthVariableName(tableId, column.id), `${nextWidth}px`);
-      handleEl.dataset.lastWidth = String(nextWidth);
+      handleEl.dataset.suiLastWidth = String(nextWidth);
       announceResizeWidth(handleEl, nextWidth);
     };
     const cleanupResize = (handleEl: HTMLElement, pointerId: number) => {
       if (handleEl.hasPointerCapture?.(pointerId)) handleEl.releasePointerCapture?.(pointerId);
-      delete handleEl.dataset.resizing;
-      delete handleEl.dataset.startX;
-      delete handleEl.dataset.startWidth;
-      delete handleEl.dataset.lastWidth;
+      delete handleEl.dataset.suiResizing;
+      delete handleEl.dataset.suiStartX;
+      delete handleEl.dataset.suiStartWidth;
+      delete handleEl.dataset.suiLastWidth;
     };
     const handlePointerUp = (event: React.PointerEvent<HTMLSpanElement>) => {
       const handleEl = event.currentTarget;
-      const nextWidth = numberFromData(handleEl.dataset.lastWidth);
+      const nextWidth = numberFromData(handleEl.dataset.suiLastWidth);
       cleanupResize(handleEl, event.pointerId);
       if (nextWidth !== null) onColumnWidthSet(column.id, nextWidth);
     };
@@ -215,7 +215,7 @@ export function PinnedDataTable<Row>({
         aria-valuenow={accessibleResizeWidth(column)}
         aria-valuetext={`${accessibleResizeWidth(column)} pixels wide`}
         title="Drag or use Left and Right Arrow keys to resize. Shift changes the width faster."
-        data-column-resize-handle={column.id}
+        data-sui-column-resize-handle={column.id}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -227,7 +227,7 @@ export function PinnedDataTable<Row>({
   };
   return (
     <div className={joinClasses("sui-data-table-scroll", className)} data-sui-component="PinnedDataTable" role="region" aria-label={ariaLabel} tabIndex={0}>
-      <table className={joinClasses("sui-data-table", tableClassName)} data-table-id={tableId}>
+      <table className={joinClasses("sui-data-table", tableClassName)} data-sui-table-id={tableId}>
         <thead>
           <tr>
             {columns.map((column) => (
@@ -235,11 +235,11 @@ export function PinnedDataTable<Row>({
                 key={column.id}
                 scope="col"
                 className={joinClasses(column.className, column.headerClassName)}
-                data-column-id={column.id}
-                data-pinned-column={column.pinned}
-                data-cell-wrap={column.wrap}
-                data-line-clamp={column.lineClamp ? "true" : undefined}
-                data-align={column.align}
+                data-sui-column-id={column.id}
+                data-sui-pinned-column={column.pinned}
+                data-sui-cell-wrap={column.wrap}
+                data-sui-line-clamp={column.lineClamp ? "true" : undefined}
+                data-sui-align={column.align}
                 aria-label={column.ariaLabel}
                 style={columnStyle(column, tableId)}
               >
@@ -263,11 +263,11 @@ export function PinnedDataTable<Row>({
                       key={column.id}
                       scope={column.rowHeader ? "row" : undefined}
                       className={joinClasses(column.className, cellClassName(column, row, rowIndex))}
-                      data-column-id={column.id}
-                      data-pinned-column={column.pinned}
-                      data-cell-wrap={column.wrap}
-                      data-line-clamp={column.lineClamp ? "true" : undefined}
-                      data-align={column.align}
+                      data-sui-column-id={column.id}
+                      data-sui-pinned-column={column.pinned}
+                      data-sui-cell-wrap={column.wrap}
+                      data-sui-line-clamp={column.lineClamp ? "true" : undefined}
+                      data-sui-align={column.align}
                       style={columnStyle(column, tableId)}
                     >
                       <span className="sui-data-table-cell-content">{column.render(row, rowIndex)}</span>

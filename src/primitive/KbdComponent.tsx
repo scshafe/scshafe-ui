@@ -10,7 +10,7 @@ export function Kbd({ children, keys, ariaLabel }: KbdProps) {
   if (keys && keys.length > 0) {
     const label = ariaLabel ?? keys.join(" + ");
     return (
-      <span className="sui-kbd-combo" data-sui-component="Kbd" aria-label={label}>
+      <span className="sui-kbd-combo" data-sui-component="Kbd" role="group" aria-label={label}>
         {keys.map((key, index) => (
           <kbd key={`${key}:${index}`} className="sui-kbd">{key}</kbd>
         ))}
@@ -18,6 +18,6 @@ export function Kbd({ children, keys, ariaLabel }: KbdProps) {
     );
   }
   return (
-    <kbd className="sui-kbd" data-sui-component="Kbd" aria-label={ariaLabel}>{children}</kbd>
+    <kbd className="sui-kbd" data-sui-component="Kbd" role={ariaLabel ? "img" : undefined} aria-label={ariaLabel}>{children}</kbd>
   );
 }

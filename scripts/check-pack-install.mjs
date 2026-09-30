@@ -8,6 +8,10 @@
 //     (renderToString) and the markup carries data-sui-component markers.
 //   - TypeScript: a .tsx consumer typechecks against the shipped .d.ts files.
 //
+// in two phases: first WITHOUT the editor's optional tiptap peers (the root
+// and every other subpath must work; @scshafe/ui/editor must not resolve),
+// then with them added (the editor subpath imports, renders and typechecks).
+//
 // With SUI_SMOKE_CONSUMER set to a directory that already has the package and
 // its peers installed (the publish workflow's install-back of the registry
 // version), skip pack+install and run the same smokes there. Either way the
@@ -60,9 +64,7 @@ async function packAndInstall(peers) {
     `${JSON.stringify({ private: true, type: "module" }, null, 2)}\n`
   );
   await copyFile(resolve(root, ".npmrc"), join(consumer, ".npmrc"));
-  // The scratch consumer may sit on another filesystem (tmpdir), where pnpm
-  // would pick a different, empty store; reuse the project's store.
-  const storeDir = (await run("pnpm", ["store", "path"], { capture: true })).trim();
+  const storeDir = await pnpmStoreDir();
   await run("pnpm", [
     "add",
     "--ignore-scripts",
@@ -74,6 +76,41 @@ async function packAndInstall(peers) {
     ...peers.map((peer) => peer.spec)
   ], { cwd: consumer });
   return consumer;
+}
+
+async function pnpmStoreDir() {
+  // The scratch consumer may sit on another filesystem (tmpdir), where pnpm
+  // would pick a different, empty store; reuse the project's store.
+  return (await run("pnpm", ["store", "path"], { capture: true })).trim();
+}
+
+async function addPeers(consumer, peers) {
+  await run("pnpm", [
+    "add", "--ignore-scripts", "--prefer-offline", "--store-dir", await pnpmStoreDir(), "--save-exact",
+    ...peers.map((peer) => peer.spec)
+  ], { cwd: consumer });
+}
+
+// The base phase proves the root and every other subpath work WITHOUT the
+// editor's tiptap peers: none may be a dependency of, or resolvable from, the
+// consumer (pnpm must not have auto-installed the optional peers).
+async function assertNoEditorPeers(consumer, editorPeers) {
+  const consumerJson = JSON.parse(await readFile(join(consumer, "package.json"), "utf8"));
+  const present = editorPeers.filter((peer) => consumerJson.dependencies?.[peer.name] !== undefined);
+  if (present.length > 0) throw new Error(`base consumer must not depend on ${present.map((peer) => peer.name).join(", ")}`);
+  const probe = `
+    const found = [];
+    for (const name of ${JSON.stringify(editorPeers.map((peer) => peer.name))}) {
+      try { import.meta.resolve(name); found.push(name); } catch {}
+    }
+    if (found.length > 0) throw new Error("tiptap is resolvable from the base consumer: " + found.join(", "));
+    let code = null;
+    try { await import("@scshafe/ui/editor"); } catch (error) { code = error.code; }
+    if (code !== "ERR_MODULE_NOT_FOUND") throw new Error("@scshafe/ui/editor should need tiptap here (got " + code + ")");
+    console.log("No tiptap installed: the editor subpath is unavailable, as intended.");
+  `;
+  await writeFile(join(consumer, "no-editor-probe.mjs"), probe);
+  await run(process.execPath, ["no-editor-probe.mjs"], { cwd: consumer });
 }
 
 async function assertDirectPeers(consumer, peers) {
@@ -89,147 +126,197 @@ async function assertDirectPeers(consumer, peers) {
 
 try {
   const { name, version, packageJson } = await readReleaseIdentity(root);
-  const peers = smokePeerSpecs(packageJson);
+  const basePeers = smokePeerSpecs(packageJson);
+  const editorPeers = smokePeerSpecs(packageJson, { editor: true });
+  // Packed mode runs both phases; an installed consumer (publish.yml) runs
+  // SUI_SMOKE_PHASE=base right after installing, then =editor after adding
+  // the editor peers.
+  const phase = installedConsumer === undefined ? "both" : process.env.SUI_SMOKE_PHASE;
+  if (!["base", "editor", "both"].includes(phase)) {
+    throw new Error("with SUI_SMOKE_CONSUMER, set SUI_SMOKE_PHASE to base or editor");
+  }
   const consumer = installedConsumer === undefined
-    ? await packAndInstall(peers)
+    ? await packAndInstall(basePeers)
     : resolve(installedConsumer);
-  await assertDirectPeers(consumer, peers);
 
-  const jsSmoke = `
-    import { existsSync, readFileSync } from "node:fs";
-    import { fileURLToPath } from "node:url";
-    import * as root from "@scshafe/ui";
-    import * as state from "@scshafe/ui/state";
-    import * as icons from "@scshafe/ui/icons";
-    import * as identity from "@scshafe/ui/identity";
-    import * as build from "@scshafe/ui/build";
-    import * as testing from "@scshafe/ui/testing";
-    import * as tokens from "@scshafe/ui/tokens";
-    import * as format from "@scshafe/ui/format";
-    import metadata from "@scshafe/ui/package.json" with { type: "json" };
+  if (phase !== "editor") {
+    await assertDirectPeers(consumer, basePeers);
+    await assertNoEditorPeers(consumer, editorPeers);
 
-    const expect = (condition, message) => { if (!condition) throw new Error(message); };
-    expect(metadata.name === ${JSON.stringify(name)} && metadata.version === ${JSON.stringify(version)}, "package identity mismatch");
-    for (const exported of ["Stack", "Inline", "Grid", "Pane", "Scroll", "Button", "Status", "EmptyState", "FocusTabs", "InputField", "Card"]) {
-      expect(typeof root[exported] === "function" || typeof root[exported] === "object", "root export missing: " + exported);
-    }
-    expect(typeof state.SuiProviders === "function" && typeof state.createSuiStore === "function", "state exports missing");
-    expect(typeof icons.DefaultIconProvider === "function", "icons export missing");
-    expect(typeof identity.UserMenu === "function" && typeof identity.buildSignOutUrl === "function", "identity exports missing");
-    expect(typeof build.buildWebApp === "function" && typeof build.assertSuiResolvable === "function", "build exports missing");
-    expect(typeof testing.bundleEntry === "function" && typeof testing.createSpaRenderHarness === "function", "testing exports missing");
-    expect(Array.isArray(tokens.SUI_TOKENS) && tokens.SUI_TOKENS.length > 0, "token registry missing");
-    expect(typeof format.timestamp === "function", "format export missing");
-    build.assertSuiResolvable(process.cwd());
+    const jsSmoke = `
+      import { existsSync, readFileSync } from "node:fs";
+      import { fileURLToPath } from "node:url";
+      import * as root from "@scshafe/ui";
+      import * as state from "@scshafe/ui/state";
+      import * as icons from "@scshafe/ui/icons";
+      import * as identity from "@scshafe/ui/identity";
+      import * as build from "@scshafe/ui/build";
+      import * as testing from "@scshafe/ui/testing";
+      import * as tokens from "@scshafe/ui/tokens";
+      import * as format from "@scshafe/ui/format";
+      import metadata from "@scshafe/ui/package.json" with { type: "json" };
 
-    const exportNames = [root, state, icons, identity, build, testing, tokens, format].flatMap((ns) => Object.keys(ns));
-    const retired = exportNames.filter((key) => /^Mc[A-Z]|[a-z]Mc[A-Z]|^mc[A-Z]/.test(key));
-    expect(retired.length === 0, "retired mc export names: " + retired.join(", "));
-
-    for (const sheet of ["layout.css", "components.css", "tokens.css"]) {
-      const css = readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/" + sheet)), "utf8");
-      expect(/--sui-/.test(css), sheet + " declares no --sui- tokens");
-      expect(!/\\.mc-|--mc-|data-mc-/.test(css), sheet + " still carries the mc namespace");
-    }
-    const tokensCss = readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/tokens.css")), "utf8");
-    for (const token of tokens.SUI_TOKENS) {
-      expect(tokensCss.includes(token.name + ": " + token.default + ";"), "tokens.css lacks " + token.name);
-    }
-    const packageDir = fileURLToPath(new URL(".", import.meta.resolve("@scshafe/ui/package.json")));
-    for (const retiredPath of ["bin", "templates", "DESIGN-STATE-LAYER.md", "DESIGN-SITE-LAYOUT.md"]) {
-      expect(!existsSync(packageDir + retiredPath), "retired path shipped: " + retiredPath);
-    }
-    expect(metadata.bin === undefined, "package still declares a bin");
-    console.log("JS smoke passed (" + exportNames.length + " exports across 8 subpaths).");
-  `;
-  await writeFile(join(consumer, "smoke.mjs"), jsSmoke);
-  await run(process.execPath, ["smoke.mjs"], { cwd: consumer });
-
-  const renderSmoke = `
-    import React from "react";
-    import { renderToString } from "react-dom/server";
-    import { Button, EmptyState, Stack, Status, InputField } from "@scshafe/ui";
-    import { SuiProviders, ToastTray, Toasts, Popovers, createSuiStore } from "@scshafe/ui/state";
-    import { DefaultIconProvider } from "@scshafe/ui/icons";
-
-    const h = React.createElement;
-    const store = createSuiStore({ slices: [Toasts, Popovers], preloadedState: { Toasts: { items: [{ id: "t1", kind: "info", message: "Saved" }] } } });
-    const html = renderToString(
-      h(SuiProviders, { store },
-        h(DefaultIconProvider, null,
-          h(Stack, { gap: "md" },
-            h(Status, { state: "running" }),
-            h(InputField, { id: "name", label: "Name", value: "", onChange() {} }),
-            h(Button, { label: "Save", icon: "action.copy", variant: "primary" }),
-            h(EmptyState, { message: "Nothing here yet." })),
-          h(ToastTray))));
-    for (const marker of ["Stack", "Status", "InputField", "Button", "EmptyState", "ToastTray"]) {
-      if (!html.includes('data-sui-component="' + marker + '"')) {
-        throw new Error("rendered markup lacks data-sui-component=" + marker + ": " + html.slice(0, 400));
+      const expect = (condition, message) => { if (!condition) throw new Error(message); };
+      expect(metadata.name === ${JSON.stringify(name)} && metadata.version === ${JSON.stringify(version)}, "package identity mismatch");
+      for (const exported of ["Stack", "Inline", "Grid", "Pane", "Scroll", "Button", "Status", "EmptyState", "FocusTabs", "InputField", "Card"]) {
+        expect(typeof root[exported] === "function" || typeof root[exported] === "object", "root export missing: " + exported);
       }
-    }
-    if (!/class="sui-stack/.test(html) || !/<svg/.test(html) || !html.includes("Saved")) {
-      throw new Error("rendered markup lacks sui- classes, icons or store state");
-    }
-    if (/data-mc-|\\bmc-/.test(html)) throw new Error("rendered markup carries the mc namespace");
-    console.log("React render smoke passed (" + html.length + " bytes of markup).");
-  `;
-  await writeFile(join(consumer, "render-smoke.mjs"), renderSmoke);
-  await run(process.execPath, ["render-smoke.mjs"], { cwd: consumer });
+      expect(typeof state.SuiProviders === "function" && typeof state.createSuiStore === "function", "state exports missing");
+      expect(typeof icons.DefaultIconProvider === "function", "icons export missing");
+      expect(typeof identity.UserMenu === "function" && typeof identity.buildSignOutUrl === "function", "identity exports missing");
+      expect(typeof build.buildWebApp === "function" && typeof build.assertSuiResolvable === "function", "build exports missing");
+      expect(typeof testing.bundleEntry === "function" && typeof testing.createSpaRenderHarness === "function", "testing exports missing");
+      expect(Array.isArray(tokens.SUI_TOKENS) && tokens.SUI_TOKENS.length > 0, "token registry missing");
+      expect(typeof format.timestamp === "function", "format export missing");
+      build.assertSuiResolvable(process.cwd());
 
-  const typeSmoke = `
-    import { Stack, Button, Status, EmptyState, type StackProps } from "@scshafe/ui";
-    import { SuiProviders, createSuiStore, Toasts, type SuiProvidersProps, type CreateSuiStoreOptions } from "@scshafe/ui/state";
-    import { SUI_TOKENS, SUI_TOKEN_NAMES, type SuiToken } from "@scshafe/ui/tokens";
-    import { buildWebApp, type BuildWebAppOptions } from "@scshafe/ui/build";
-    import { useIdentity } from "@scshafe/ui/identity";
+      const exportNames = [root, state, icons, identity, build, testing, tokens, format].flatMap((ns) => Object.keys(ns));
+      const retired = exportNames.filter((key) => /^Mc[A-Z]|[a-z]Mc[A-Z]|^mc[A-Z]/.test(key));
+      expect(retired.length === 0, "retired mc export names: " + retired.join(", "));
 
-    const options: CreateSuiStoreOptions = { slices: [Toasts] };
-    const store = createSuiStore(options);
-    const props: SuiProvidersProps = { store, children: null };
-    const first: SuiToken | undefined = SUI_TOKENS[0];
-    const names: readonly string[] = SUI_TOKEN_NAMES;
-    const stack: StackProps = { gap: "md", children: null };
-    const buildOptions: BuildWebAppOptions = { entry: "src/main.tsx", outfile: "dist/app.js" };
-    // @ts-expect-error unknown spacing token
-    const badStack: StackProps = { gap: "huge", children: null };
+      for (const sheet of ["layout.css", "components.css", "tokens.css"]) {
+        const css = readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/" + sheet)), "utf8");
+        expect(/--sui-/.test(css), sheet + " declares no --sui- tokens");
+        expect(!/\\.mc-|--mc-|data-mc-/.test(css), sheet + " still carries the mc namespace");
+      }
+      const tokensCss = readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/tokens.css")), "utf8");
+      for (const token of tokens.SUI_TOKENS) {
+        for (const theme of tokens.SUI_THEMES) {
+          expect(tokensCss.includes(token.name + ": " + token[theme] + ";"), "tokens.css lacks the " + theme + " " + token.name);
+        }
+      }
+      expect(tokensCss.includes("@media (prefers-color-scheme: dark)") && tokensCss.includes('[data-sui-theme="dark"]'), "tokens.css lacks the theme selectors");
+      expect(typeof root.applySuiTheme === "function" && root.SUI_THEME_ATTRIBUTE === "data-sui-theme", "theme helpers missing");
+      const packageDir = fileURLToPath(new URL(".", import.meta.resolve("@scshafe/ui/package.json")));
+      for (const retiredPath of ["bin", "templates", "DESIGN-STATE-LAYER.md", "DESIGN-SITE-LAYOUT.md"]) {
+        expect(!existsSync(packageDir + retiredPath), "retired path shipped: " + retiredPath);
+      }
+      expect(metadata.bin === undefined, "package still declares a bin");
+    expect(metadata.dependencies === undefined, "package declares hard dependencies (tiptap belongs in optional peers)");
+      console.log("JS smoke passed (" + exportNames.length + " exports across 8 subpaths).");
+    `;
+    await writeFile(join(consumer, "smoke.mjs"), jsSmoke);
+    await run(process.execPath, ["smoke.mjs"], { cwd: consumer });
 
-    export function App() {
-      return (
-        <SuiProviders {...props}>
-          <Stack {...stack}>
-            <Status state="running" />
-            <Button label="Save" />
-            <EmptyState message="Nothing here yet." />
-          </Stack>
-        </SuiProviders>
-      );
-    }
-    void first; void names; void buildWebApp; void buildOptions; void useIdentity; void badStack;
-  `;
-  await writeFile(join(consumer, "smoke.tsx"), typeSmoke);
-  await writeFile(join(consumer, "tsconfig.json"), `${JSON.stringify({
-    compilerOptions: {
-      module: "NodeNext",
-      moduleResolution: "NodeNext",
-      target: "ES2022",
-      jsx: "react-jsx",
-      strict: true,
-      noEmit: true,
-      skipLibCheck: true,
-      types: []
-    },
-    files: ["smoke.tsx"]
-  }, null, 2)}\n`);
-  await run(process.execPath, [
-    resolve(root, "node_modules/typescript/bin/tsc"),
-    "--project",
-    "tsconfig.json"
-  ], { cwd: consumer });
+    const renderSmoke = `
+      import React from "react";
+      import { renderToString } from "react-dom/server";
+      import { Button, EmptyState, Stack, Status, InputField } from "@scshafe/ui";
+      import { SuiProviders, ToastTray, Toasts, Popovers, createSuiStore } from "@scshafe/ui/state";
+      import { DefaultIconProvider } from "@scshafe/ui/icons";
+
+      const h = React.createElement;
+      const store = createSuiStore({ slices: [Toasts, Popovers], preloadedState: { Toasts: { items: [{ id: "t1", kind: "info", message: "Saved" }] } } });
+      const html = renderToString(
+        h(SuiProviders, { store },
+          h(DefaultIconProvider, null,
+            h(Stack, { gap: "md" },
+              h(Status, { state: "running" }),
+              h(InputField, { id: "name", label: "Name", value: "", onChange() {} }),
+              h(Button, { label: "Save", icon: "action.copy", variant: "primary" }),
+              h(EmptyState, { message: "Nothing here yet." })),
+            h(ToastTray))));
+      for (const marker of ["Stack", "Status", "InputField", "Button", "EmptyState", "ToastTray"]) {
+        if (!html.includes('data-sui-component="' + marker + '"')) {
+          throw new Error("rendered markup lacks data-sui-component=" + marker + ": " + html.slice(0, 400));
+        }
+      }
+      if (!/class="sui-stack/.test(html) || !/<svg/.test(html) || !html.includes("Saved")) {
+        throw new Error("rendered markup lacks sui- classes, icons or store state");
+      }
+      if (/data-mc-|\\bmc-/.test(html)) throw new Error("rendered markup carries the mc namespace");
+      console.log("React render smoke passed (" + html.length + " bytes of markup).");
+    `;
+    await writeFile(join(consumer, "render-smoke.mjs"), renderSmoke);
+    await run(process.execPath, ["render-smoke.mjs"], { cwd: consumer });
+
+    const typeSmoke = `
+      import { Stack, Button, Status, EmptyState, type StackProps } from "@scshafe/ui";
+      import { SuiProviders, createSuiStore, Toasts, type SuiProvidersProps, type CreateSuiStoreOptions } from "@scshafe/ui/state";
+      import { SUI_TOKENS, SUI_TOKEN_NAMES, type SuiToken } from "@scshafe/ui/tokens";
+      import { buildWebApp, type BuildWebAppOptions } from "@scshafe/ui/build";
+      import { useIdentity } from "@scshafe/ui/identity";
+
+      const options: CreateSuiStoreOptions = { slices: [Toasts] };
+      const store = createSuiStore(options);
+      const props: SuiProvidersProps = { store, children: null };
+      const first: SuiToken | undefined = SUI_TOKENS[0];
+      const names: readonly string[] = SUI_TOKEN_NAMES;
+      const stack: StackProps = { gap: "md", children: null };
+      const buildOptions: BuildWebAppOptions = { entry: "src/main.tsx", outfile: "dist/app.js" };
+      // @ts-expect-error unknown spacing token
+      const badStack: StackProps = { gap: "huge", children: null };
+
+      export function App() {
+        return (
+          <SuiProviders {...props}>
+            <Stack {...stack}>
+              <Status state="running" />
+              <Button label="Save" />
+              <EmptyState message="Nothing here yet." />
+            </Stack>
+          </SuiProviders>
+        );
+      }
+      void first; void names; void buildWebApp; void buildOptions; void useIdentity; void badStack;
+    `;
+    await writeFile(join(consumer, "smoke.tsx"), typeSmoke);
+    await writeFile(join(consumer, "tsconfig.json"), `${JSON.stringify({
+      compilerOptions: {
+        module: "NodeNext",
+        moduleResolution: "NodeNext",
+        target: "ES2022",
+        jsx: "react-jsx",
+        strict: true,
+        noEmit: true,
+        skipLibCheck: true,
+        types: []
+      },
+      files: ["smoke.tsx"]
+    }, null, 2)}\n`);
+    await run(process.execPath, [
+      resolve(root, "node_modules/typescript/bin/tsc"),
+      "--project",
+      "tsconfig.json"
+    ], { cwd: consumer });
+  }
+
+  if (phase !== "base") {
+    if (installedConsumer === undefined) await addPeers(consumer, editorPeers);
+    await assertDirectPeers(consumer, [...basePeers, ...editorPeers]);
+    const editorSmoke = `
+      import React from "react";
+      import { renderToString } from "react-dom/server";
+      import { MarkdownEditor } from "@scshafe/ui/editor";
+      import * as root from "@scshafe/ui";
+      if (typeof MarkdownEditor !== "function") throw new Error("editor export missing");
+      if ("MarkdownEditor" in root) throw new Error("MarkdownEditor is still in the root export");
+      const html = renderToString(React.createElement(MarkdownEditor, { ariaLabel: "Message", initialValue: "**hi**" }));
+      if (!html.includes('data-sui-component="MarkdownEditor"')) throw new Error("editor markup lacks its marker: " + html);
+      console.log("Editor smoke passed (@scshafe/ui/editor with its tiptap peers).");
+    `;
+    await writeFile(join(consumer, "editor-smoke.mjs"), editorSmoke);
+    await run(process.execPath, ["editor-smoke.mjs"], { cwd: consumer });
+    await writeFile(join(consumer, "editor-smoke.tsx"), `
+      import { useRef } from "react";
+      import { MarkdownEditor, type MarkdownEditorHandle, type MarkdownEditorProps } from "@scshafe/ui/editor";
+      const props: MarkdownEditorProps = { ariaLabel: "Message", onChange: (markdown: string) => void markdown };
+      export function Composer() {
+        const ref = useRef<MarkdownEditorHandle>(null);
+        return <MarkdownEditor {...props} ref={ref} />;
+      }
+    `);
+    await writeFile(join(consumer, "tsconfig.editor.json"), `${JSON.stringify({
+      compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext", target: "ES2022", jsx: "react-jsx", strict: true, noEmit: true, skipLibCheck: true, types: [] },
+      files: ["editor-smoke.tsx"]
+    }, null, 2)}\n`);
+    await run(process.execPath, [resolve(root, "node_modules/typescript/bin/tsc"), "--project", "tsconfig.editor.json"], { cwd: consumer });
+  }
+
   console.log(
     installedConsumer === undefined
-      ? "@scshafe/ui packed-install JS, React render and TypeScript smokes passed."
-      : `@scshafe/ui installed-consumer JS, React render and TypeScript smokes passed (${consumer}).`
+      ? "@scshafe/ui packed-install smokes passed: JS, React render and TypeScript without the editor peers, then the editor subpath with them."
+      : `@scshafe/ui installed-consumer ${phase} smokes passed (${consumer}).`
   );
 } finally {
   if (scratch !== undefined) await rm(scratch, { force: true, recursive: true });

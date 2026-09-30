@@ -16,7 +16,7 @@ const iconized = (element) => renderToStaticMarkup(React.createElement(DefaultIc
 test("iconized state renders only under a provider — providerless markup is unchanged", () => {
   const before = bare(React.createElement(Status, { state: "running" }));
   assert.doesNotMatch(before, /<svg/, "no provider → text-only chip (bucket pins hold)");
-  assert.match(before, /class="chip green"[^>]*data-sui-component="Status"/);
+  assert.match(before, /class="sui-badge sui-badge--green"[^>]*data-sui-component="Status"/);
   const after = iconized(React.createElement(Status, { state: "running" }));
   assert.match(after, /<svg/, "provider → the state glyph renders");
   const optedOut = iconized(React.createElement(Status, { state: "running", icon: null }));
@@ -60,7 +60,7 @@ test("ListRow gains the status slot and timestamp; chips stay text-only taxonomy
   assert.match(html, /class="sui-card-status"/);
   assert.match(html, /data-sui-tone="red"/);
   assert.match(html, /1m ago/);
-  const chipsSection = html.slice(html.indexOf('class="chips"'));
+  const chipsSection = html.slice(html.indexOf('class="sui-list-row-chips"'));
   assert.doesNotMatch(chipsSection.slice(0, 200), /<svg/, "taxonomy chips render without glyphs");
 });
 

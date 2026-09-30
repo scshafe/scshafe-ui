@@ -28,7 +28,7 @@ export function RailWorkspace({ children, className, stackAt = "narrow", dataSui
   const classes = ["sui-rail-workspace", stackAt === "mobile" ? "sui-rail-workspace--stack-mobile" : null, className]
     .filter(Boolean).join(" ");
   return (
-    <div className={classes} data-sui-component={dataSuiComponent} aria-label={ariaLabel}>
+    <div className={classes} data-sui-component={dataSuiComponent} role={ariaLabel ? "group" : undefined} aria-label={ariaLabel}>
       {children}
     </div>
   );

@@ -4,17 +4,17 @@ import { Description } from "../primitive/DescriptionComponent.js";
 import { Tooltip } from "../widget/TooltipComponent.js";
 
 /** @param {{ children: any, className?: string, componentName?: string, as?: string, tooltip?: any, [extra: string]: any }} props */
-export function Panel({ children, className = "panel", componentName = "Panel", as = "section", tooltip, ...rest }) {
+export function Panel({ children, className, componentName = "Panel", as = "section", tooltip, ...rest }) {
   const Tag = as;
   const defaultTooltip = {
     component: componentName,
     layer: "container",
     description: "Bounded content region with standard panel spacing and surface treatment.",
-    values: { as, className }
+    values: { as, className: className ?? "none" }
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <Tag
-      className={className}
+      className={["sui-panel", className].filter(Boolean).join(" ")}
       data-sui-component={componentName}
       {...rest}
     >{children}</Tag>
@@ -22,7 +22,7 @@ export function Panel({ children, className = "panel", componentName = "Panel", 
 }
 
 /** @param {{ title: any, description?: any, aside?: any, children?: any, className?: string, headingLevel?: number, componentName?: string, tooltip?: any, [extra: string]: any }} props */
-export function PanelHeader({ title, description, aside, children, className = "panel-header", headingLevel = 2, componentName = "PanelHeader", tooltip, ...rest }) {
+export function PanelHeader({ title, description, aside, children, className, headingLevel = 2, componentName = "PanelHeader", tooltip, ...rest }) {
   const defaultTooltip = {
     component: componentName,
     layer: "container",
@@ -31,7 +31,7 @@ export function PanelHeader({ title, description, aside, children, className = "
   };
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
-      className={className}
+      className={["sui-panel-header", className].filter(Boolean).join(" ")}
       data-sui-component={componentName}
       {...rest}
     >

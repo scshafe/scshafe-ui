@@ -19,7 +19,7 @@ export interface HoverButtonProps {
   popoverTarget?: string;
   popoverTargetAction?: "show" | "hide" | "toggle";
   dataSuiComponent?: string;
-  /** Additional attributes (typically `data-*`) spread onto the button. Use the full attribute name as the key (e.g. `{ "data-workspace-refresh": "home" }`). */
+  /** Additional attributes (typically `data-*`) spread onto the button. Use the full attribute name as the key (e.g. `{ "data-sui-action": "home" }`). */
   data?: Record<string, string>;
 }
 

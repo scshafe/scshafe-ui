@@ -5,6 +5,173 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.3.0 — 2026-09-30
+
+Meets the SCSHAFE app standard's frontend requirements (WP-09A step 2):
+light and dark themes, reduced motion, a keyboard focus ring on every
+component and automated WCAG 2.2 AA checks; the tiptap editor in its own
+subpath with optional peers; configured sign-out; and every public class in
+the `sui` namespace.
+
+### Breaking changes
+
+Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
+
+- **Every public class is `sui-*` and every rendered data attribute is
+  `data-sui-*`.** 0.2.0 renamed only the `mc-` names; 69 unprefixed classes,
+  17 data attributes and the `FocusTabsComponent` marker remained, some with
+  application-specific names. They are renamed below, and
+  `test/namespace.test.mjs` now fails on any unprefixed class or data
+  attribute in rendered markup or in the stylesheets.
+  *Migration:* replace the old names in host CSS, selectors and tests using the
+  table below (a find-and-replace per row; the longer names first).
+- **`className` adds to a component's base class instead of replacing it** for
+  `EmptyState` (`sui-empty-state`), `Panel` (`sui-panel`), `PanelHeader`
+  (`sui-panel-header`), `ListRow` (`sui-list-row`) and `MarkdownContent`
+  (`sui-markdown`), as it already did elsewhere. *Migration:* a host that passed
+  `className` to drop the package styling restyles `.sui-<component>` instead.
+- **`FocusTabs` renders its own `sui-focus-tabs` strip and `sui-focus-tab`
+  button classes** (styled in `components.css`) before the model's classes, and
+  its marker is `data-sui-component="FocusTabs"`. *Migration:* host rules for
+  the strip keep working through the model classes; tests that pinned
+  `FocusTabsComponent` pin `FocusTabs`.
+
+- **Light and dark themes; the default follows `prefers-color-scheme`.**
+  0.2.0 shipped dark values only. Every colour, surface, border and shadow
+  token now has a light and a dark value; the light theme applies unless the
+  user prefers dark, and `data-sui-theme="light"` or `"dark"` on the root
+  element (or any subtree) pins one. Users whose system prefers light now get
+  the light theme. *Migration:* to keep 0.2.0's look everywhere, render
+  `<html data-sui-theme="dark">` (or pass `theme="dark"` to `SuiProviders`, or
+  call `applySuiTheme("dark")`). A host that re-declared colour tokens at
+  `:root` for its dark design either pins the dark theme or re-declares its
+  values per theme (README "Theming and tokens").
+- **The token registry records both themes.** `SuiToken.default` is replaced
+  by `light` and `dark` (equal for theme-independent tokens), plus `themed`
+  and, for colours, a contrast `role`. *Migration:* read `token.dark` where you
+  read `token.default` (or `suiTokenValue(name, theme)`).
+- **Component colours come from tokens.** Every colour literal in
+  `components.css` rules became a token reference, so a few dark-theme
+  colours moved slightly (tone tints capped at 12 %, accent tints under text
+  at 20 %, form controls outlined with the new `--sui-field-border`).
+  *Migration:* none needed; hosts that matched exact computed colours in
+  visual tests update their baselines.
+
+- **One keyboard focus ring for every component.** Every focusable element a
+  component renders shows a 2px `--sui-focus-ring` outline on
+  `:focus-visible`; the per-component outlines (and the `outline: none` rules
+  that hid focus on inputs, the markdown editor and the editable name) are
+  gone. *Migration:* hosts that styled focus on package elements restyle the
+  shared rule (`:where([data-sui-component]) :focus-visible`) or
+  `--sui-focus-ring`.
+
+- **Markup fixes from the axe run.** ToastTray renders a labelled
+  `<section aria-label="Notifications">` of `<div role="status|alert">` toasts
+  instead of an `<ol>` of `<li role=…>` (a list may not hold those roles), and
+  no longer sets `aria-live` on the tray (each toast is its own live region).
+  Badge drops its `aria-label` (the label text is in the markup, now after a
+  space); Kbd combos are `role="group"`; RecordMeta, MessageBubble's parts and
+  a labelled RailWorkspace are `role="group"` so their `aria-label` is
+  allowed. *Migration:* host CSS or tests that selected `.sui-toast-tray li`
+  select `.sui-toast`; tests that read a Badge's `aria-label` read its text.
+
+- **The tiptap editor moved to `@scshafe/ui/editor`, and tiptap is an
+  optional peer.** `MarkdownEditor` (and `MarkdownEditorHandle`,
+  `MarkdownEditorProps`) left the root export; `@tiptap/core`, `@tiptap/pm`,
+  `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-link`,
+  `@tiptap/extension-placeholder` and `tiptap-markdown` moved from
+  `dependencies` to optional `peerDependencies`, so an app without the editor
+  installs no editor. The package now has no hard dependencies. The editor
+  creates its tiptap instance after mount (`immediatelyRender: false`), so it
+  server-renders its shell. *Migration:* import `MarkdownEditor` from
+  `@scshafe/ui/editor` and add the seven tiptap packages to the app's
+  dependencies (README "Editor").
+
+- **`/identity` takes the end-session URL from configuration.**
+  `buildSignOutUrl(config, location?)` replaces `buildSignOutUrl(location?)`:
+  the identity provider's end-session endpoint comes from a `SignOutConfig`
+  (`endSessionEndpoint`, optional `postLogoutRedirectUri`,
+  `proxySignOutPath` — default `/oauth2/sign_out` — and `idTokenHint`,
+  default true) instead of being derived as `id.<suffix>` from the browser's
+  hostname. `UserMenu` takes it as the `signOut` prop, from the new
+  `IdentityConfigProvider`, or from `SuiProviders`' `identity` option. There
+  is deliberately no default endpoint: without configuration `UserMenu` shows
+  no Sign out link. Endpoints must be `https:` (plain `http:` only on a
+  loopback host), without credentials; the proxy path must be same-origin.
+  *Migration:* pass the provider's end-session URL, e.g.
+  `<SuiProviders identity={{ signOut: { endSessionEndpoint: "https://id.<your-tailnet>/api/oidc/end-session" } }}>`
+  (the URL 0.2.0 derived), or `<UserMenu signOut={…} />`; callers of
+  `buildSignOutUrl(location)` call `buildSignOutUrl({ endSessionEndpoint }, location)`.
+
+#### Class and marker renames
+
+| Before (0.2.0) | After (0.3.0) |
+| --- | --- |
+| `chip` + tone class `green` `yellow` `orange` `red` `purple` `blue` (Badge, Status, Card overflow chip) | `sui-badge` + `sui-badge--<tone>` |
+| `count-pill-label` | `sui-badge-label` (`count-pill` was never rendered and is gone) |
+| `text-area-field` | `sui-text-area-field` |
+| `sr-only` (TextAreaField label) | `sui-visually-hidden`, now styled by the package |
+| `project-chat-composer-context project-chat-composer-context-control` (SelectField) | `sui-select-field`, now styled by the package |
+| `copyable`, `copyable-{name,slug,id,value,code}` | `sui-copyable`, `sui-copyable-{name,slug,id,value,code}` |
+| `empty` (EmptyState) | `sui-empty-state` |
+| `panel`, `panel-header` | `sui-panel`, `sui-panel-header` |
+| `task-row` (ListRow), `card-top`, `chips`, `list-row-{media,content,aside,actions}` | `sui-list-row`, `sui-list-row-top`, `sui-list-row-chips`, `sui-list-row-{media,content,aside,actions}` |
+| `metric` (MetricCard) | `sui-metric-card` |
+| `card-meta`, `meta-pill` (RecordMeta) | `sui-record-meta`, `sui-record-meta-pill` |
+| `project-chat-message`, `project-chat-message-<role>`, `project-chat-message-final` (MessageBubble) | `sui-message`, `sui-message--<role>`, `sui-message--final` |
+| `project-chat-message-{avatar,bubble,toolbar,toolbar-actions,parts,part,part-label}` | `sui-message-{avatar,bubble,toolbar,toolbar-actions,parts,part,part-label}` |
+| `project-chat-markdown` | `sui-message-markdown` |
+| `markdown-content` (MarkdownContent default), `markdown-code-block` | `sui-markdown`, `sui-markdown-code-block` |
+| `collapsible-list-rail`, `collapsible-list-rail-{header,toggle,title,actions,body,resize-handle}` | `sui-collapsible-list-rail`, `sui-collapsible-list-rail-{header,toggle,title,actions,body,resize-handle}` |
+| `is-collapsed`, `no-header`, `is-resizable` (on the rail) | `sui-collapsible-list-rail--collapsed`, `--no-header`, `--resizable` |
+| `panel-rail-toggle` (RailToggle) | `sui-rail-toggle` |
+| `data-table-column-menu`, `data-table-column-menu-{panel,header,list,row}`, `data-table-column-{visibility,order-button,width-input}` | the same names with the `sui-` prefix |
+| `project-tab-icon`, `project-tab-counts`, `project-tab-count`, `project-tab-divider` (FocusTabs) | `sui-focus-tab-icon`, `sui-focus-tab-counts`, `sui-focus-tab-count`, `sui-focus-tabs-divider` |
+| `.sui-button-tab.active` (host-applied `active`) | `.sui-button-tab.sui-button-active` |
+| marker `data-sui-component="FocusTabsComponent"` | `data-sui-component="FocusTabs"` |
+| `data-project-tab` (FocusTabs buttons) | `data-sui-focus-tab` |
+| `data-field` (SelectField), `data-copied` (Copyable) | `data-sui-field`, `data-sui-copied` |
+| `data-surface-id`, `data-collapsed`, `data-resizing` (rails) | `data-sui-surface-id`, `data-sui-collapsed`, `data-sui-resizing` |
+| `data-table-id`, `data-column-id`, `data-pinned-column`, `data-cell-wrap`, `data-line-clamp`, `data-align`, `data-column-resize-handle` (PinnedDataTable) | `data-sui-table-id`, `data-sui-column-id`, `data-sui-pinned-column`, `data-sui-cell-wrap`, `data-sui-line-clamp`, `data-sui-align`, `data-sui-column-resize-handle` |
+| `data-table-column-menu`, `data-table-column-menu-row`, `data-table-preferences-reset` (DataTableColumnMenu) | `data-sui-table-column-menu`, `data-sui-table-column-menu-row`, `data-sui-table-preferences-reset` |
+| `data-popover-id` (Popover) | `data-sui-popover-id` |
+| transient drag state `data-start-x`, `data-start-width`, `data-last-width` | `data-sui-start-x`, `data-sui-start-width`, `data-sui-last-width` |
+
+### Added
+
+- `docs/ACCESSIBILITY.md` (shipped in the package): themes, keyboard and focus
+  behaviour, names, errors, contrast and motion against WCAG 2.2 AA; what is
+  checked automatically, what by hand, and what the host owns.
+- Theme API: `applySuiTheme`, `useSuiTheme`, `SuiThemePreference` (root);
+  `SUI_THEMES`, `SUI_THEME_ATTRIBUTE`, `suiTokenValue`,
+  `SUI_REDUCED_MOTION_DURATION`, `SuiTokenRole` (`/tokens`);
+  `SuiProviders` options `theme` and `identity`.
+- Tokens `--sui-field`, `--sui-field-border`, `--sui-focus-ring`,
+  `--sui-tint`, `--sui-code-bg`, `--sui-backdrop`, `--sui-shadow-color`,
+  `--sui-duration` and the status tones `--sui-tone-<tone>` /
+  `--sui-tone-<tone>-text` for green, blue, yellow, orange, red and purple.
+- `@scshafe/ui/editor`; `IdentityConfigProvider`, `useIdentityConfig`,
+  `SignOutConfig`, `IdentityConfig` (`/identity`).
+- `prefers-reduced-motion: reduce` sets every transition to 0s.
+- Keyboard resizing for CollapsibleListRail (a focusable window splitter:
+  Arrow keys, Shift, Home/End, Enter resets).
+- Package styles for SelectField, the TextAreaField's visually hidden label
+  (`sui-visually-hidden`) and the FocusTabs strip.
+- Tests: axe-core over every component in both themes, a keyboard-focus test
+  per interactive component, the token contrast check, theme cascade, reduced
+  motion, the namespace guard, the editor's optional-peer proofs and the
+  install-back pipeline shape; the component catalog they share
+  (`test/support/catalog.mjs`). New dev dependencies: `jsdom` 29.1.1,
+  `axe-core` 4.13.0.
+
+### Changed
+
+- The packed-install check and `publish.yml`'s install-back install the
+  package with the base peers only, prove that the root and every other
+  subpath work and that tiptap is absent, then add the editor peers and smoke
+  `@scshafe/ui/editor` (render and TypeScript).
+- Toast dismiss and EditableName buttons are 24px (WCAG 2.5.8).
+
 ## 0.2.0 — 2026-09-30
 
 First published version, on GitHub Packages. The package was `mc-ui` 0.1.0

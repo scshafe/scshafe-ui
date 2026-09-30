@@ -189,7 +189,7 @@ function parseMarkdownBlocks(value) {
 
 function MarkdownBlock({ block, index }) {
   const keyPrefix = `markdown:block:${index}`;
-  if (block.type === "code") return <pre className="markdown-code-block"><code>{block.text}</code></pre>;
+  if (block.type === "code") return <pre className="sui-markdown-code-block"><code>{block.text}</code></pre>;
   if (block.type === "heading") {
     const HeadingTag = `h${block.level}`;
     return <HeadingTag>{renderInline(block.text, `${keyPrefix}:heading`)}</HeadingTag>;
@@ -203,7 +203,7 @@ function MarkdownBlock({ block, index }) {
 }
 
 /** @param {{ value?: any, className?: string, tooltip?: any }} props */
-export function MarkdownContent({ value, className = "markdown-content", tooltip }) {
+export function MarkdownContent({ value, className, tooltip }) {
   const blocks = parseMarkdownBlocks(value);
   const defaultTooltip = {
     component: "MarkdownContent",
@@ -214,7 +214,7 @@ export function MarkdownContent({ value, className = "markdown-content", tooltip
   if (!blocks.length) return null;
   return <Tooltip tooltip={tooltip} fallback={defaultTooltip} as="div">
     <div
-      className={className}
+      className={["sui-markdown", className].filter(Boolean).join(" ")}
       data-sui-component="MarkdownContent"
     >{blocks.map((block, index) => <MarkdownBlock key={`markdown-block:${index}`} block={block} index={index} />)}</div>
   </Tooltip>;

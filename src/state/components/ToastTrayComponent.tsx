@@ -8,14 +8,16 @@ interface ToastItem {
   message: string;
 }
 
+// Each toast is its own live region: role="status" (polite) or, for errors,
+// role="alert" (assertive); the tray is a labelled region.
 export function ToastTray() {
   const items = useSelector(selectToasts) as ToastItem[];
   const dispatch = useDispatch();
   if (!items.length) return null;
   return (
-    <ol className="sui-toast-tray" aria-live="polite" data-sui-component="ToastTray">
+    <section className="sui-toast-tray" aria-label="Notifications" data-sui-component="ToastTray">
       {items.map((toast) => (
-        <li
+        <div
           key={toast.id}
           className={`sui-toast sui-toast--${toast.kind}`}
           role={toast.kind === "error" ? "alert" : "status"}
@@ -29,8 +31,8 @@ export function ToastTray() {
           >
             ×
           </button>
-        </li>
+        </div>
       ))}
-    </ol>
+    </section>
   );
 }
