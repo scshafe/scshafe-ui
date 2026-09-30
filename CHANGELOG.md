@@ -61,6 +61,16 @@ Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
   shared rule (`:where([data-sui-component]) :focus-visible`) or
   `--sui-focus-ring`.
 
+- **Markup fixes from the axe run.** ToastTray renders a labelled
+  `<section aria-label="Notifications">` of `<div role="status|alert">` toasts
+  instead of an `<ol>` of `<li role=…>` (a list may not hold those roles), and
+  no longer sets `aria-live` on the tray (each toast is its own live region).
+  Badge drops its `aria-label` (the label text is in the markup, now after a
+  space); Kbd combos are `role="group"`; RecordMeta, MessageBubble's parts and
+  a labelled RailWorkspace are `role="group"` so their `aria-label` is
+  allowed. *Migration:* host CSS or tests that selected `.sui-toast-tray li`
+  select `.sui-toast`; tests that read a Badge's `aria-label` read its text.
+
 #### Class and marker renames
 
 | Before (0.2.0) | After (0.3.0) |

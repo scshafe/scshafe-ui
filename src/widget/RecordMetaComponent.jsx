@@ -26,6 +26,7 @@ export function RecordMeta({ entries, tooltip }) {
     <div
       className="sui-record-meta"
       data-sui-component="RecordMeta"
+      role="group"
       aria-label="Record provenance"
     >
       {filtered.map((entry, index) => <span key={`${entry.label}:${index}`} className="sui-record-meta-pill"><span>{entry.label}</span>{entry.value}</span>)}

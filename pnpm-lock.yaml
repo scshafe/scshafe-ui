@@ -39,6 +39,9 @@ importers:
       '@types/react':
         specifier: 19.3.0
         version: 19.3.0
+      axe-core:
+        specifier: 4.13.0
+        version: 4.13.0
       esbuild:
         specifier: 0.28.2
         version: 0.28.2
@@ -498,6 +501,10 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  axe-core@4.13.0:
+    resolution: {integrity: sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A==}
+    engines: {node: '>=4'}
 
   bidi-js@1.1.0:
     resolution: {integrity: sha512-fX1Onk0tdVPC7obPWB5EbJ1z7NVhLq4m2xZLq2YXBkxzMXIGRpNMU88n0EPgWseKl12J7zXs7qrDxPK4sRs2fg==}
@@ -1125,6 +1132,8 @@ snapshots:
   '@types/use-sync-external-store@0.0.6': {}
 
   argparse@2.0.1: {}
+
+  axe-core@4.13.0: {}
 
   bidi-js@1.1.0:
     dependencies:

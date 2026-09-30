@@ -75,6 +75,9 @@ export const CATALOG = [
   { name: "InfiniteScrollSentinel", render: () => h(ui.InfiniteScrollSentinel, { onLoadMore: noop, disabled: true }, "Showing 20 of 40") },
   { name: "PinnedDataTable", focus: "[role=separator]", render: () => h(ui.PinnedDataTable, { ariaLabel: "Files", tableId: "files", columns: tableColumns, rows: tableRows, rowKey: (row) => row.id, onColumnWidthSet: noop, onColumnWidthReset: noop }) },
   { name: "Sheet", focus: "button", render: () => h(ui.Sheet, { open: true, onClose: noop, side: "center", ariaLabel: "Settings" }, h(ui.SheetHeader, { title: "Settings", description: "Change settings." }), h(ui.SheetBody, null, h("p", null, "Body")), h(ui.SheetFooter, null, h(ui.Button, { label: "Close" }))) },
+  // axe cannot evaluate inside an open <dialog> in jsdom (every rule is
+  // "needs review"), so the Sheet parts are also checked outside one.
+  { name: "SheetParts", focus: "button", render: () => h("div", { "data-sui-component": "Sheet" }, h(ui.SheetHeader, { title: "Settings", description: "Change settings." }), h(ui.SheetBody, null, h("p", null, "Body")), h(ui.SheetFooter, null, h(ui.Button, { label: "Close" }), h(ui.Kbd, null, "Esc"))) },
   { name: "Popover", render: () => withOpenPopover("catalog-popover", h(ui.Popover, { id: "catalog-popover", ariaLabel: "Details" }, h("p", null, "Popover content"))) },
   { name: "HoverCard", render: () => withOpenPopover("catalog-hover", h(ui.HoverCard, { id: "catalog-hover", content: h("strong", null, "More"), ariaLabel: "More" }, h("span", null, "hover me"))) },
   // State layer

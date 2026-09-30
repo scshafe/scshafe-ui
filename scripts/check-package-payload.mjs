@@ -74,6 +74,7 @@ const expected = new Set([
   "LICENSE",
   "README.md",
   "components.css",
+  "docs/ACCESSIBILITY.md",
   "docs/FRONTEND-DOCTRINE.md",
   "layout.css",
   "package.json",

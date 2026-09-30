@@ -22,7 +22,7 @@ export function MessageBubble({ message, tooltip }) {
           <span><strong>{message.title}</strong>{message.timeLabel ? <small>{message.timeLabel}</small> : null}</span>
           {message.status ? <span className="sui-message-toolbar-actions"><Status state={message.status} tooltip={message.statusTooltip} /></span> : null}
         </div>
-        <div className="sui-message-parts" aria-label={message.ariaLabel ?? `${message.title} content`}>
+        <div className="sui-message-parts" role="group" aria-label={message.ariaLabel ?? `${message.title} content`}>
           {(message.parts ?? []).map((part) => <section key={part.id} className="sui-message-part">
             {part.label ? <small className="sui-message-part-label">{part.label}</small> : null}
             {part.markdown ? <MarkdownContent value={part.content} className="sui-message-markdown" /> : <p>{part.content}</p>}

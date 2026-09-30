@@ -70,6 +70,7 @@
     "components.css",
     "tokens.css",
     "docs/FRONTEND-DOCTRINE.md",
+    "docs/ACCESSIBILITY.md",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
@@ -133,6 +134,7 @@
     "@reduxjs/toolkit": "2.13.0",
     "@types/node": "^22.15.0",
     "@types/react": "19.3.0",
+    "axe-core": "4.13.0",
     "esbuild": "0.28.2",
     "iconoir-react": "7.12.1",
     "jsdom": "29.1.1",
