@@ -1,6 +1,6 @@
 {
   "name": "@scshafe/ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The SCSHAFE standard frontend library: framework-light React components, layout primitives and a token-driven stylesheet, with optional state, icon, identity, build and testing subpaths.",
   "type": "module",
   "license": "MIT",

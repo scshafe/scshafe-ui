@@ -5,6 +5,10 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.3.0 — unreleased
+
+Meets the SCSHAFE app standard's frontend requirements (WP-09A step 2).
+
 ## 0.2.0 — 2026-09-30
 
 First published version, on GitHub Packages. The package was `mc-ui` 0.1.0
