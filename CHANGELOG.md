@@ -32,6 +32,27 @@ Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
   the strip keep working through the model classes; tests that pinned
   `FocusTabsComponent` pin `FocusTabs`.
 
+- **Light and dark themes; the default follows `prefers-color-scheme`.**
+  0.2.0 shipped dark values only. Every colour, surface, border and shadow
+  token now has a light and a dark value; the light theme applies unless the
+  user prefers dark, and `data-sui-theme="light"` or `"dark"` on the root
+  element (or any subtree) pins one. Users whose system prefers light now get
+  the light theme. *Migration:* to keep 0.2.0's look everywhere, render
+  `<html data-sui-theme="dark">` (or pass `theme="dark"` to `SuiProviders`, or
+  call `applySuiTheme("dark")`). A host that re-declared colour tokens at
+  `:root` for its dark design either pins the dark theme or re-declares its
+  values per theme (README "Theming and tokens").
+- **The token registry records both themes.** `SuiToken.default` is replaced
+  by `light` and `dark` (equal for theme-independent tokens), plus `themed`
+  and, for colours, a contrast `role`. *Migration:* read `token.dark` where you
+  read `token.default` (or `suiTokenValue(name, theme)`).
+- **Component colours come from tokens.** Every colour literal in
+  `components.css` rules became a token reference, so a few dark-theme
+  colours moved slightly (tone tints capped at 12 %, accent tints under text
+  at 20 %, form controls outlined with the new `--sui-field-border`).
+  *Migration:* none needed; hosts that matched exact computed colours in
+  visual tests update their baselines.
+
 #### Class and marker renames
 
 | Before (0.2.0) | After (0.3.0) |

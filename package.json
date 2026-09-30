@@ -96,12 +96,12 @@
     "release:manifest": "node scripts/write-release-manifest.mjs"
   },
   "peerDependencies": {
+    "@reduxjs/toolkit": ">=2",
+    "esbuild": ">=0.20",
+    "iconoir-react": ">=7",
     "react": ">=18",
     "react-dom": ">=18",
-    "@reduxjs/toolkit": ">=2",
-    "react-redux": ">=9",
-    "esbuild": ">=0.20",
-    "iconoir-react": ">=7"
+    "react-redux": ">=9"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -122,11 +122,11 @@
   },
   "dependencies": {
     "@tiptap/core": "^3.23.6",
+    "@tiptap/extension-link": "^3.23.6",
+    "@tiptap/extension-placeholder": "^3.23.6",
     "@tiptap/pm": "^3.23.6",
     "@tiptap/react": "^3.23.6",
     "@tiptap/starter-kit": "^3.23.6",
-    "@tiptap/extension-link": "^3.23.6",
-    "@tiptap/extension-placeholder": "^3.23.6",
     "tiptap-markdown": "^0.9.0"
   },
   "devDependencies": {
@@ -135,6 +135,7 @@
     "@types/react": "19.3.0",
     "esbuild": "0.28.2",
     "iconoir-react": "7.12.1",
+    "jsdom": "29.1.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-redux": "9.3.0",

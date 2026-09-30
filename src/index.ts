@@ -5,6 +5,10 @@
 // Later layers add primitives/widgets with the same rule. Ship the styles with
 // `import "@scshafe/ui/layout.css"`; the token registry is `@scshafe/ui/tokens`.
 
+// Themes: applySuiTheme / useSuiTheme pin data-sui-theme; the stylesheets follow
+// prefers-color-scheme otherwise.
+export * from "./theme.js";
+
 export * from "./layout/layoutShared.js";
 export * from "./layout/StackComponent.js";
 export * from "./layout/InlineComponent.js";

@@ -133,8 +133,12 @@ try {
     }
     const tokensCss = readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/tokens.css")), "utf8");
     for (const token of tokens.SUI_TOKENS) {
-      expect(tokensCss.includes(token.name + ": " + token.default + ";"), "tokens.css lacks " + token.name);
+      for (const theme of tokens.SUI_THEMES) {
+        expect(tokensCss.includes(token.name + ": " + token[theme] + ";"), "tokens.css lacks the " + theme + " " + token.name);
+      }
     }
+    expect(tokensCss.includes("@media (prefers-color-scheme: dark)") && tokensCss.includes('[data-sui-theme="dark"]'), "tokens.css lacks the theme selectors");
+    expect(typeof root.applySuiTheme === "function" && root.SUI_THEME_ATTRIBUTE === "data-sui-theme", "theme helpers missing");
     const packageDir = fileURLToPath(new URL(".", import.meta.resolve("@scshafe/ui/package.json")));
     for (const retiredPath of ["bin", "templates", "DESIGN-STATE-LAYER.md", "DESIGN-SITE-LAYOUT.md"]) {
       expect(!existsSync(packageDir + retiredPath), "retired path shipped: " + retiredPath);

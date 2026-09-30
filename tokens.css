@@ -1,12 +1,136 @@
 /* @scshafe/ui token registry — every theme custom property the package reads,
- * with its default. The same list is exported as SUI_TOKENS from
- * "@scshafe/ui/tokens". layout.css and components.css declare the same defaults
+ * with its light and dark value. The same list is exported as SUI_TOKENS from
+ * "@scshafe/ui/tokens". layout.css and components.css declare the same values
  * for the tokens they use, so importing tokens.css is optional; import it when
- * you theme from the full list. Re-declare any token after the package
- * stylesheets to theme. */
+ * you theme from the full list.
+ *
+ * The theme follows prefers-color-scheme; data-sui-theme="light" or "dark" on
+ * the root element (or a subtree) pins one. Re-declare tokens after the package
+ * stylesheets to theme: at :root for both themes, or inside the same selectors
+ * as below for one theme. */
 
 :root {
-  /* Text and accent colours */
+  --sui-radius-sm: 6px;
+  --sui-radius-md: 8px;
+  --sui-radius: var(--sui-radius-md);
+  --sui-radius-lg: 10px;
+  --sui-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sui-chat-text-size: 13px;
+  --sui-duration: 120ms;
+  --sui-clamp-2xs: 80px;
+  --sui-clamp-xs: 120px;
+  --sui-clamp-sm: 160px;
+  --sui-clamp-md: 200px;
+  --sui-clamp-lg: 280px;
+  --sui-clamp-xl: 360px;
+  --sui-space-none: 0px;
+  --sui-space-xs: 4px;
+  --sui-space-sm: 8px;
+  --sui-space-md: 12px;
+  --sui-space-lg: 16px;
+  --sui-space-xl: 24px;
+  --sui-space-2xl: 32px;
+}
+
+/* Light theme: the default, and data-sui-theme="light" on any element. */
+:where(:root), :where([data-sui-theme="light"]) {
+  color-scheme: light;
+  --sui-text: #1b2533;
+  --sui-text-strong: #0b1220;
+  --sui-muted: #465366;
+  --sui-blue: #0a4f99;
+  --sui-accent: var(--sui-blue);
+  --sui-accent-hover: #083f78;
+  --sui-accent-subtle: rgba(10, 79, 153, 0.1);
+  --sui-green: #11602a;
+  --sui-ok: var(--sui-green);
+  --sui-ok-subtle: rgba(17, 96, 42, 0.1);
+  --sui-tone-green: var(--sui-green);
+  --sui-tone-green-text: #0f5a26;
+  --sui-tone-blue: var(--sui-blue);
+  --sui-tone-blue-text: #0550ae;
+  --sui-tone-yellow: #9a6700;
+  --sui-tone-yellow-text: #7d4e00;
+  --sui-tone-orange: #bc4c00;
+  --sui-tone-orange-text: #953800;
+  --sui-tone-red: #cf222e;
+  --sui-tone-red-text: #a40e26;
+  --sui-tone-purple: #8250df;
+  --sui-tone-purple-text: #6639ba;
+  --sui-bg: #f6f8fb;
+  --sui-panel: #ffffff;
+  --sui-card: #ffffff;
+  --sui-bg-elevated: #eef2f7;
+  --sui-surface-2: var(--sui-bg-elevated);
+  --sui-popover: rgba(255, 255, 255, 0.98);
+  --sui-field: #ffffff;
+  --sui-bg-hover: rgba(10, 79, 153, 0.06);
+  --sui-tint: rgba(15, 23, 42, 0.035);
+  --sui-code-bg: rgba(15, 23, 42, 0.05);
+  --sui-backdrop: rgba(15, 23, 42, 0.35);
+  --sui-line: rgba(31, 45, 66, 0.16);
+  --sui-border: var(--sui-line);
+  --sui-border-strong: rgba(31, 45, 66, 0.28);
+  --sui-border-hover: rgba(10, 79, 153, 0.45);
+  --sui-field-border: #6b778a;
+  --sui-focus-ring: var(--sui-accent);
+  --sui-shadow: 0 10px 34px rgba(15, 23, 42, 0.1);
+  --sui-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.16);
+  --sui-shadow-color: rgba(15, 23, 42, 0.12);
+}
+
+/* Dark theme from the user's preference, unless the root pins light. */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-sui-theme="light"])) {
+    color-scheme: dark;
+    --sui-text: #eff6ff;
+    --sui-text-strong: #f8fbff;
+    --sui-muted: #9fb0c8;
+    --sui-blue: #6cb6ff;
+    --sui-accent: var(--sui-blue);
+    --sui-accent-hover: #8cc8ff;
+    --sui-accent-subtle: rgba(108, 182, 255, 0.11);
+    --sui-green: #52d273;
+    --sui-ok: var(--sui-green);
+    --sui-ok-subtle: rgba(82, 210, 115, 0.08);
+    --sui-tone-green: var(--sui-green);
+    --sui-tone-green-text: #bff8c9;
+    --sui-tone-blue: var(--sui-blue);
+    --sui-tone-blue-text: #cae5ff;
+    --sui-tone-yellow: #f5c542;
+    --sui-tone-yellow-text: #ffe8a3;
+    --sui-tone-orange: #ff9f43;
+    --sui-tone-orange-text: #ffd2a4;
+    --sui-tone-red: #ff6b6b;
+    --sui-tone-red-text: #ffc4c4;
+    --sui-tone-purple: #b18cff;
+    --sui-tone-purple-text: #dfd2ff;
+    --sui-bg: #08111f;
+    --sui-panel: #111d2f;
+    --sui-card: rgba(17, 29, 47, 0.82);
+    --sui-bg-elevated: rgba(18, 31, 50, 0.72);
+    --sui-surface-2: var(--sui-bg-elevated);
+    --sui-popover: rgba(8, 17, 31, 0.96);
+    --sui-field: rgba(8, 17, 31, 0.5);
+    --sui-bg-hover: rgba(108, 182, 255, 0.06);
+    --sui-tint: rgba(255, 255, 255, 0.04);
+    --sui-code-bg: rgba(4, 10, 20, 0.58);
+    --sui-backdrop: rgba(0, 0, 0, 0.5);
+    --sui-line: rgba(183, 203, 231, 0.18);
+    --sui-border: var(--sui-line);
+    --sui-border-strong: rgba(183, 203, 231, 0.28);
+    --sui-border-hover: rgba(108, 182, 255, 0.36);
+    --sui-field-border: #6b7c93;
+    --sui-focus-ring: var(--sui-accent);
+    --sui-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
+    --sui-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.34);
+    --sui-shadow-color: rgba(0, 0, 0, 0.22);
+  }
+}
+
+/* Dark theme pinned with data-sui-theme="dark" on any element. */
+:where([data-sui-theme="dark"]) {
+  color-scheme: dark;
   --sui-text: #eff6ff;
   --sui-text-strong: #f8fbff;
   --sui-muted: #9fb0c8;
@@ -17,50 +141,36 @@
   --sui-green: #52d273;
   --sui-ok: var(--sui-green);
   --sui-ok-subtle: rgba(82, 210, 115, 0.08);
-
-  /* Surfaces */
+  --sui-tone-green: var(--sui-green);
+  --sui-tone-green-text: #bff8c9;
+  --sui-tone-blue: var(--sui-blue);
+  --sui-tone-blue-text: #cae5ff;
+  --sui-tone-yellow: #f5c542;
+  --sui-tone-yellow-text: #ffe8a3;
+  --sui-tone-orange: #ff9f43;
+  --sui-tone-orange-text: #ffd2a4;
+  --sui-tone-red: #ff6b6b;
+  --sui-tone-red-text: #ffc4c4;
+  --sui-tone-purple: #b18cff;
+  --sui-tone-purple-text: #dfd2ff;
   --sui-bg: #08111f;
   --sui-panel: #111d2f;
   --sui-card: rgba(17, 29, 47, 0.82);
   --sui-bg-elevated: rgba(18, 31, 50, 0.72);
-  --sui-bg-hover: rgba(108, 182, 255, 0.06);
   --sui-surface-2: var(--sui-bg-elevated);
   --sui-popover: rgba(8, 17, 31, 0.96);
-
-  /* Hairlines and borders */
+  --sui-field: rgba(8, 17, 31, 0.5);
+  --sui-bg-hover: rgba(108, 182, 255, 0.06);
+  --sui-tint: rgba(255, 255, 255, 0.04);
+  --sui-code-bg: rgba(4, 10, 20, 0.58);
+  --sui-backdrop: rgba(0, 0, 0, 0.5);
   --sui-line: rgba(183, 203, 231, 0.18);
   --sui-border: var(--sui-line);
   --sui-border-strong: rgba(183, 203, 231, 0.28);
   --sui-border-hover: rgba(108, 182, 255, 0.36);
-
-  /* Floating layers */
-  --sui-shadow: 0 10px 34px rgba(0,0,0,0.22);
-  --sui-shadow-lg: 0 16px 40px rgba(0,0,0,0.34);
-
-  /* Corners */
-  --sui-radius-sm: 6px;
-  --sui-radius-md: 8px;
-  --sui-radius: var(--sui-radius-md);
-  --sui-radius-lg: 10px;
-
-  /* Type */
-  --sui-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --sui-chat-text-size: 13px;
-
-  /* Card body clamps */
-  --sui-clamp-2xs: 80px;
-  --sui-clamp-xs: 120px;
-  --sui-clamp-sm: 160px;
-  --sui-clamp-md: 200px;
-  --sui-clamp-lg: 280px;
-  --sui-clamp-xl: 360px;
-
-  /* Layout spacing */
-  --sui-space-none: 0px;
-  --sui-space-xs: 4px;
-  --sui-space-sm: 8px;
-  --sui-space-md: 12px;
-  --sui-space-lg: 16px;
-  --sui-space-xl: 24px;
-  --sui-space-2xl: 32px;
+  --sui-field-border: #6b7c93;
+  --sui-focus-ring: var(--sui-accent);
+  --sui-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
+  --sui-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.34);
+  --sui-shadow-color: rgba(0, 0, 0, 0.22);
 }
