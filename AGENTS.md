@@ -18,14 +18,26 @@ changes.
   `test/namespace.test.mjs` fails on any rendered class that is not `sui-*`,
   any data attribute that is not `data-sui-*`, and any such selector in the
   stylesheets. A new component goes into `test/support/catalog.mjs`.
-- Every theme value is a registered `--sui-*` token. A new token goes into
-  `src/tokens.ts`, `tokens.css` and the `:root` block of the stylesheet that
-  uses it, in one commit; `test/tokens.test.mjs` enforces this.
-- The root export stays free of Redux and the icon library
-  (`test/state-optionality.test.mjs`); `@reduxjs/toolkit`, `react-redux`,
-  `iconoir-react`, `esbuild` and `react-dom` are optional peers, `react` the
-  only required one. The package never knows an endpoint or a host's domain:
-  hosts inject fetchers, icons and popover state through the seams.
+- Every theme value is a registered `--sui-*` token with a light and a dark
+  value; component rules carry no colour literals. A new token goes into
+  `src/tokens.ts`, `tokens.css` and the matching blocks (`:root` for
+  theme-independent tokens; the light, preferred-dark and pinned-dark blocks
+  for themed ones) of the stylesheet that uses it, in one commit;
+  `test/tokens.test.mjs` enforces this and `test/contrast.test.mjs` checks the
+  colour against WCAG 2.2 AA in both themes.
+- Accessibility is part of the contract (`docs/ACCESSIBILITY.md`): keep the
+  shared `:focus-visible` ring (never `outline: none`), put transitions on
+  `var(--sui-duration)`, add every new component to the catalog so the axe,
+  keyboard-focus and namespace tests cover it, and keep the manual checks list
+  current.
+- The root export stays free of Redux, the icon library and tiptap
+  (`test/state-optionality.test.mjs`, `test/editor.test.mjs`); tiptap is
+  imported only by `src/editor/`. `@reduxjs/toolkit`, `react-redux`,
+  `iconoir-react`, `esbuild`, `react-dom` and the tiptap packages are optional
+  peers, `react` the only required one; the package has no `dependencies`.
+  The package never knows an endpoint or a host's domain: hosts inject
+  fetchers, icons, popover state and the sign-out configuration through the
+  seams.
 - No application-specific names, deployment or process references in code,
   styles or docs.
 - `lib/` is build output and is never committed. Build it with
@@ -43,7 +55,9 @@ changes.
   `pnpm run build && pnpm run release:manifest` in the same commit.
 - Peers used by the install checks are pinned exactly in `devDependencies`
   (`scripts/release-identity.mjs` `smokePeerSpecs`); the consumer in the
-  install checks depends on each of them directly.
+  install checks depends on each of them directly. The install checks and the
+  install-back run twice: with the base peers only (tiptap must be absent),
+  then with the editor peers added.
 - Test and consumer imports use the scoped specifiers `@scshafe/ui` and
   `@scshafe/ui/<subpath>`.
 

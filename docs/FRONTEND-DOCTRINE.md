@@ -43,8 +43,13 @@ them in code, so "follow the doctrine" is mostly "use the factory".*
 ## Theming
 
 - Import `@scshafe/ui/layout.css` + `@scshafe/ui/components.css`, then override the
-  `--sui-*` tokens at `:root` in your own theme.css. The token registry, with every
-  default, is `@scshafe/ui/tokens.css` (CSS) and `@scshafe/ui/tokens` (JS).
+  `--sui-*` tokens in your own theme.css: at `:root` for both themes, or per theme with
+  the package's theme selectors. The token registry, with every light and dark value,
+  is `@scshafe/ui/tokens.css` (CSS) and `@scshafe/ui/tokens` (JS). The theme follows
+  `prefers-color-scheme`; `data-sui-theme` pins one.
+- Keep what the package checks: 4.5:1 text contrast and 3:1 for control boundaries and
+  the focus ring in both themes, the shared `:focus-visible` ring, and transitions on
+  `--sui-duration` (docs/ACCESSIBILITY.md).
   Never fork the package CSS; deliberate same-selector overrides after the package
   links are the escape hatch.
 

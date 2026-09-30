@@ -5,9 +5,13 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
-## 0.3.0 — unreleased
+## 0.3.0 — 2026-09-30
 
-Meets the SCSHAFE app standard's frontend requirements (WP-09A step 2).
+Meets the SCSHAFE app standard's frontend requirements (WP-09A step 2):
+light and dark themes, reduced motion, a keyboard focus ring on every
+component and automated WCAG 2.2 AA checks; the tiptap editor in its own
+subpath with optional peers; configured sign-out; and every public class in
+the `sui` namespace.
 
 ### Breaking changes
 
@@ -132,6 +136,41 @@ Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
 | `data-table-column-menu`, `data-table-column-menu-row`, `data-table-preferences-reset` (DataTableColumnMenu) | `data-sui-table-column-menu`, `data-sui-table-column-menu-row`, `data-sui-table-preferences-reset` |
 | `data-popover-id` (Popover) | `data-sui-popover-id` |
 | transient drag state `data-start-x`, `data-start-width`, `data-last-width` | `data-sui-start-x`, `data-sui-start-width`, `data-sui-last-width` |
+
+### Added
+
+- `docs/ACCESSIBILITY.md` (shipped in the package): themes, keyboard and focus
+  behaviour, names, errors, contrast and motion against WCAG 2.2 AA; what is
+  checked automatically, what by hand, and what the host owns.
+- Theme API: `applySuiTheme`, `useSuiTheme`, `SuiThemePreference` (root);
+  `SUI_THEMES`, `SUI_THEME_ATTRIBUTE`, `suiTokenValue`,
+  `SUI_REDUCED_MOTION_DURATION`, `SuiTokenRole` (`/tokens`);
+  `SuiProviders` options `theme` and `identity`.
+- Tokens `--sui-field`, `--sui-field-border`, `--sui-focus-ring`,
+  `--sui-tint`, `--sui-code-bg`, `--sui-backdrop`, `--sui-shadow-color`,
+  `--sui-duration` and the status tones `--sui-tone-<tone>` /
+  `--sui-tone-<tone>-text` for green, blue, yellow, orange, red and purple.
+- `@scshafe/ui/editor`; `IdentityConfigProvider`, `useIdentityConfig`,
+  `SignOutConfig`, `IdentityConfig` (`/identity`).
+- `prefers-reduced-motion: reduce` sets every transition to 0s.
+- Keyboard resizing for CollapsibleListRail (a focusable window splitter:
+  Arrow keys, Shift, Home/End, Enter resets).
+- Package styles for SelectField, the TextAreaField's visually hidden label
+  (`sui-visually-hidden`) and the FocusTabs strip.
+- Tests: axe-core over every component in both themes, a keyboard-focus test
+  per interactive component, the token contrast check, theme cascade, reduced
+  motion, the namespace guard, the editor's optional-peer proofs and the
+  install-back pipeline shape; the component catalog they share
+  (`test/support/catalog.mjs`). New dev dependencies: `jsdom` 29.1.1,
+  `axe-core` 4.13.0.
+
+### Changed
+
+- The packed-install check and `publish.yml`'s install-back install the
+  package with the base peers only, prove that the root and every other
+  subpath work and that tiptap is absent, then add the editor peers and smoke
+  `@scshafe/ui/editor` (render and TypeScript).
+- Toast dismiss and EditableName buttons are 24px (WCAG 2.5.8).
 
 ## 0.2.0 — 2026-09-30
 

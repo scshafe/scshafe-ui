@@ -61,7 +61,7 @@ cd ~/src/<app> && pnpm unlink @scshafe/ui && pnpm install --frozen-lockfile
 ```
 
 The link is local only: never commit it. An app's `main` depends on an exact
-published version (`"@scshafe/ui": "0.2.0"`) resolved from GitHub Packages
+published version (`"@scshafe/ui": "0.3.0"`) resolved from GitHub Packages
 with an `integrity` hash, never on a `link:`, `file:`, `git` or `workspace:`
 specifier. A change an app needs reaches it as a release, then the app
 upgrades in one commit that changes `package.json` and the lockfile together.
