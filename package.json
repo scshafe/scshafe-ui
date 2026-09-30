@@ -42,6 +42,10 @@
       "types": "./lib/identity/index.d.ts",
       "default": "./lib/identity/index.js"
     },
+    "./editor": {
+      "types": "./lib/editor/index.d.ts",
+      "default": "./lib/editor/index.js"
+    },
     "./build": {
       "types": "./lib/build.d.ts",
       "default": "./lib/build.js"
@@ -98,20 +102,39 @@
   },
   "peerDependencies": {
     "@reduxjs/toolkit": ">=2",
+    "@tiptap/core": "^3.23.6",
+    "@tiptap/extension-link": "^3.23.6",
+    "@tiptap/extension-placeholder": "^3.23.6",
+    "@tiptap/pm": "^3.23.6",
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
     "esbuild": ">=0.20",
     "iconoir-react": ">=7",
     "react": ">=18",
     "react-dom": ">=18",
-    "react-redux": ">=9"
+    "react-redux": ">=9",
+    "tiptap-markdown": "^0.9.0"
   },
   "peerDependenciesMeta": {
-    "react-dom": {
-      "optional": true
-    },
     "@reduxjs/toolkit": {
       "optional": true
     },
-    "react-redux": {
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/extension-link": {
+      "optional": true
+    },
+    "@tiptap/extension-placeholder": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
       "optional": true
     },
     "esbuild": {
@@ -119,19 +142,25 @@
     },
     "iconoir-react": {
       "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-redux": {
+      "optional": true
+    },
+    "tiptap-markdown": {
+      "optional": true
     }
-  },
-  "dependencies": {
-    "@tiptap/core": "^3.23.6",
-    "@tiptap/extension-link": "^3.23.6",
-    "@tiptap/extension-placeholder": "^3.23.6",
-    "@tiptap/pm": "^3.23.6",
-    "@tiptap/react": "^3.23.6",
-    "@tiptap/starter-kit": "^3.23.6",
-    "tiptap-markdown": "^0.9.0"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "2.13.0",
+    "@tiptap/core": "3.31.4",
+    "@tiptap/extension-link": "3.31.4",
+    "@tiptap/extension-placeholder": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/react": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4",
     "@types/node": "^22.15.0",
     "@types/react": "19.3.0",
     "axe-core": "4.13.0",
@@ -141,6 +170,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-redux": "9.3.0",
+    "tiptap-markdown": "0.9.0",
     "typescript": "5.8.3"
   }
 }

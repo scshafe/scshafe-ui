@@ -34,9 +34,12 @@ export function MarkdownEditor({
   ref,
 }: MarkdownEditorProps) {
   const editor = useEditor({
+    // Create the editor after mount: identical server and first client render
+    // (SSR-safe), as tiptap requires under server rendering.
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
-        // tighten markdown surface — drop features we don't want in chat composer
+        // tighten the markdown surface: no horizontal rules
         horizontalRule: false,
       }),
       Link.configure({

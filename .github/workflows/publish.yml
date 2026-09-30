@@ -218,7 +218,9 @@ jobs:
           # peers for @scshafe/ui but does not link them into the consumer's
           # node_modules, so the consumer could not import react or render
           # (switchyard-postgres 0.1.0's lesson). The peer versions are the
-          # exact devDependencies this tag was verified against.
+          # exact devDependencies this tag was verified against. The editor's
+          # optional tiptap peers are left out here and added after the base
+          # smokes, so the root and other subpaths are proven without them.
           mapfile -t peers < <(node scripts/smoke-peers.mjs)
           (( ${#peers[@]} > 0 )) || { echo "::error::no peer specs"; exit 1; }
           consumer="$RUNNER_TEMP/consumer"
@@ -235,9 +237,24 @@ jobs:
           node scripts/check-install-back.mjs "$RUNNER_TEMP/consumer"
           "${{ steps.local.outputs.integrity }}" "$PUBLISHED_INTEGRITY"
 
-      - name: JS, React render and TS smokes against the registry install
+      - name: JS, React render and TS smokes against the registry install, without the editor peers
         env:
           SUI_SMOKE_CONSUMER: ${{ runner.temp }}/consumer
+          SUI_SMOKE_PHASE: base
+        run: node scripts/check-pack-install.mjs
+
+      - name: Add the editor's optional tiptap peers
+        run: |
+          set -euo pipefail
+          mapfile -t editor_peers < <(node scripts/smoke-peers.mjs --editor)
+          (( ${#editor_peers[@]} > 0 )) || { echo "::error::no editor peer specs"; exit 1; }
+          cd "$RUNNER_TEMP/consumer"
+          pnpm add --save-exact --ignore-scripts "${editor_peers[@]}"
+
+      - name: Editor subpath smokes against the registry install, with its peers
+        env:
+          SUI_SMOKE_CONSUMER: ${{ runner.temp }}/consumer
+          SUI_SMOKE_PHASE: editor
         run: node scripts/check-pack-install.mjs
 
       - name: Create the GitHub Release with digests

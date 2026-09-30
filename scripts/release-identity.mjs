@@ -44,16 +44,23 @@ export async function readReleaseIdentity(root = projectRoot) {
 }
 
 // The peers a consumer installs next to the package for the install checks and
-// the publish workflow's install-back: every peerDependency (optional ones
-// included, so every subpath can be smoke-tested) plus @types/react for the
-// TypeScript smoke, each at the exact devDependencies version this tree is
-// verified against. A peer that pnpm only auto-installs is not importable from
-// the consumer itself (switchyard-postgres 0.1.0), so each is a direct,
-// exact dependency of the consumer.
+// the publish workflow's install-back, each at the exact devDependencies
+// version this tree is verified against. A peer that pnpm only auto-installs
+// is not importable from the consumer itself (switchyard-postgres 0.1.0), so
+// each is a direct, exact dependency of the consumer.
+//
+// Two sets, because the editor is optional: the BASE set is every
+// peerDependency except the editor's tiptap packages (optional ones included,
+// so every other subpath can be smoke-tested) plus @types/react for the
+// TypeScript smoke; the EDITOR set is the tiptap packages the
+// "@scshafe/ui/editor" subpath needs. The consumer is checked without the
+// editor set first (the root and other subpaths must work without tiptap),
+// then with it.
 export const SMOKE_EXTRA_PACKAGES = ["@types/react"];
 
-export function smokePeerSpecs(packageJson) {
-  const names = [...Object.keys(packageJson.peerDependencies ?? {}), ...SMOKE_EXTRA_PACKAGES];
+export const isEditorPeer = (name) => /^@tiptap\//.test(name) || name === "tiptap-markdown";
+
+function exactSpecs(packageJson, names) {
   return names.map((name) => {
     const version = packageJson.devDependencies?.[name];
     if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) {
@@ -61,4 +68,13 @@ export function smokePeerSpecs(packageJson) {
     }
     return { name, version, spec: `${name}@${version}` };
   });
+}
+
+export function smokePeerSpecs(packageJson, { editor = false } = {}) {
+  const peers = Object.keys(packageJson.peerDependencies ?? {});
+  const names = editor
+    ? peers.filter(isEditorPeer)
+    : [...peers.filter((name) => !isEditorPeer(name)), ...SMOKE_EXTRA_PACKAGES];
+  if (names.length === 0) throw new Error(`no ${editor ? "editor" : "base"} peers in package.json`);
+  return exactSpecs(packageJson, names);
 }

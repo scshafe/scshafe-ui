@@ -71,6 +71,18 @@ Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
   allowed. *Migration:* host CSS or tests that selected `.sui-toast-tray li`
   select `.sui-toast`; tests that read a Badge's `aria-label` read its text.
 
+- **The tiptap editor moved to `@scshafe/ui/editor`, and tiptap is an
+  optional peer.** `MarkdownEditor` (and `MarkdownEditorHandle`,
+  `MarkdownEditorProps`) left the root export; `@tiptap/core`, `@tiptap/pm`,
+  `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-link`,
+  `@tiptap/extension-placeholder` and `tiptap-markdown` moved from
+  `dependencies` to optional `peerDependencies`, so an app without the editor
+  installs no editor. The package now has no hard dependencies. The editor
+  creates its tiptap instance after mount (`immediatelyRender: false`), so it
+  server-renders its shell. *Migration:* import `MarkdownEditor` from
+  `@scshafe/ui/editor` and add the seven tiptap packages to the app's
+  dependencies (README "Editor").
+
 #### Class and marker renames
 
 | Before (0.2.0) | After (0.3.0) |

@@ -7,32 +7,28 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@tiptap/core':
-        specifier: ^3.23.6
-        version: 3.31.4(@tiptap/pm@3.31.4)
-      '@tiptap/extension-link':
-        specifier: ^3.23.6
-        version: 3.31.4(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4)
-      '@tiptap/extension-placeholder':
-        specifier: ^3.23.6
-        version: 3.31.4(@tiptap/extensions@3.31.4(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4))
-      '@tiptap/pm':
-        specifier: ^3.23.6
-        version: 3.31.4
-      '@tiptap/react':
-        specifier: ^3.23.6
-        version: 3.31.4(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      '@tiptap/starter-kit':
-        specifier: ^3.23.6
-        version: 3.31.4
-      tiptap-markdown:
-        specifier: ^0.9.0
-        version: 0.9.0(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))
     devDependencies:
       '@reduxjs/toolkit':
         specifier: 2.13.0
         version: 2.13.0(react-redux@9.3.0(@types/react@19.3.0)(react@19.3.0)(redux@5.0.1))(react@19.3.0)
+      '@tiptap/core':
+        specifier: 3.31.4
+        version: 3.31.4(@tiptap/pm@3.31.4)
+      '@tiptap/extension-link':
+        specifier: 3.31.4
+        version: 3.31.4(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4)
+      '@tiptap/extension-placeholder':
+        specifier: 3.31.4
+        version: 3.31.4(@tiptap/extensions@3.31.4(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4))
+      '@tiptap/pm':
+        specifier: 3.31.4
+        version: 3.31.4
+      '@tiptap/react':
+        specifier: 3.31.4
+        version: 3.31.4(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(@tiptap/pm@3.31.4)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@tiptap/starter-kit':
+        specifier: 3.31.4
+        version: 3.31.4
       '@types/node':
         specifier: ^22.15.0
         version: 22.20.4
@@ -60,6 +56,9 @@ importers:
       react-redux:
         specifier: 9.3.0
         version: 9.3.0(@types/react@19.3.0)(react@19.3.0)(redux@5.0.1)
+      tiptap-markdown:
+        specifier: 0.9.0
+        version: 0.9.0(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))
       typescript:
         specifier: 5.8.3
         version: 5.8.3

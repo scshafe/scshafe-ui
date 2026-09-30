@@ -16,11 +16,10 @@ export * from "./layout/GridComponent.js";
 export * from "./layout/PaneComponent.js";
 export * from "./layout/ScrollComponent.js";
 
-// Second layer (C2): Bucket A — the import-closed generic components (react + npm only, zero
-// domain coupling). Kbd/Sheet/PinnedDataTable are react-only; MarkdownEditor adds @tiptap +
-// tiptap-markdown (package deps). Ship the styles with `import "@scshafe/ui/components.css"`.
+// Second layer (C2): Bucket A — the import-closed generic components (react only, zero
+// domain coupling). The tiptap MarkdownEditor lives in the "@scshafe/ui/editor" subpath
+// (optional tiptap peers). Ship the styles with `import "@scshafe/ui/components.css"`.
 export * from "./primitive/KbdComponent.js";
-export * from "./primitive/MarkdownEditorComponent.js";
 export * from "./widget/SheetComponent.js";
 export * from "./table/PinnedDataTableComponent.js";
 
