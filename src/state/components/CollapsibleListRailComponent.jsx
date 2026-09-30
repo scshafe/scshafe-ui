@@ -85,6 +85,27 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
     }
     dispatch(paneSizeSet({ paneId: `rail:${surfaceId}`, size: defaultWidth }));
   }, [dispatch, surfaceId, defaultWidth]);
+  // Keyboard resizing (the drag handle is a focusable window splitter):
+  // Left/Right step 16px (Shift: 64px), Home/End jump to the bounds, Enter
+  // resets to the default width.
+  const handleResizeKeyDown = useCallback((event) => {
+    const step = event.shiftKey ? 64 : 16;
+    const next = event.key === "ArrowLeft" ? effectiveWidth - step
+      : event.key === "ArrowRight" ? effectiveWidth + step
+        : event.key === "Home" ? minWidth
+          : event.key === "End" ? maxWidth
+            : event.key === "Enter" ? defaultWidth
+              : null;
+    if (next === null) return;
+    event.preventDefault();
+    const size = Math.max(minWidth, Math.min(maxWidth, next));
+    const railElement = event.currentTarget.closest(".sui-collapsible-list-rail");
+    if (railElement) {
+      railElement.style.width = `${size}px`;
+      railElement.style.flexBasis = `${size}px`;
+    }
+    dispatch(paneSizeSet({ paneId: `rail:${surfaceId}`, size }));
+  }, [dispatch, surfaceId, effectiveWidth, minWidth, maxWidth, defaultWidth]);
   // L2 fix for the mobile !important war: on a phone the rail is full-width by
   // package CSS, so the persisted desktop width must NOT render as an inline style
   // (inline px could only be beaten by !important).
@@ -118,13 +139,19 @@ export function CollapsibleListRail({ surfaceId, title, ariaLabel, children, cla
           role="separator"
           aria-orientation="vertical"
           aria-label={`Resize ${title}`}
-          title="Drag to resize. Double-click to reset."
+          aria-valuemin={minWidth}
+          aria-valuemax={maxWidth}
+          aria-valuenow={Math.round(effectiveWidth)}
+          aria-valuetext={`${Math.round(effectiveWidth)} pixels wide`}
+          tabIndex={0}
+          title="Drag, or use the Left and Right Arrow keys, to resize. Double-click or Enter resets."
           data-sui-component="CollapsibleListRailResize"
           onPointerDown={handleResizePointerDown}
           onPointerMove={handleResizePointerMove}
           onPointerUp={handleResizePointerEnd}
           onPointerCancel={handleResizePointerEnd}
           onDoubleClick={handleResizeDoubleClick}
+          onKeyDown={handleResizeKeyDown}
         />
       ) : null}
     </aside>

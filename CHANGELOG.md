@@ -53,6 +53,14 @@ Each entry says how to migrate. Pre-1.0, a breaking change is a minor bump.
   *Migration:* none needed; hosts that matched exact computed colours in
   visual tests update their baselines.
 
+- **One keyboard focus ring for every component.** Every focusable element a
+  component renders shows a 2px `--sui-focus-ring` outline on
+  `:focus-visible`; the per-component outlines (and the `outline: none` rules
+  that hid focus on inputs, the markdown editor and the editable name) are
+  gone. *Migration:* hosts that styled focus on package elements restyle the
+  shared rule (`:where([data-sui-component]) :focus-visible`) or
+  `--sui-focus-ring`.
+
 #### Class and marker renames
 
 | Before (0.2.0) | After (0.3.0) |
