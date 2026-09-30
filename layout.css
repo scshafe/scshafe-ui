@@ -128,7 +128,7 @@
  * an app frame (the one-attribute switch, generalized as a modifier). */
 .sui-app-shell { flex: 1 1 auto; min-width: 0; min-height: 0; overflow: auto; }
 .sui-app-shell--contained { overflow: hidden; }
-/* The single grid link: a pinned strip row + the growing focus row. */
+/* The single grid link (a pinned strip row + the growing focus row). */
 .sui-workspace { height: 100%; min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
 /* The focus area renders ONE active focus; it fills and clips. */
 .sui-focus-area { min-height: 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
