@@ -22,3 +22,17 @@ test("publish.yml smokes the registry install without, then with, the editor pee
   assert.ok(order.every((index) => index > 0), "every step is present");
   assert.deepEqual([...order].sort((a, b) => a - b), order, "in this order");
 });
+
+test("publish.yml then installs the package alone and smokes @scshafe/ui/ssr without React, before the Release", () => {
+  const workflow = readFileSync(new URL("../.github/workflows/publish.yml", import.meta.url), "utf8");
+  const order = [
+    "SUI_SMOKE_PHASE: editor",
+    "Install the published version alone into a second consumer, with no peers",
+    'pnpm add --config.auto-install-peers=false --save-exact --ignore-scripts "@scshafe/ui@$VERSION"',
+    'node scripts/check-install-back.mjs "$RUNNER_TEMP/ssr-consumer"',
+    "SUI_SMOKE_PHASE: ssr",
+    "Create the GitHub Release with digests"
+  ].map((marker) => workflow.indexOf(marker));
+  assert.ok(order.every((index) => index > 0), "every step is present");
+  assert.deepEqual([...order].sort((a, b) => a - b), order, "in this order");
+});

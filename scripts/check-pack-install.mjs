@@ -11,6 +11,9 @@
 // in two phases: first WITHOUT the editor's optional tiptap peers (the root
 // and every other subpath must work; @scshafe/ui/editor must not resolve),
 // then with them added (the editor subpath imports, renders and typechecks).
+// A third phase (ssr, 0.4.0) installs the package ALONE — no peers at all — and
+// proves @scshafe/ui/ssr renders and typechecks (skipLibCheck off) while react
+// is not even resolvable: a server-rendered app needs no React.
 //
 // With SUI_SMOKE_CONSUMER set to a directory that already has the package and
 // its peers installed (the publish workflow's install-back of the registry
@@ -50,14 +53,18 @@ async function run(command, args, options = {}) {
   return stdout;
 }
 
-async function packAndInstall(peers) {
-  const packed = singlePackReport(await run("pnpm", [
-    ...PNPM_PACK_ARGS,
-    "--pack-destination",
-    scratch
-  ], { capture: true }));
+let packedBasename;
 
-  const consumer = join(scratch, "consumer");
+async function packAndInstall(peers, name = "consumer") {
+  if (packedBasename === undefined) {
+    packedBasename = singlePackReport(await run("pnpm", [
+      ...PNPM_PACK_ARGS,
+      "--pack-destination",
+      scratch
+    ], { capture: true })).basename;
+  }
+
+  const consumer = join(scratch, name);
   await mkdir(consumer);
   await writeFile(
     join(consumer, "package.json"),
@@ -75,7 +82,7 @@ async function packAndInstall(peers) {
     "--store-dir",
     storeDir,
     "--save-exact",
-    join(scratch, packed.basename),
+    join(scratch, packedBasename),
     ...peers.map((peer) => peer.spec)
   ], { cwd: consumer });
   return consumer;
@@ -116,6 +123,76 @@ async function assertNoEditorPeers(consumer, editorPeers) {
   await run(process.execPath, ["no-editor-probe.mjs"], { cwd: consumer });
 }
 
+// The ssr phase: a consumer with @scshafe/ui as its ONLY dependency (installed
+// with auto-install-peers=false, so no peer arrives). react must not resolve;
+// @scshafe/ui/ssr, /format and /tokens and the stylesheets must import, render
+// and typecheck — with skipLibCheck off, so the shipped .d.ts may not reach
+// for @types/react either.
+async function assertSsrWithoutReact(consumer, name, version) {
+  const consumerJson = JSON.parse(await readFile(join(consumer, "package.json"), "utf8"));
+  const deps = Object.keys(consumerJson.dependencies ?? {});
+  if (deps.length !== 1 || deps[0] !== name) throw new Error(`the ssr consumer must depend on ${name} alone (found ${deps.join(", ")})`);
+  const smoke = `
+    import { readFileSync } from "node:fs";
+    import { fileURLToPath } from "node:url";
+    import * as ssr from "@scshafe/ui/ssr";
+    import { toneByState } from "@scshafe/ui/format";
+    import { SUI_TOKENS } from "@scshafe/ui/tokens";
+    import metadata from "@scshafe/ui/package.json" with { type: "json" };
+    const expect = (condition, message) => { if (!condition) throw new Error(message); };
+    expect(metadata.name === ${JSON.stringify(name)} && metadata.version === ${JSON.stringify(version)}, "package identity mismatch");
+    for (const name of ["react", "react-dom", "react/jsx-runtime", "@types/react"]) {
+      let found = true;
+      try { import.meta.resolve(name); } catch { found = false; }
+      expect(!found, name + " is resolvable from the ssr consumer");
+    }
+    let code = null;
+    try { await import("@scshafe/ui"); } catch (error) { code = error.code; }
+    expect(code === "ERR_MODULE_NOT_FOUND", "the React root should need react here (got " + code + ")");
+    const page = String(ssr.documentPage({
+      title: "Inbox",
+      stylesheets: ["/assets/tokens.css", "/assets/layout.css", "/assets/components.css"],
+      body: ssr.appShell({
+        chrome: ssr.navTabs({ ariaLabel: "Sections", items: [{ id: "inbox", label: "Inbox", href: "/", active: true }] }),
+        children: ssr.stack({ children: [
+          ssr.inputField({ id: "q", name: "q", label: "Search", value: "<b>" }),
+          ssr.button({ label: "Search", type: "submit", variant: "primary" }),
+          ssr.status({ state: "running" }),
+          ssr.list({ title: "Messages", children: ssr.listRow({ title: "Hello", status: "queued" }) }),
+          ssr.emptyState({ message: "Nothing else." })
+        ] })
+      })
+    }));
+    for (const marker of ["AppFrame", "AppShell", "NavTabs", "Tab", "Stack", "InputField", "Button", "Status", "List", "ListRow", "EmptyState"]) {
+      expect(page.includes('data-sui-component="' + marker + '"'), "ssr markup lacks " + marker);
+    }
+    expect(page.includes('value="&lt;b&gt;"') && !/\\sstyle=|<script/.test(page), "escaping or CSP shape");
+    expect(toneByState.get("running") === "green" && SUI_TOKENS.length > 0, "format/tokens");
+    for (const sheet of ["layout.css", "components.css", "tokens.css"]) {
+      expect(/--sui-/.test(readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/" + sheet)), "utf8")), sheet);
+    }
+    expect(readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/layout.css")), "utf8").includes(".sui-grid-columns--3 "), "grid column classes");
+    console.log("SSR smoke passed without React (" + page.length + " bytes).");
+  `;
+  await writeFile(join(consumer, "ssr-smoke.mjs"), smoke);
+  await run(process.execPath, ["ssr-smoke.mjs"], { cwd: consumer });
+  await writeFile(join(consumer, "ssr-smoke.ts"), `
+    import { html, stack, button, inputField, type SafeHtml, type StackProps, type Content } from "@scshafe/ui/ssr";
+    const props: StackProps = { gap: "md", children: [button({ label: "Go" }), inputField({ id: "a", label: "A" })] };
+    const out: SafeHtml = stack(props);
+    const content: Content = [out, "text", 1, null];
+    // @ts-expect-error unknown spacing token
+    const bad: StackProps = { gap: "huge" };
+    export const page: string = String(html\`<main>\${content}</main>\`);
+    void bad;
+  `);
+  await writeFile(join(consumer, "tsconfig.ssr.json"), `${JSON.stringify({
+    compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext", target: "ES2022", lib: ["ES2022"], strict: true, noEmit: true, skipLibCheck: false, types: [] },
+    files: ["ssr-smoke.ts"]
+  }, null, 2)}\n`);
+  await run(process.execPath, [resolve(root, "node_modules/typescript/bin/tsc"), "--project", "tsconfig.ssr.json"], { cwd: consumer });
+}
+
 async function assertDirectPeers(consumer, peers) {
   const consumerJson = JSON.parse(await readFile(join(consumer, "package.json"), "utf8"));
   const wrong = peers.filter((peer) => consumerJson.dependencies?.[peer.name] !== peer.version);
@@ -134,15 +211,15 @@ try {
   // Packed mode runs both phases; an installed consumer (publish.yml) runs
   // SUI_SMOKE_PHASE=base right after installing, then =editor after adding
   // the editor peers.
-  const phase = installedConsumer === undefined ? "both" : process.env.SUI_SMOKE_PHASE;
-  if (!["base", "editor", "both"].includes(phase)) {
-    throw new Error("with SUI_SMOKE_CONSUMER, set SUI_SMOKE_PHASE to base or editor");
+  const phase = installedConsumer === undefined ? "all" : process.env.SUI_SMOKE_PHASE;
+  if (!["base", "editor", "ssr", "all"].includes(phase)) {
+    throw new Error("with SUI_SMOKE_CONSUMER, set SUI_SMOKE_PHASE to base, editor or ssr");
   }
-  const consumer = installedConsumer === undefined
-    ? await packAndInstall(basePeers)
-    : resolve(installedConsumer);
+  const consumer = phase === "ssr"
+    ? undefined
+    : installedConsumer === undefined ? await packAndInstall(basePeers) : resolve(installedConsumer);
 
-  if (phase !== "editor") {
+  if (phase === "base" || phase === "all") {
     await assertDirectPeers(consumer, basePeers);
     await assertNoEditorPeers(consumer, editorPeers);
 
@@ -157,6 +234,7 @@ try {
       import * as testing from "@scshafe/ui/testing";
       import * as tokens from "@scshafe/ui/tokens";
       import * as format from "@scshafe/ui/format";
+      import * as ssr from "@scshafe/ui/ssr";
       import metadata from "@scshafe/ui/package.json" with { type: "json" };
 
       const expect = (condition, message) => { if (!condition) throw new Error(message); };
@@ -171,9 +249,10 @@ try {
       expect(typeof testing.bundleEntry === "function" && typeof testing.createSpaRenderHarness === "function", "testing exports missing");
       expect(Array.isArray(tokens.SUI_TOKENS) && tokens.SUI_TOKENS.length > 0, "token registry missing");
       expect(typeof format.timestamp === "function", "format export missing");
+      expect(typeof ssr.stack === "function" && typeof ssr.html === "function", "ssr exports missing");
       build.assertSuiResolvable(process.cwd());
 
-      const exportNames = [root, state, icons, identity, build, testing, tokens, format].flatMap((ns) => Object.keys(ns));
+      const exportNames = [root, state, icons, identity, build, testing, tokens, format, ssr].flatMap((ns) => Object.keys(ns));
       const retired = exportNames.filter((key) => /^Mc[A-Z]|[a-z]Mc[A-Z]|^mc[A-Z]/.test(key));
       expect(retired.length === 0, "retired mc export names: " + retired.join(", "));
 
@@ -196,7 +275,7 @@ try {
       }
       expect(metadata.bin === undefined, "package still declares a bin");
     expect(metadata.dependencies === undefined, "package declares hard dependencies (tiptap belongs in optional peers)");
-      console.log("JS smoke passed (" + exportNames.length + " exports across 8 subpaths).");
+      console.log("JS smoke passed (" + exportNames.length + " exports across 9 subpaths).");
     `;
     await writeFile(join(consumer, "smoke.mjs"), jsSmoke);
     await run(process.execPath, ["smoke.mjs"], { cwd: consumer });
@@ -284,7 +363,7 @@ try {
     ], { cwd: consumer });
   }
 
-  if (phase !== "base") {
+  if (phase === "editor" || phase === "all") {
     if (installedConsumer === undefined) await addPeers(consumer, editorPeers);
     await assertDirectPeers(consumer, [...basePeers, ...editorPeers]);
     const editorSmoke = `
@@ -316,10 +395,15 @@ try {
     await run(process.execPath, [resolve(root, "node_modules/typescript/bin/tsc"), "--project", "tsconfig.editor.json"], { cwd: consumer });
   }
 
+  if (phase === "ssr" || phase === "all") {
+    const ssrConsumer = installedConsumer === undefined ? await packAndInstall([], "ssr-consumer") : resolve(installedConsumer);
+    await assertSsrWithoutReact(ssrConsumer, name, version);
+  }
+
   console.log(
     installedConsumer === undefined
-      ? "@scshafe/ui packed-install smokes passed: JS, React render and TypeScript without the editor peers, then the editor subpath with them."
-      : `@scshafe/ui installed-consumer ${phase} smokes passed (${consumer}).`
+      ? "@scshafe/ui packed-install smokes passed: JS, React render and TypeScript without the editor peers, the editor subpath with them, and @scshafe/ui/ssr with no peers at all."
+      : `@scshafe/ui installed-consumer ${phase} smokes passed (${installedConsumer}).`
   );
 } finally {
   if (scratch !== undefined) await rm(scratch, { force: true, recursive: true });
