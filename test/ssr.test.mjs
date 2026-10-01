@@ -100,6 +100,7 @@ const PAIRS = [
   ["ListRow", h(ui.ListRow, { title: "Nightly", subtitle: "main", status: "running", chips: ["retry_scheduled"], timestamp: STAMP }), ssr.listRow({ title: "Nightly", subtitle: "main", status: "running", chips: ["retry_scheduled"], timestamp: STAMP })],
   ["ListRow li", h(ui.ListRow, { title: "Row", as: "li", titleLevel: 4, actions: h("span", null, "act") }, h("p", null, "detail")), ssr.listRow({ title: "Row", as: "li", titleLevel: 4, actions: ssr.html`<span>act</span>`, children: ssr.html`<p>detail</p>` })],
   ["List", h(ui.List, { title: "Runs", count: 1, description: "Recent runs." }, h(ui.ListRow, { title: "Nightly", subtitle: "main" })), ssr.list({ title: "Runs", count: 1, description: "Recent runs.", children: ssr.listRow({ title: "Nightly", subtitle: "main" }) })],
+  ["List empty", h(ui.List, { title: "Runs", empty: { message: "No runs yet." } }), ssr.list({ title: "Runs", empty: { message: "No runs yet." } })],
   ["Panel", h(ui.Panel, null, h(ui.PanelHeader, { title: "Panel", description: "About", aside: "3 items" }), h("p", null, "Body.")), ssr.panel({ children: [ssr.panelHeader({ title: "Panel", description: "About", aside: "3 items" }), ssr.html`<p>Body.</p>`] })],
   ["Tab", h(ui.Tab, { id: "plans", label: "Plans", active: true, badge: 4 }), ssr.tab({ id: "plans", label: "Plans", active: true, badge: 4 })],
   ["Tab disabled", h(ui.Tab, { id: "runs", label: "Runs", disabled: true }), ssr.tab({ id: "runs", label: "Runs", disabled: true })],
@@ -114,6 +115,15 @@ for (const [name, element, markup] of PAIRS) {
     assert.deepEqual(ssrTree, reactTree);
   });
 }
+
+test("List empty state shows its message and passes no stray attributes", () => {
+  const legacy = renderToStaticMarkup(h(ui.List, { empty: { title: "Empty", description: "Nothing to show yet." } }));
+  assert.match(legacy, /<div class="sui-empty-state" data-sui-component="EmptyState">Empty: Nothing to show yet\.<\/div>/);
+  assert.doesNotMatch(legacy, /\s(title|description)=/);
+  const defaulted = renderToStaticMarkup(h(ui.List, { empty: {} }));
+  assert.match(defaulted, />Nothing to show yet\.<\/div>/);
+  assert.doesNotMatch(renderToStaticMarkup(h(ui.List, { empty: { message: "No runs." } })), /\s(title|description|message)=/);
+});
 
 test("parity covers every server-rendered marker family", () => {
   const markers = new Set(PAIRS.flatMap(([, , markup]) => [...String(markup).matchAll(/data-sui-component="([^"]+)"/g)].map((match) => match[1])));
