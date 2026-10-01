@@ -212,6 +212,14 @@
   background-clip: padding-box;
 }
 .sui-data-table thead th { position: sticky; top: 0; z-index: 3; }
+/* Default cells: start-aligned (browsers centre <th>), padded, divided by rows.
+   The sticky header gets an opaque surface so scrolled rows do not show through.
+   Text/surface pairs are registry tokens, so test/contrast.test.mjs covers them;
+   the pinned-column and data-sui-align rules are more specific and still win. */
+.sui-data-table th, .sui-data-table td { padding: 8px 12px; text-align: start; vertical-align: middle; color: var(--sui-text); border-bottom: 1px solid var(--sui-line); }
+.sui-data-table thead th { background: var(--sui-panel); color: var(--sui-text-strong); font-size: 13px; font-weight: 600; border-bottom-color: var(--sui-border-strong); }
+.sui-data-table tbody tr:hover > td { background: var(--sui-bg-hover); }
+.sui-data-table tbody tr:last-child > td { border-bottom: 0; }
 .sui-data-table [data-sui-pinned-column="left"] {
   position: sticky;
   left: 0;
