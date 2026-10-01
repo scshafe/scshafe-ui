@@ -61,8 +61,11 @@ mkdir first-react-app && cd first-react-app
 ```
 
 Create `.npmrc` in the project. The first line maps the `@scshafe` scope to GitHub Packages (no
-token here). The second stops pnpm from installing the package's *optional* peers (the editor's
-tiptap packages) that this app does not use:
+token here). The second stops pnpm from installing the package's peers that this app does not
+use: the editor's tiptap packages and the state, icon and build helpers (`@reduxjs/toolkit`,
+`react-redux`, `iconoir-react`, `esbuild`), which only the subpaths that use them need. The install
+then prints `WARN Issues with peer dependencies found` with those packages as `✕ missing peer`:
+that is expected, not a failure.
 
 ```ini
 @scshafe:registry=https://npm.pkg.github.com
@@ -122,7 +125,9 @@ export default defineConfig({ plugins: [react()] });
 </html>
 ```
 
-`src/main.jsx` imports the package's stylesheets once, then your own:
+`src/main.jsx` imports the package's stylesheets once, then your own. (`tokens.css`, which the
+server-rendered app below also serves, is optional: `layout.css` and `components.css` already
+declare every token they use.)
 
 ```jsx
 import React from "react";
@@ -223,7 +228,8 @@ export function App() {
 pnpm dev
 ```
 
-Open the URL it prints (`http://localhost:5173/`). You see the header with **Inbox (3)** and
+Open the URL it prints (usually `http://localhost:5173/`; if 5173 is taken, Vite uses the next
+free port and prints that one). You see the header with **Inbox (3)** and
 **Settings** tabs and a **Theme** select, the inbox heading, the search form and three message
 rows with status. Type `zzz` in **Search**: the list shows *Nothing matches “zzz”.*; **Clear**
 brings the rows back. **Settings** shows a panel with *No settings yet.*
@@ -244,7 +250,8 @@ Rendering**, which has *Emulate CSS media feature prefers-color-scheme* and
   `getComputedStyle(document.documentElement).getPropertyValue("--sui-duration")`. It prints
   `0s`; without the emulation it prints the normal `120ms`. Every component transition reads
   this token.
-- **Keyboard focus.** Click the page background, then press **Tab** repeatedly: focus moves
+- **Keyboard focus.** Reload the page (or click the *First app* title), then press **Tab**
+  repeatedly: focus moves
   through the Inbox tab, Settings tab, Theme select, Search field and Clear button in reading
   order, and every focused control shows a visible focus ring. **Shift+Tab** goes back. Clicking
   a control with the mouse shows no ring (`:focus-visible`).
@@ -272,7 +279,8 @@ mkdir first-ssr-app && cd first-ssr-app
 ```
 
 `.npmrc`, the same two lines as before (with `auto-install-peers=false`, installing the package
-alone installs **no** React):
+alone installs **no** React). pnpm still prints the peer-dependency warning, this time listing
+`react` and `react-dom` too: expected, since `@scshafe/ui/ssr` uses none of the peers:
 
 ```ini
 @scshafe:registry=https://npm.pkg.github.com
@@ -421,8 +429,9 @@ pnpm start
 
 It prints the address it listens on: `http://127.0.0.1:8080/`. If port 8080 is already taken
 (`EADDRINUSE`), pick another with `PORT=8081 pnpm start` and use that port wherever this guide
-says 8080. Open the address. You see the same header, tabs, heading, search form and three
-rows as the React app. Search for `zzz`: the list shows *Nothing matches “zzz”.*; **Clear**
+says 8080. Open the address. You see the same tabs, heading and three rows as the React app; the header has
+no Theme select (the theme comes from `?theme=`, set up above) and the search form has a **Search**
+button, since nothing runs in the browser. Search for `zzz`: the list shows *Nothing matches “zzz”.*; **Clear**
 returns. In a second terminal, the page's policy:
 
 ```sh
