@@ -13,7 +13,9 @@ import { Tooltip } from "../widget/TooltipComponent.js";
  *  - title: optional list heading
  *  - description: optional list description
  *  - count: optional count shown in the header
- *  - empty: { title, description } for the EmptyState shown when children is empty
+ *  - empty: { message } for the EmptyState shown when children is empty (the
+ *    same shape as @scshafe/ui/ssr's list). The older { title, description }
+ *    shape still renders, as "title: description".
  *  - actions: optional node rendered on the right of the header
  *  - children: ListRow elements (or any rows)
  *  - tooltip: tooltip metadata object or string
@@ -44,8 +46,15 @@ export function List({ title = null, description = null, count = null, empty = n
       {hasItems ? (
         <div className="sui-list-items">{children}</div>
       ) : empty ? (
-        <EmptyState title={empty.title ?? "Empty"} description={empty.description ?? "Nothing to show yet."} />
+        <EmptyState message={emptyMessage(empty)} />
       ) : null}
     </section>
   </Tooltip>;
+}
+
+/** The EmptyState message for `empty`: `message`, else the legacy title/description pair. */
+function emptyMessage(empty) {
+  if (empty.message !== undefined && empty.message !== null) return empty.message;
+  const parts = [empty.title, empty.description].filter((part) => part !== undefined && part !== null && part !== "");
+  return parts.length > 0 ? parts.join(": ") : "Nothing to show yet.";
 }
