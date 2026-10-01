@@ -58,6 +58,10 @@
       "types": "./lib/tokens.d.ts",
       "default": "./lib/tokens.js"
     },
+    "./ssr": {
+      "types": "./lib/ssr/index.d.ts",
+      "default": "./lib/ssr/index.js"
+    },
     "./layout.css": "./layout.css",
     "./components.css": "./components.css",
     "./tokens.css": "./tokens.css",
