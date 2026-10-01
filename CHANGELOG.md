@@ -5,6 +5,30 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.4.1 — 2026-10-01
+
+Acceptance (U4): the first-app guide, and two fixes it surfaced.
+
+### Added
+
+- `docs/FIRST-APP.md`: from an empty directory to a React app (Vite) and a server-rendered app
+  (`@scshafe/ui/ssr`, no React), each on one published version, with the theme, reduced-motion
+  and keyboard-focus checks. Checked by a fresh-eyes run that followed only the guide. It lives in
+  the repository (it shows the user-level npmrc token line, which the package payload scan
+  keeps out of the published files).
+
+### Fixed
+
+- `List`'s empty state showed no message: it passed `title` and `description` to `EmptyState`,
+  which rendered them as stray attributes. `empty` now takes `{ message }`, the same shape as
+  the server-rendered `list`; the older `{ title, description }` still renders, as
+  "title: description".
+- `PinnedDataTable` / `dataTable` cells had browser defaults (centred header cells, no padding
+  or dividers, a see-through sticky header). `components.css` now gives cells start alignment,
+  padding and row dividers, the header an opaque `--sui-panel` surface with
+  `--sui-text-strong` text, and rows a `--sui-bg-hover` hover, all contrast-checked in both
+  themes. Column `align` and the pinned column still take precedence.
+
 ## 0.4.0 — 2026-10-01
 
 The server-rendered adapter (U3): `@scshafe/ui/ssr`, for apps that render HTML on the server
