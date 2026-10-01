@@ -1,0 +1,27 @@
+# Project intent (LIB-01). The schema is illustrative until M2/M7 fix it.
+schema_version = 1
+
+[project]
+id = "scshafe-ui"
+class = "managed"
+
+[app]
+kind = "library"
+
+[skills]
+# LIB-02 asks for .agents/skills; the catalog is M4. Recorded gap.
+selected = []
+
+# Adopted, not generated (D-6): `dev adopt --add-missing` added this file to
+# an existing library on 2026-09-30. `params` were read from package.json.
+# Rendering scshafe-dev at `commit` with them gives the standard baseline
+# `dev check` compares this repository with; it does not reproduce this
+# repository's files, and the files that differ from it were left as they are.
+[template]
+source = "scshafe/scshafe-dev"
+version = "0.1.0"
+commit = "b03c914b1d950a153dffb7ef5bf8976cd887d60c"
+released = false
+dirty = false
+mode = "adopted"
+params = { kind = "library", name = "scshafe-ui", description = "The SCSHAFE standard frontend library: framework-light React components, layout primitives and a token-driven stylesheet, with optional state, icon, identity, build and testing subpaths.", peers = ["@reduxjs/toolkit@2.13.0", "@tiptap/core@3.31.4", "@tiptap/extension-link@3.31.4", "@tiptap/extension-placeholder@3.31.4", "@tiptap/pm@3.31.4", "@tiptap/react@3.31.4", "@tiptap/starter-kit@3.31.4", "esbuild@0.28.2", "iconoir-react@7.12.1", "react@19.3.0", "react-dom@19.3.0", "react-redux@9.3.0", "tiptap-markdown@0.9.0"], deps = [], date = "2026-09-30", package = "@scshafe/ui" }
