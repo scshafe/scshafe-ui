@@ -6,7 +6,8 @@ layers. Every component renders a stable `data-sui-component` marker and `sui-` 
 are the test contract hosts pin. Light and dark themes, reduced motion and keyboard focus
 are built in, checked against WCAG 2.2 AA ([docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)).
 
-Requires Node 22.22+ or 24.18+ and React 18 or newer.
+Requires Node 22.22+ or 24.18+ and React 18 or newer — except `@scshafe/ui/ssr`, the
+server-rendered adapter, which needs no React and no other peer.
 
 ## Install
 
@@ -23,7 +24,7 @@ for `//npm.pkg.github.com/`), never in the project. In GitHub Actions use the jo
 package grants your repository read access. Then install an exact version:
 
 ```sh
-pnpm add --save-exact @scshafe/ui@0.3.0 react react-dom
+pnpm add --save-exact @scshafe/ui@0.4.0 react react-dom
 ```
 
 ### Peer dependencies
@@ -78,6 +79,7 @@ are exported from the package root.
 | `@scshafe/ui/testing` | `bundleEntry`, `runNodeChild`, `createSpaRenderHarness` for hermetic render tests |
 | `@scshafe/ui/tokens` | The token registry as data: `SUI_TOKENS` (light and dark values), `SUI_TOKEN_NAMES`, `SUI_THEMES`, `SUI_THEME_ATTRIBUTE`, `suiTokenValue`, `SUI_COMPONENT_VARIABLES` |
 | `@scshafe/ui/format` | Generic formatting helpers (`toneByState`, `timestamp`, `esc`, `plural`, …) |
+| `@scshafe/ui/ssr` | Server-rendered adapter: escaping string helpers with the same markers and classes, no React, no client JavaScript |
 | `@scshafe/ui/layout.css`, `components.css`, `tokens.css` | Stylesheets |
 
 ## Components
@@ -171,6 +173,57 @@ import { MarkdownEditor } from "@scshafe/ui/editor";
 
 The editor mounts tiptap after hydration (`immediatelyRender: false`), so it server-renders
 its empty shell.
+
+## Server-rendered apps (`@scshafe/ui/ssr`)
+
+String helpers that emit the **same** `sui-` classes and `data-sui-component` markers as the
+React components, for apps that render HTML on the server with no React and no client
+JavaScript. Install the package alone (`pnpm add --save-exact --config.auto-install-peers=false
+@scshafe/ui@0.4.0`): the subpath imports nothing but the package's own `format` helpers.
+
+```js
+import { documentPage, appShell, navTabs, stack, list, listRow, inputField, button, html } from "@scshafe/ui/ssr";
+
+const page = documentPage({
+  title: "Inbox",
+  stylesheets: ["/assets/tokens.css", "/assets/layout.css", "/assets/components.css"],
+  body: appShell({
+    chrome: navTabs({ ariaLabel: "Sections", items: [{ id: "inbox", label: "Inbox", href: "/", active: true }] }),
+    children: stack({ children: [
+      html`<form action="/search" method="get">${inputField({ id: "q", name: "q", label: "Search", value: query })}${button({ label: "Search", type: "submit" })}</form>`,
+      list({ title: "Messages", children: messages.map((m) => listRow({ title: m.subject, href: `/m/${m.id}`, status: m.state })) })
+    ] })
+  })
+});
+response.end(String(page));
+```
+
+- **Escaping.** Every string or number is escaped. Only `SafeHtml` passes through: what the
+  helpers return, `` html`…` `` (a tagged template that escapes its values), and the explicit
+  `trustedHtml(markup)` for markup you produced yourself (never user input).
+- **Template contexts.** In `` html`…` `` a value may sit in text or in a quoted attribute
+  value; in `href`/`src`/`action`/`formaction` it must be a plain string and is URL-checked. A
+  value as a tag name, in an unquoted attribute, bare inside a tag, in an `on*`/`style`/`srcdoc`
+  attribute, or inside `<script>`/`<style>` throws.
+- **URLs.** URL attributes accept `http(s)`, `mailto`, `tel` and relative URLs; anything else
+  (`javascript:`, `data:`, …) renders as `#` (`safeUrl`).
+- **CSP.** No helper emits a `style` attribute, a `<script>` or an event-handler attribute, so
+  pages run under `default-src 'self'; style-src 'self'; script-src 'none'`. Serve
+  `tokens.css`, `layout.css` and `components.css` from the package.
+- **Helpers.** Layout `stack` · `inline` · `grid` (columns as classes: `{ kind: "equal",
+  count: 1–12 }` or `{ kind: "autoFit", minSize: "xs"…"xl" }`, 8–24rem) · `pane` · `scroll`;
+  the frame `appShell` · `workspace` · `fill` · `documentPage`; navigation `tab` (a link with
+  `href`, `aria-current="page"` when active) · `navTabs`; forms `title` · `description` · `label`
+  · `inputField` · `selectField` · `textAreaField` (with `name`) · `button` (a link with
+  `href`); status `badge` · `status` · `statCount` · `kbd` · `chipList` · `recordMeta` ·
+  `metricCard`; `emptyState` · `list` · `listRow` (title link with `href`) · `panel` ·
+  `panelHeader` · `tabPanelHeader` · `dataTable` (the `PinnedDataTable` markup, static). Low
+  level: `html`, `trustedHtml`, `join`, `attrs`, `safeUrl`, `escapeHtml`, `renderContent`.
+- **React-only, by design.** Hover cards and tooltips, icon glyphs, column resizing and the
+  state layer need client JavaScript and have no server helper.
+- **Parity is tested.** `test/ssr.test.mjs` renders each helper and its React component with
+  equivalent props and compares the element trees. `examples/ssr-app` is a complete
+  `node:http` app with a strict CSP (`node examples/ssr-app/server.mjs`).
 
 ## Theming and tokens
 

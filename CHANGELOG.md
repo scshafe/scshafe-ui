@@ -5,6 +5,43 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.4.0 — 2026-10-01
+
+The server-rendered adapter (U3): `@scshafe/ui/ssr`, for apps that render HTML on the server
+with no React and no client JavaScript.
+
+### Added
+
+- `@scshafe/ui/ssr`: string helpers with the same `sui-` classes and `data-sui-component`
+  markers as the React components — layout (`stack`, `inline`, `grid`, `pane`, `scroll`), the
+  frame (`appShell`, `workspace`, `fill`, `documentPage`), navigation (`tab`, `navTabs`), forms
+  (`title`, `description`, `label`, `inputField`, `selectField`, `textAreaField`, `button`),
+  status (`badge`, `status`, `statCount`, `kbd`, `chipList`, `recordMeta`, `metricCard`), and
+  `emptyState`, `list`, `listRow`, `panel`, `panelHeader`, `tabPanelHeader`, `dataTable`.
+  Everything is escaped unless it is `SafeHtml`; `` html`…` `` is a context-aware tagged
+  template; URL attributes take http(s), mailto, tel and relative URLs only; no style
+  attribute, script or event handler is ever emitted. The subpath needs no peer.
+- Server-rendered extras the React components do not have: link tabs and link buttons (`href`),
+  a `<nav>` strip (`navTabs`), a title link on `listRow`, and `documentPage`.
+- `layout.css`: `.sui-grid-columns--1`…`12` and `.sui-grid-auto-fit--xs`…`xl` (the column
+  templates as classes, for markup that cannot carry a style attribute).
+- `components.css`: `.sui-nav-tabs`; `a.sui-tab` / `a.sui-button` without underline and with a
+  disabled look for `aria-disabled="true"`; `.sui-list-row-anchor`.
+- `examples/ssr-app`: a `node:http` app on the adapter with a strict CSP — the U4 guide's
+  server-rendered app (not part of the package).
+- Tests: marker parity with the React components (33 pairs), escaping in every text and
+  attribute position, URL schemes, template contexts, CSP shape, axe in both themes and
+  keyboard focus over a server-rendered catalog, and the example app booted and fetched.
+- Release: the install-back adds a third consumer with `@scshafe/ui` **alone** (no peers); it
+  must not resolve `react`, and `@scshafe/ui/ssr` must render and typecheck there with
+  `skipLibCheck` off.
+
+### Notes
+
+- React-only by design (they need client JavaScript): hover cards and tooltips, icon glyphs,
+  column resizing, the state layer. The server `dataTable` is the `PinnedDataTable` markup
+  without resize handles or width styles.
+
 ## 0.3.1 — 2026-10-01
 
 Release-tooling fix; the library is unchanged from 0.3.0 apart from `package.json`'s version,

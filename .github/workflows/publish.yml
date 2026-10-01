@@ -259,6 +259,32 @@ jobs:
           SUI_SMOKE_PHASE: editor
         run: node scripts/check-pack-install.mjs
 
+      # 0.4.0: a second consumer with @scshafe/ui ALONE (no peers, none
+      # auto-installed): @scshafe/ui/ssr must render and typecheck from the
+      # registry bytes while react is not even resolvable.
+      - name: Install the published version alone into a second consumer, with no peers
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          consumer="$RUNNER_TEMP/ssr-consumer"
+          mkdir -p "$consumer"
+          cd "$consumer"
+          printf '{\n  "private": true,\n  "type": "module"\n}\n' > package.json
+          printf '@scshafe:registry=%s\n' "$REGISTRY" > .npmrc
+          pnpm add --config.auto-install-peers=false --save-exact --ignore-scripts "@scshafe/ui@$VERSION"
+
+      - name: Compare registry integrity with the local pack (no-peer consumer)
+        run: >-
+          node scripts/check-install-back.mjs "$RUNNER_TEMP/ssr-consumer"
+          "${{ steps.local.outputs.integrity }}" "$PUBLISHED_INTEGRITY"
+
+      - name: SSR smokes against the registry install, without React or any peer
+        env:
+          SUI_SMOKE_CONSUMER: ${{ runner.temp }}/ssr-consumer
+          SUI_SMOKE_PHASE: ssr
+        run: node scripts/check-pack-install.mjs
+
       - name: Create the GitHub Release with digests
         env:
           GH_TOKEN: ${{ github.token }}
@@ -281,8 +307,9 @@ jobs:
             echo "| \`$(basename "$TGZ")\` integrity (registry dist.integrity) | \`$INTEGRITY\` |"
             echo "| \`$manifest\` sha256 | \`$manifest_sha256\` |"
             echo
-            echo "The registry tarball's integrity equals a fresh pack of this tag, and the"
-            echo "registry install renders with its pinned peers (install-back job)."
+            echo "The registry tarball's integrity equals a fresh pack of this tag, the"
+            echo "registry install renders with its pinned peers, and @scshafe/ui/ssr renders"
+            echo "and typechecks from a consumer with no peers at all (install-back job)."
             echo
             awk -v v="$VERSION" '$0 ~ "^## " v " " {on=1; next} on && /^## / {exit} on {print}' CHANGELOG.md
           } > "$notes"
