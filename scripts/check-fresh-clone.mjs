@@ -1,12 +1,21 @@
+// scshafe-dev release script. Master copy: scshafe/scshafe-dev
+// release/scripts/check-fresh-clone.mjs, copied verbatim into each library by
+// `dev new` (D-5). Do not edit it in a library.
+//
+// LIB-03: the committed HEAD alone builds and verifies. Clone the clean
+// candidate into a scratch directory, install offline from the same store,
+// build lib/ from src/ (it is never committed), run verify, and require the
+// clone to stay clean.
+
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { projectRoot as root, readReleaseIdentity } from "./release-identity.mjs";
 
-const root = resolve(fileURLToPath(new URL("../", import.meta.url)));
-const scratch = await mkdtemp(join(tmpdir(), "sui-clone-"));
+const { base } = await readReleaseIdentity(root);
+const scratch = await mkdtemp(join(tmpdir(), `${base}-clone-`));
 const clone = join(scratch, "candidate");
 
 let storeEnv = {};

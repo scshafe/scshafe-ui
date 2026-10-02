@@ -1,3 +1,7 @@
+// scshafe-dev release script. Master copy: scshafe/scshafe-dev
+// release/scripts/write-release-manifest.mjs, copied verbatim into each
+// library by `dev new` (D-5). Do not edit it in a library.
+//
 // Write release/<scope>-<name>-<version>.payload.sha256 from a fresh pack:
 // one line per packed entry, `<sha256>  <path>`, in code-unit path order. The
 // digests are taken from the packed bytes exactly as check-release-artifact.mjs
@@ -18,7 +22,8 @@ import {
   singlePackReport
 } from "./release-identity.mjs";
 
-const scratch = await mkdtemp(join(tmpdir(), "sui-manifest-"));
+const identity = await readReleaseIdentity(root);
+const scratch = await mkdtemp(join(tmpdir(), `${identity.base}-manifest-`));
 
 async function run(command, args, options = {}) {
   const child = spawn(command, args, {
@@ -70,7 +75,6 @@ async function manifestLines(tarball) {
 }
 
 try {
-  const identity = await readReleaseIdentity(root);
   const report = singlePackReport(
     await run("pnpm", [...PNPM_PACK_ARGS, "--pack-destination", scratch])
   );

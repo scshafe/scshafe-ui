@@ -53,11 +53,17 @@ changes.
   sha256. A payload change (including `package.json`, `README.md`,
   `CHANGELOG.md`, the stylesheets or `src/`) needs
   `pnpm run build && pnpm run release:manifest` in the same commit.
+- The release kit (`scripts/*.mjs` except `release.config.mjs`, `ci.yml`,
+  `publish.yml`) is a verbatim copy of scshafe-dev's master: never edit it
+  here; a fix lands in scshafe-dev first, then `dev check scshafe-ui --diff`
+  brings it over. Repository choices go in `scripts/release.config.mjs`.
 - Peers used by the install checks are pinned exactly in `devDependencies`
-  (`scripts/release-identity.mjs` `smokePeerSpecs`); the consumer in the
-  install checks depends on each of them directly. The install checks and the
-  install-back run twice: with the base peers only (tiptap must be absent),
-  then with the editor peers added.
+  (`smokePeerSpecs`, phases in `scripts/release.config.mjs`); the consumer in
+  the install checks depends on each of them directly. The install checks and
+  the install-back run the base phase first (tiptap must be absent;
+  `test/smoke/`), then the `editor` phase with the tiptap peers added
+  (`test/smoke/editor/`). `test/ssr-alone-install.test.mjs` installs the
+  packed package alone (no peers) and proves `@scshafe/ui/ssr` without React.
 - Test and consumer imports use the scoped specifiers `@scshafe/ui` and
   `@scshafe/ui/<subpath>`.
 
