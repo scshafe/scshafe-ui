@@ -40,6 +40,17 @@ pnpm run verify    # typecheck, build, tests, payload manifest, pack-twice bytes
                    # pack-and-install JS / React render / TypeScript smokes
 ```
 
+The release scripts in `scripts/` (and `ci.yml`, `publish.yml`) are verbatim
+copies of scshafe-dev's master kit: never edit them here (`dev check
+scshafe-ui` reports any drift). This repository's own inputs are
+`scripts/release.config.mjs` (payload rules, the optional `editor` peer phase,
+the extra smoke packages) and the smokes the master check runs against the
+packed install: `test/smoke/*.smoke.{mjs,ts}` with the base peers (tiptap
+absent, `@scshafe/ui/editor` unavailable), then `test/smoke/editor/` with the
+tiptap peers added. `test/ssr-alone-install.test.mjs` adds what the master
+phases cannot express: the package installed alone, with no peer at all,
+serving `@scshafe/ui/ssr`.
+
 Run `pnpm run verify` before every push. On a clean, committed HEAD,
 `pnpm run test:fresh-clone` clones the commit, installs offline from the
 store, builds and verifies it, as CI does.
