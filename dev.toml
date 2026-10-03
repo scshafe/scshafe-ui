@@ -29,3 +29,9 @@ released = true
 dirty = false
 mode = "adopted"
 params = { kind = "library", name = "scshafe-ui", description = "The SCSHAFE standard frontend library: framework-light React components, layout primitives and a token-driven stylesheet, with optional state, icon, identity, build and testing subpaths.", peers = ["@reduxjs/toolkit@2.13.0", "@tiptap/core@3.31.4", "@tiptap/extension-link@3.31.4", "@tiptap/extension-placeholder@3.31.4", "@tiptap/pm@3.31.4", "@tiptap/react@3.31.4", "@tiptap/starter-kit@3.31.4", "esbuild@0.28.2", "iconoir-react@7.12.1", "react@19.3.0", "react-dom@19.3.0", "react-redux@9.3.0", "tiptap-markdown@0.9.0"], deps = [], date = "2026-09-30", package = "@scshafe/ui" }
+
+# IDENT-01: what this project's agent may do (scshafe/infra docs/platform/agent-identity.md).
+# References, never secrets. `dev identity plan` compares it with the host and GitHub.
+[identity]
+agent = "agent-scshafe-ui"
+github = ["contents=write", "pull_requests=write", "issues=write", "workflows=write", "actions=write"]
