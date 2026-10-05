@@ -24,7 +24,8 @@ export type SuiTokenCategory =
   | "font"
   | "space"
   | "clamp"
-  | "motion";
+  | "motion"
+  | "material";
 
 /**
  * What a colour token is for, which decides the contrast it must reach
@@ -43,6 +44,14 @@ export type SuiThemeName = "light" | "dark";
 
 /** The attribute that pins a theme: `data-sui-theme="light" | "dark"`. */
 export const SUI_THEME_ATTRIBUTE = "data-sui-theme";
+
+/**
+ * The attribute that asks for solid surfaces instead of glass:
+ * `data-sui-transparency="reduce"` on the root element (or any subtree). It does
+ * what `prefers-reduced-transparency: reduce` and `prefers-contrast: more` do,
+ * for hosts that offer the choice themselves.
+ */
+export const SUI_TRANSPARENCY_ATTRIBUTE = "data-sui-transparency";
 
 /** The themes the package ships, in declaration order. */
 export const SUI_THEMES: readonly SuiThemeName[] = Object.freeze(["light", "dark"] as SuiThemeName[]);
@@ -118,7 +127,7 @@ export const SUI_TOKENS: readonly SuiToken[] = Object.freeze([
   themed("--sui-card", { light: "#ffffff", dark: "rgba(17, 29, 47, 0.82)" }, "surface", "surface", "Card and message-bubble background."),
   themed("--sui-bg-elevated", { light: "#eef2f7", dark: "rgba(18, 31, 50, 0.72)" }, "surface", "surface", "Raised surface (rails, menus)."),
   themed("--sui-surface-2", { light: "var(--sui-bg-elevated)", dark: "var(--sui-bg-elevated)" }, "surface", "surface", "Secondary surface; defaults to the elevated surface."),
-  themed("--sui-popover", { light: "rgba(255, 255, 255, 0.98)", dark: "rgba(8, 17, 31, 0.96)" }, "surface", "surface", "Popover, tooltip, dialog and toast background."),
+  themed("--sui-popover", { light: "rgba(255, 255, 255, 0.98)", dark: "rgba(8, 17, 31, 0.96)" }, "surface", "surface", "Opaque floating surface: what glass becomes under reduced transparency or increased contrast; pinned table cells."),
   themed("--sui-field", { light: "#ffffff", dark: "rgba(8, 17, 31, 0.5)" }, "surface", "surface", "Form control and button background."),
   themed("--sui-bg-hover", { light: "rgba(10, 79, 153, 0.06)", dark: "rgba(108, 182, 255, 0.06)" }, "surface", "overlay", "Row / item hover background."),
   themed("--sui-tint", { light: "rgba(15, 23, 42, 0.035)", dark: "rgba(255, 255, 255, 0.04)" }, "surface", "overlay", "Neutral tint that sets a block off its surface (rows, readers, pills)."),
@@ -135,16 +144,30 @@ export const SUI_TOKENS: readonly SuiToken[] = Object.freeze([
   themed("--sui-shadow", { light: "0 10px 34px rgba(15, 23, 42, 0.1)", dark: "0 10px 34px rgba(0, 0, 0, 0.22)" }, "shadow", "decorative", "Panel shadow."),
   themed("--sui-shadow-lg", { light: "0 16px 40px rgba(15, 23, 42, 0.16)", dark: "0 16px 40px rgba(0, 0, 0, 0.34)" }, "shadow", "decorative", "Popover, dialog and toast shadow."),
   themed("--sui-shadow-color", { light: "rgba(15, 23, 42, 0.12)", dark: "rgba(0, 0, 0, 0.22)" }, "shadow", "decorative", "Colour of small, directional shadows (pinned columns, raised buttons)."),
+  // Liquid Glass: the material of the functional layer (controls and navigation
+  // floating over content). Solid (--sui-popover) under reduced transparency.
+  themed("--sui-glass", { light: "rgba(255, 255, 255, 0.72)", dark: "rgba(24, 36, 56, 0.72)" }, "surface", "surface", "Glass fill of controls and floating layers (buttons, tab strips, popovers, toasts)."),
+  themed("--sui-glass-thick", { light: "rgba(255, 255, 255, 0.88)", dark: "rgba(17, 29, 47, 0.88)" }, "surface", "surface", "Thicker glass for larger, longer-lived surfaces (sheets, rails, detail popovers)."),
+  themed("--sui-glass-sheen", { light: "rgba(255, 255, 255, 0.55)", dark: "rgba(255, 255, 255, 0.07)" }, "surface", "overlay", "Light caught across the top of a glass surface (the start of its sheen gradient)."),
+  themed("--sui-glass-edge", { light: "rgba(31, 45, 66, 0.14)", dark: "rgba(183, 203, 231, 0.16)" }, "border", "decorative", "Glass rim: the edge that separates glass from what is behind it."),
+  themed("--sui-glass-highlight", { light: "rgba(255, 255, 255, 0.9)", dark: "rgba(255, 255, 255, 0.14)" }, "border", "decorative", "Bright inner highlight along the top edge of glass."),
+  themed("--sui-glass-shadow", { light: "0 8px 24px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.08)", dark: "0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3)" }, "shadow", "decorative", "Elevation of floating glass."),
+  fixed("--sui-glass-blur", "24px", "material", "components.css", "Backdrop blur of glass; 0px under reduced transparency."),
+  fixed("--sui-glass-saturate", "180%", "material", "components.css", "Backdrop saturation of glass, so colour from behind carries through; 100% under reduced transparency."),
   // Corners
-  fixed("--sui-radius-sm", "6px", "radius", "components.css", "Small corner radius (chips, inputs)."),
-  fixed("--sui-radius-md", "8px", "radius", "components.css", "Medium corner radius."),
+  fixed("--sui-radius-sm", "8px", "radius", "components.css", "Small corner radius (inputs, code)."),
+  fixed("--sui-radius-md", "12px", "radius", "components.css", "Medium corner radius (cards)."),
   fixed("--sui-radius", "var(--sui-radius-md)", "radius", "components.css", "Default corner radius."),
-  fixed("--sui-radius-lg", "10px", "radius", "components.css", "Large corner radius (cards, bubbles)."),
+  fixed("--sui-radius-lg", "16px", "radius", "components.css", "Large corner radius (popovers, toasts, rails, bubbles)."),
+  fixed("--sui-radius-xl", "20px", "radius", "components.css", "Extra-large corner radius (dialogs, tab strips)."),
+  fixed("--sui-radius-pill", "999px", "radius", "components.css", "Capsule: buttons, tabs, badges and chips."),
   // Type
   fixed("--sui-mono", "ui-monospace, SFMono-Regular, Menlo, monospace", "font", "components.css", "Monospace face for ids, code and keys."),
   fixed("--sui-chat-text-size", "13px", "font", "components.css", "MessageBubble body text size."),
   // Motion
   fixed("--sui-duration", "120ms", "motion", "components.css", "Duration of every transition; 0s under prefers-reduced-motion: reduce."),
+  fixed("--sui-ease", "cubic-bezier(0.2, 0.8, 0.2, 1)", "motion", "components.css", "Easing of colour, opacity and border transitions."),
+  fixed("--sui-ease-spring", "cubic-bezier(0.34, 1.36, 0.64, 1)", "motion", "components.css", "Easing with a slight overshoot, for scale and position (presses, layers appearing)."),
   // Card body clamps (Card maxHeight)
   fixed("--sui-clamp-2xs", "80px", "clamp", "components.css", "Card body clamp, 2xs."),
   fixed("--sui-clamp-xs", "120px", "clamp", "components.css", "Card body clamp, xs."),

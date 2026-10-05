@@ -10,13 +10,19 @@
  * as below for one theme. */
 
 :root {
-  --sui-radius-sm: 6px;
-  --sui-radius-md: 8px;
+  --sui-radius-sm: 8px;
+  --sui-radius-md: 12px;
   --sui-radius: var(--sui-radius-md);
-  --sui-radius-lg: 10px;
+  --sui-radius-lg: 16px;
+  --sui-radius-xl: 20px;
+  --sui-radius-pill: 999px;
   --sui-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --sui-chat-text-size: 13px;
   --sui-duration: 120ms;
+  --sui-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --sui-ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --sui-glass-blur: 24px;
+  --sui-glass-saturate: 180%;
   --sui-clamp-2xs: 80px;
   --sui-clamp-xs: 120px;
   --sui-clamp-sm: 160px;
@@ -77,6 +83,12 @@
   --sui-shadow: 0 10px 34px rgba(15, 23, 42, 0.1);
   --sui-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.16);
   --sui-shadow-color: rgba(15, 23, 42, 0.12);
+  --sui-glass: rgba(255, 255, 255, 0.72);
+  --sui-glass-thick: rgba(255, 255, 255, 0.88);
+  --sui-glass-sheen: rgba(255, 255, 255, 0.55);
+  --sui-glass-edge: rgba(31, 45, 66, 0.14);
+  --sui-glass-highlight: rgba(255, 255, 255, 0.9);
+  --sui-glass-shadow: 0 8px 24px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
 /* Dark theme from the user's preference, unless the root pins light. */
@@ -125,6 +137,12 @@
     --sui-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
     --sui-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.34);
     --sui-shadow-color: rgba(0, 0, 0, 0.22);
+    --sui-glass: rgba(24, 36, 56, 0.72);
+    --sui-glass-thick: rgba(17, 29, 47, 0.88);
+    --sui-glass-sheen: rgba(255, 255, 255, 0.07);
+    --sui-glass-edge: rgba(183, 203, 231, 0.16);
+    --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+    --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -173,4 +191,10 @@
   --sui-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
   --sui-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.34);
   --sui-shadow-color: rgba(0, 0, 0, 0.22);
+  --sui-glass: rgba(24, 36, 56, 0.72);
+  --sui-glass-thick: rgba(17, 29, 47, 0.88);
+  --sui-glass-sheen: rgba(255, 255, 255, 0.07);
+  --sui-glass-edge: rgba(183, 203, 231, 0.16);
+  --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+  --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
