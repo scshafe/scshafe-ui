@@ -256,9 +256,10 @@ The full registry ships as `@scshafe/ui/tokens.css` and as data from `@scshafe/u
 | Surfaces | `--sui-bg` `--sui-panel` `--sui-card` `--sui-bg-elevated` `--sui-surface-2` `--sui-popover` `--sui-field` `--sui-bg-hover` `--sui-tint` `--sui-code-bg` `--sui-backdrop` |
 | Hairlines and controls | `--sui-line` `--sui-border` `--sui-border-strong` `--sui-border-hover` `--sui-field-border` `--sui-focus-ring` |
 | Floating layers | `--sui-shadow` `--sui-shadow-lg` `--sui-shadow-color` |
-| Corners | `--sui-radius-sm` `--sui-radius-md` `--sui-radius` `--sui-radius-lg` |
+| Glass | `--sui-glass` `--sui-glass-thick` `--sui-glass-sheen` `--sui-glass-edge` `--sui-glass-highlight` `--sui-glass-shadow` `--sui-glass-blur` `--sui-glass-saturate` |
+| Corners | `--sui-radius-sm` `--sui-radius-md` `--sui-radius` `--sui-radius-lg` `--sui-radius-xl` `--sui-radius-pill` |
 | Type | `--sui-mono` `--sui-chat-text-size` |
-| Motion | `--sui-duration` (0s under `prefers-reduced-motion: reduce`) |
+| Motion | `--sui-duration` (0s under `prefers-reduced-motion: reduce`) `--sui-ease` `--sui-ease-spring` |
 | Card clamps | `--sui-clamp-2xs` … `--sui-clamp-xl` |
 | Spacing | `--sui-space-none` `--sui-space-xs` … `--sui-space-2xl` |
 
@@ -278,10 +279,42 @@ Keep the contrast the package checks (4.5:1 for text, 3:1 for control boundaries
 ring, in both themes). Never fork the package CSS. `test/tokens.test.mjs` keeps the stylesheets
 and `SUI_TOKENS` identical for both themes.
 
+### Liquid Glass
+
+The controls and navigation are made of glass, after Apple's Liquid Glass: a translucent fill
+that lets the page behind show through, a sheen and a bright top edge, a rim and a soft shadow,
+capsule buttons, tabs, badges and chips, and concentric corners. Glass belongs to the
+functional layer that floats over content: buttons, tabs and their strips (`FocusTabs`, the
+server-rendered `navTabs`), popovers, tooltips, menus, toasts, sheets and the rail of a
+`RailWorkspace`. Content stays steady: cards, tables, readers, editors and messages keep solid
+surfaces and only share the geometry and the lit top edge. Popovers, toasts and sheets grow
+out of where they come from (`@starting-style` transitions on `--sui-duration`).
+
+Popovers, toasts and Card's "show full" button blur and saturate what is behind them
+(`backdrop-filter`). Larger layers, which can hold popovers, use the thicker
+`--sui-glass-thick` instead: `backdrop-filter` would make them the containing block of the
+fixed-position popovers inside them. Modal sheets blur the page through `::backdrop`.
+
+Glass turns into the solid `--sui-popover` surface, with no blur, under
+`prefers-reduced-transparency: reduce` and `prefers-contrast: more` (which also darkens the
+rim), and wherever `data-sui-transparency="reduce"` is set, on the root element or a subtree.
+Not every browser reports reduced transparency, so an app with an appearance setting should
+set the attribute itself (`SUI_TRANSPARENCY_ATTRIBUTE` from `@scshafe/ui/tokens`):
+
+```html
+<html data-sui-transparency="reduce">     <!-- solid surfaces instead of glass -->
+```
+
+To tune the material, re-declare the glass tokens like any other: a thinner `--sui-glass` or a
+smaller `--sui-glass-blur`, for example. Body text on glass is checked at 4.5:1 over *any*
+backdrop; secondary text is checked over the package's surfaces, so check it over your own
+imagery if you put glass over photographs.
+
 ## Accessibility
 
 The components target WCAG 2.2 AA. Every focusable element shows a `--sui-focus-ring` outline on
-`:focus-visible`, every transition respects `prefers-reduced-motion`, and the tests run axe-core
+`:focus-visible`, every transition respects `prefers-reduced-motion`, glass turns solid under reduced
+transparency and increased contrast, and the tests run axe-core
 over every component in both themes, a keyboard-focus check per interactive component and a
 contrast check of every text and control token pair. [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
 lists what is checked automatically, what is checked by hand, and what the host owns.

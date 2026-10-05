@@ -4,13 +4,19 @@
  * prefers-color-scheme, and data-sui-theme="light" | "dark" pins one. */
 
 :root {
-  --sui-radius-sm: 6px;
-  --sui-radius-md: 8px;
+  --sui-radius-sm: 8px;
+  --sui-radius-md: 12px;
   --sui-radius: var(--sui-radius-md);
-  --sui-radius-lg: 10px;
+  --sui-radius-lg: 16px;
+  --sui-radius-xl: 20px;
+  --sui-radius-pill: 999px;
   --sui-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --sui-chat-text-size: 13px;
   --sui-duration: 120ms;
+  --sui-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --sui-ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --sui-glass-blur: 24px;
+  --sui-glass-saturate: 180%;
   --sui-clamp-2xs: 80px;
   --sui-clamp-xs: 120px;
   --sui-clamp-sm: 160px;
@@ -64,6 +70,12 @@
   --sui-shadow: 0 10px 34px rgba(15, 23, 42, 0.1);
   --sui-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.16);
   --sui-shadow-color: rgba(15, 23, 42, 0.12);
+  --sui-glass: rgba(255, 255, 255, 0.72);
+  --sui-glass-thick: rgba(255, 255, 255, 0.88);
+  --sui-glass-sheen: rgba(255, 255, 255, 0.55);
+  --sui-glass-edge: rgba(31, 45, 66, 0.14);
+  --sui-glass-highlight: rgba(255, 255, 255, 0.9);
+  --sui-glass-shadow: 0 8px 24px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
 /* Dark theme from the user's preference, unless the root pins light. */
@@ -112,6 +124,12 @@
     --sui-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
     --sui-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.34);
     --sui-shadow-color: rgba(0, 0, 0, 0.22);
+    --sui-glass: rgba(24, 36, 56, 0.72);
+    --sui-glass-thick: rgba(17, 29, 47, 0.88);
+    --sui-glass-sheen: rgba(255, 255, 255, 0.07);
+    --sui-glass-edge: rgba(183, 203, 231, 0.16);
+    --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+    --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -160,6 +178,12 @@
   --sui-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
   --sui-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.34);
   --sui-shadow-color: rgba(0, 0, 0, 0.22);
+  --sui-glass: rgba(24, 36, 56, 0.72);
+  --sui-glass-thick: rgba(17, 29, 47, 0.88);
+  --sui-glass-sheen: rgba(255, 255, 255, 0.07);
+  --sui-glass-edge: rgba(183, 203, 231, 0.16);
+  --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+  --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Reduced motion: every transition runs for --sui-duration, which drops to 0s
@@ -168,6 +192,51 @@
 @media (prefers-reduced-motion: reduce) {
   :root { --sui-duration: 0s; }
 }
+
+/* Reduced transparency and increased contrast: glass turns into the opaque
+ * floating surface, with no blur, sheen or saturation, in both themes; more
+ * contrast also darkens the rim. data-sui-transparency="reduce" does the same
+ * on the root element or a subtree, for hosts that offer the choice themselves
+ * (not every browser reports prefers-reduced-transparency). [data-sui-theme]
+ * repeats it where a subtree pins a theme, so the fill follows that theme. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root, [data-sui-theme] {
+    --sui-glass: var(--sui-popover);
+    --sui-glass-thick: var(--sui-popover);
+    --sui-glass-sheen: transparent;
+    --sui-glass-blur: 0px;
+    --sui-glass-saturate: 100%;
+  }
+}
+@media (prefers-contrast: more) {
+  :root, [data-sui-theme] { --sui-glass-edge: var(--sui-border-strong); }
+}
+[data-sui-transparency="reduce"], [data-sui-transparency="reduce"] [data-sui-theme] {
+  --sui-glass: var(--sui-popover);
+  --sui-glass-thick: var(--sui-popover);
+  --sui-glass-sheen: transparent;
+  --sui-glass-blur: 0px;
+  --sui-glass-saturate: 100%;
+}
+
+/* ============ Liquid Glass ============
+ * Glass is the material of the functional layer: controls and navigation that
+ * float over content (buttons, tabs and their strips, popovers, menus, toasts,
+ * sheets, rails). Content surfaces (cards, tables, readers, editors, messages)
+ * stay steady and only share the geometry and the lit top edge.
+ *
+ * A glass surface is a translucent --sui-glass fill under a --sui-glass-sheen
+ * gradient, a --sui-glass-edge rim, an inner --sui-glass-highlight along the top
+ * and a soft --sui-glass-shadow. Real backdrop blur (backdrop-filter) is kept to
+ * leaf layers: Popover, Toast and Card's "show full" button. backdrop-filter
+ * makes an element the containing block of its fixed-position descendants, and
+ * Popover renders in place with position: fixed, so a blurred rail, strip,
+ * sheet or card would trap and misplace the menus inside it. A layer that cannot
+ * blur and may float over busy content takes the thicker --sui-glass-thick
+ * fill instead, and modal layers blur the page through ::backdrop.
+ * Corners are concentric: an inset child's radius is its container's minus the
+ * padding between them. Layers appear from where they come from (@starting-style
+ * at the end of this file); every transition still runs on --sui-duration. */
 
 /* Kbd — keyboard-key badges. */
 .sui-kbd {
@@ -191,16 +260,18 @@
 .sui-kbd-combo { display: inline-flex; gap: 3px; align-items: center; }
 
 /* Sheet — native <dialog> slide-in / centered modal. */
-.sui-sheet { color: var(--sui-text); background: var(--sui-popover); border: 1px solid var(--sui-line); border-radius: var(--sui-radius); padding: 0; box-shadow: var(--sui-shadow-lg); max-width: 100vw; max-height: 100vh; }
-.sui-sheet::backdrop { background: var(--sui-backdrop, rgba(0, 0, 0, 0.45)); }
-.sui-sheet--right { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(560px, 100vw); height: 100vh; max-height: 100vh; border-left: 1px solid var(--sui-line); border-right: 0; border-top: 0; border-bottom: 0; border-radius: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+/* Thick glass: a centered sheet floats with large concentric corners; the
+ * right-hand sheet is anchored full-height to the edge for longer work. */
+.sui-sheet { color: var(--sui-text); background-color: var(--sui-glass-thick); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent 120px); border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-xl); padding: 0; box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-shadow-lg); max-width: 100vw; max-height: 100vh; transition: opacity calc(var(--sui-duration) * 2) var(--sui-ease), scale calc(var(--sui-duration) * 2) var(--sui-ease-spring), translate calc(var(--sui-duration) * 2) var(--sui-ease-spring); }
+.sui-sheet::backdrop { background: var(--sui-backdrop, rgba(0, 0, 0, 0.45)); -webkit-backdrop-filter: blur(calc(var(--sui-glass-blur) / 3)); backdrop-filter: blur(calc(var(--sui-glass-blur) / 3)); transition: opacity calc(var(--sui-duration) * 2) var(--sui-ease); }
+.sui-sheet--right { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(560px, 100vw); height: 100vh; max-height: 100vh; border-left: 1px solid var(--sui-glass-edge); border-right: 0; border-top: 0; border-bottom: 0; border-radius: 0; box-shadow: inset 1px 0 0 var(--sui-glass-highlight), var(--sui-shadow-lg); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
 .sui-sheet--center { width: min(460px, calc(100vw - 32px)); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
-.sui-sheet__header { padding: 12px 16px; border-bottom: 1px solid var(--sui-line); display: grid; gap: 4px; }
-.sui-sheet__title { margin: 0; font-size: 15px; font-weight: 700; color: var(--sui-text); }
+.sui-sheet__header { padding: 14px 18px; border-bottom: 1px solid var(--sui-line); display: grid; gap: 4px; }
+.sui-sheet__title { margin: 0; font-size: 15px; font-weight: 700; color: var(--sui-text-strong); }
 .sui-sheet__description { margin: 0; color: var(--sui-muted); font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
-.sui-sheet__body { padding: 12px 16px; overflow: auto; min-height: 0; }
+.sui-sheet__body { padding: 12px 18px; overflow: auto; min-height: 0; }
 .sui-sheet__body:empty { padding: 0; }
-.sui-sheet__footer { padding: 10px 16px; border-top: 1px solid var(--sui-line); display: inline-flex; gap: 8px; align-items: center; justify-content: flex-end; background: var(--sui-tint); }
+.sui-sheet__footer { padding: 10px 18px; border-top: 1px solid var(--sui-line); display: inline-flex; gap: 8px; align-items: center; justify-content: flex-end; background: var(--sui-tint); }
 
 /* PinnedDataTable — sticky-header / pinned-column data table. */
 .sui-data-table-scroll { min-width: 0; min-height: 0; overflow: auto; scrollbar-gutter: stable; }
@@ -276,17 +347,22 @@
   max-width: min(360px, calc(100vw - 16px));
   max-height: calc(100vh - 16px);
   padding: 6px;
-  border: 1px solid var(--sui-border-strong);
-  border-radius: var(--sui-radius-md);
-  background: var(--sui-popover);
+  border: 1px solid var(--sui-glass-edge);
+  border-radius: var(--sui-radius-lg);
+  background-color: var(--sui-glass);
+  background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent 48px);
   color: var(--sui-text);
-  box-shadow: var(--sui-shadow-lg);
+  box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow);
+  -webkit-backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate));
+  backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate));
   overflow: auto;
+  transition: opacity calc(var(--sui-duration) * 1.5) var(--sui-ease), scale calc(var(--sui-duration) * 2) var(--sui-ease-spring);
 }
-.sui-popover-side--top { transform: translateX(-50%); }
-.sui-popover-side--bottom { transform: translateX(-50%); }
-.sui-popover-side--left { transform: translateY(-50%); }
-.sui-popover-side--right { transform: translateY(-50%); }
+/* Each side grows out of the edge that faces its anchor. */
+.sui-popover-side--top { transform: translateX(-50%); transform-origin: 50% 100%; }
+.sui-popover-side--bottom { transform: translateX(-50%); transform-origin: 50% 0; }
+.sui-popover-side--left { transform: translateY(-50%); transform-origin: 100% 50%; }
+.sui-popover-side--right { transform: translateY(-50%); transform-origin: 0 50%; }
 
 /* HoverCard content + Tooltip. */
 .sui-hover-card-content { display: flex; flex-direction: column; gap: 6px; min-width: 200px; font-size: 12px; color: var(--sui-text); }
@@ -309,8 +385,8 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  border-radius: var(--sui-radius-sm);
-  padding: 3px 6px;
+  border-radius: var(--sui-radius-pill);
+  padding: 3px 8px;
   border: 1px solid var(--sui-line);
   background: var(--sui-tint);
   font-size: 11px;
@@ -351,7 +427,7 @@
 .sui-input-field { display: flex; flex-direction: column; gap: 4px; }
 .sui-input-field-label { color: var(--sui-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .sui-input-field-required { color: var(--sui-tone-red-text); }
-.sui-input-field input, .sui-text-area-field textarea { background: var(--sui-field); border: 1px solid var(--sui-field-border); border-radius: var(--sui-radius-sm); padding: 6px 10px; color: var(--sui-text); font: inherit; font-size: 13px; }
+.sui-input-field input, .sui-text-area-field textarea { background: var(--sui-field); border: 1px solid var(--sui-field-border); border-radius: var(--sui-radius-sm); padding: 6px 10px; color: var(--sui-text); font: inherit; font-size: 13px; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease); }
 .sui-input-field input:focus, .sui-text-area-field textarea:focus, .sui-select-field select:focus { border-color: color-mix(in srgb, var(--sui-accent) 45%, transparent); background: color-mix(in srgb, var(--sui-accent) 6%, transparent); }
 .sui-input-field input:disabled { opacity: 0.5; cursor: not-allowed; }
 .sui-input-field input[readonly] { background: var(--sui-tint); }
@@ -392,7 +468,7 @@
 .sui-reader-body { color: var(--sui-text); font-size: 13px; line-height: 1.55; }
 
 /* Panel + PanelHeader — default `panel` / `sui-panel-header` classes. */
-.sui-panel { border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: linear-gradient(180deg, var(--sui-tint), var(--sui-tint)); box-shadow: var(--sui-shadow); padding: 8px 10px; margin-bottom: 8px; }
+.sui-panel { border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: linear-gradient(180deg, var(--sui-tint), var(--sui-tint)); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-shadow); padding: 8px 10px; margin-bottom: 8px; }
 .sui-panel h2 { margin: 0 0 4px; font-size: 15px; }
 .sui-panel h3, .sui-panel h4, .sui-panel h5, .sui-panel h6 { letter-spacing: 0; margin: 0 0 4px; }
 .sui-panel-header { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 6px; }
@@ -406,50 +482,59 @@
  * =========================================================================== */
 
 /* HoverButton — small circular icon button revealed on parent hover. */
-.sui-hover-button { display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; border: 0; background: transparent; color: var(--sui-muted); border-radius: 50%; cursor: pointer; opacity: 0; transition: opacity var(--sui-duration) ease, background var(--sui-duration) ease, color var(--sui-duration) ease, transform var(--sui-duration) ease; flex: 0 0 auto; }
+.sui-hover-button { display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; border: 0; background: transparent; color: var(--sui-muted); border-radius: 50%; cursor: pointer; opacity: 0; transition: opacity var(--sui-duration) var(--sui-ease), background var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); flex: 0 0 auto; }
 .sui-hover-button--size-sm { width: 16px; height: 16px; }
 .sui-hover-button--size-md { width: 20px; height: 20px; }
 .sui-hover-button--size-lg { width: 24px; height: 24px; }
 .sui-hover-button:hover { background: color-mix(in srgb, var(--sui-accent) 18%, transparent); color: var(--sui-text); }
 .sui-hover-button:focus-visible { opacity: 1; }
+.sui-hover-button:active:not(:disabled) { scale: 0.9; }
 .sui-hover-button:disabled { cursor: not-allowed; opacity: 0.35; }
 .sui-hover-button--danger:hover { background: color-mix(in srgb, var(--sui-tone-red) 12%, transparent); color: var(--sui-tone-red-text); }
 .sui-hover-button--accent:hover { background: color-mix(in srgb, var(--sui-accent) 18%, transparent); color: var(--sui-accent); }
 .sui-hover-host:hover .sui-hover-button, .sui-hover-host:focus-within .sui-hover-button, .sui-hover-button:focus-visible { opacity: 1; }
 
-/* Button + IconButton. */
-.sui-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); background: var(--sui-field); color: var(--sui-text); padding: 6px 10px; font: inherit; font-weight: 600; line-height: 1; cursor: pointer; transition: border-color var(--sui-duration) ease, background var(--sui-duration) ease, color var(--sui-duration) ease; }
-.sui-button:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-accent) 40%, transparent); background: color-mix(in srgb, var(--sui-accent) 8%, transparent); }
+/* Button + IconButton — glass capsules: lit with the accent on hover, pressed
+ * in on :active. They sit on steady surfaces, so they take no backdrop-filter
+ * (each filtered surface costs a rendering pass). Variants set
+ * background-color, so the sheen (background-image) stays. */
+.sui-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-pill); background-color: var(--sui-glass); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 2px var(--sui-shadow-color); color: var(--sui-text); padding: 6px 12px; font: inherit; font-weight: 600; line-height: 1; cursor: pointer; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-button:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-accent) 40%, transparent); background-color: color-mix(in srgb, var(--sui-accent) 8%, var(--sui-glass)); }
+.sui-button:active:not(:disabled) { scale: 0.96; box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 0 0 3px color-mix(in srgb, var(--sui-accent) 14%, transparent); }
 .sui-button:disabled { opacity: 0.48; cursor: not-allowed; }
-.sui-button-primary { border-color: color-mix(in srgb, var(--sui-accent) 56%, transparent); background: color-mix(in srgb, var(--sui-accent) 14%, transparent); font-weight: 700; }
-.sui-button-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--sui-accent) 20%, transparent); }
-.sui-button-secondary { border-color: var(--sui-border-strong); background: var(--sui-tint); color: var(--sui-text); }
-.sui-button-ghost { border-color: transparent; background: transparent; color: var(--sui-muted); padding: 4px 6px; }
-.sui-button-ghost:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-accent) 32%, transparent); background: color-mix(in srgb, var(--sui-accent) 6%, transparent); color: var(--sui-text); }
-.sui-button-tab { border-color: var(--sui-line); background: var(--sui-tint); color: var(--sui-muted); }
-.sui-button-tab:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-accent) 36%, transparent); background: color-mix(in srgb, var(--sui-accent) 8%, transparent); }
-.sui-button-tab.sui-button-active { border-color: color-mix(in srgb, var(--sui-accent) 62%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--sui-accent) 20%, transparent), color-mix(in srgb, var(--sui-tone-purple) 12%, transparent)); color: var(--sui-text); box-shadow: 0 6px 18px var(--sui-shadow-color); }
-.sui-button-chip { padding: 3px 8px; font-size: 11px; }
-.sui-button-active, .sui-button[aria-pressed="true"] { border-color: color-mix(in srgb, var(--sui-accent) 62%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--sui-accent) 20%, transparent), color-mix(in srgb, var(--sui-tone-purple) 12%, transparent)); color: var(--sui-text); }
+.sui-button-primary { border-color: color-mix(in srgb, var(--sui-accent) 56%, transparent); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); color: var(--sui-text-strong); font-weight: 700; }
+.sui-button-primary:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-accent) 72%, transparent); background-color: color-mix(in srgb, var(--sui-accent) 20%, var(--sui-glass)); }
+/* The default variant: glass with a firmer rim, so it reads as a control on a plain panel. */
+.sui-button-secondary { border-color: var(--sui-border-strong); color: var(--sui-text); }
+.sui-button-ghost { border-color: transparent; background-color: transparent; background-image: none; box-shadow: none; color: var(--sui-muted); padding: 4px 8px; }
+.sui-button-ghost:hover:not(:disabled) { border-color: transparent; background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
+.sui-button-tab { border-color: transparent; background-color: transparent; background-image: none; box-shadow: none; color: var(--sui-muted); }
+.sui-button-tab:hover:not(:disabled) { border-color: transparent; background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
+.sui-button-tab.sui-button-active { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); color: var(--sui-accent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); }
+.sui-button-chip { padding: 3px 9px; font-size: 11px; }
+.sui-button-active, .sui-button[aria-pressed="true"] { border-color: color-mix(in srgb, var(--sui-accent) 62%, transparent); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent), linear-gradient(135deg, color-mix(in srgb, var(--sui-accent) 20%, transparent), color-mix(in srgb, var(--sui-tone-purple) 12%, transparent)); color: var(--sui-text); }
 .sui-button-icon { min-width: 28px; height: 28px; padding: 0 8px; font-size: 14px; font-weight: 700; }
-.sui-button-danger { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background: color-mix(in srgb, var(--sui-tone-red) 12%, transparent); color: var(--sui-tone-red-text); }
-.sui-button-mini { padding: 4px 8px; font-size: 12px; }
+.sui-button-danger { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); color: var(--sui-tone-red-text); }
+.sui-button-danger:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-tone-red) 70%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); }
+.sui-button-mini { padding: 4px 9px; font-size: 12px; }
 
 /* Optional identity chip (@scshafe/ui/identity), using the host's existing tokens. */
 .sui-user-menu { display: inline-flex; align-items: center; gap: var(--sui-space-xs, 6px); min-width: 0; max-width: 100%; color: var(--sui-text); }
 .sui-user-menu-identity { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--sui-muted); }
 .sui-user-menu > a { flex-shrink: 0; text-decoration: none; }
 
-/* Tab — single tab button in a strip. */
-.sui-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-sm); background: transparent; color: var(--sui-muted); padding: 6px 10px; font: inherit; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color var(--sui-duration) ease, background var(--sui-duration) ease, color var(--sui-duration) ease; }
-.sui-tab:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-accent) 32%, transparent); background: color-mix(in srgb, var(--sui-accent) 6%, transparent); color: var(--sui-text); }
-.sui-tab-active { border-color: color-mix(in srgb, var(--sui-accent) 56%, transparent); background: color-mix(in srgb, var(--sui-accent) 14%, transparent); color: var(--sui-text); font-weight: 600; }
+/* Tab — single tab button in a strip: a clear capsule; the selected tab is a
+ * lens of glass with an accent label. */
+.sui-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-pill); background-color: transparent; color: var(--sui-muted); padding: 6px 12px; font: inherit; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-tab:not(.sui-tab-active):not(:disabled):hover { background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
+.sui-tab:active:not(:disabled) { scale: 0.96; }
+.sui-tab-active { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); color: var(--sui-accent); font-weight: 600; }
 .sui-tab:disabled { opacity: 0.42; cursor: not-allowed; }
 .sui-tab-label { white-space: nowrap; }
-.sui-tab-badge { background: color-mix(in srgb, var(--sui-accent) 16%, transparent); color: var(--sui-text); border: 1px solid color-mix(in srgb, var(--sui-accent) 32%, transparent); border-radius: 999px; padding: 0 6px; min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
+.sui-tab-badge { background: color-mix(in srgb, var(--sui-accent) 16%, transparent); color: var(--sui-text); border: 1px solid color-mix(in srgb, var(--sui-accent) 32%, transparent); border-radius: var(--sui-radius-pill); padding: 0 6px; min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
 /* Server-rendered navigation (@scshafe/ui/ssr): a strip of link tabs, and links styled as
  * tabs or buttons. */
-.sui-nav-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.sui-nav-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; width: fit-content; max-width: 100%; box-sizing: border-box; padding: 4px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-xl); background-color: var(--sui-glass-thick); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow); }
 a.sui-tab, a.sui-button { text-decoration: none; }
 a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0.42; cursor: not-allowed; }
 
@@ -466,9 +551,9 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 .sui-editable-name-text:hover { color: var(--sui-text-strong); }
 .sui-editable-name-text:focus-visible { border-radius: 2px; }
 .sui-editable-name--editing { gap: 4px; }
-.sui-editable-name-input { flex: 1 1 auto; min-width: 0; border: 1px solid var(--sui-field-border); border-radius: 4px; background: var(--sui-field); color: var(--sui-text); padding: 3px 6px; font: inherit; font-size: 13px; font-weight: 600; }
+.sui-editable-name-input { flex: 1 1 auto; min-width: 0; border: 1px solid var(--sui-field-border); border-radius: var(--sui-radius-sm); background: var(--sui-field); color: var(--sui-text); padding: 3px 6px; font: inherit; font-size: 13px; font-weight: 600; }
 .sui-editable-name-input:focus { border-color: var(--sui-accent); }
-.sui-editable-name-submit, .sui-editable-name-cancel { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: var(--sui-muted); border-radius: 4px; cursor: pointer; flex: 0 0 auto; }
+.sui-editable-name-submit, .sui-editable-name-cancel { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: var(--sui-muted); border-radius: var(--sui-radius-pill); cursor: pointer; flex: 0 0 auto; }
 .sui-editable-name-submit:hover, .sui-editable-name-submit:focus-visible { background: color-mix(in srgb, var(--sui-tone-green) 12%, transparent); color: var(--sui-tone-green-text); }
 .sui-editable-name-cancel:hover, .sui-editable-name-cancel:focus-visible { background: color-mix(in srgb, var(--sui-tone-red) 12%, transparent); color: var(--sui-tone-red-text); }
 .sui-editable-name-submit:disabled, .sui-editable-name-cancel:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -481,7 +566,7 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 
 /* Card / MetricCard — bounded card with optional HTML5 popover detail. */
 /* Card (REVAMP) — bounded card with optional HTML5 popover detail */
-.sui-card { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: var(--sui-space-sm); border: 1px solid var(--sui-border); border-radius: var(--sui-radius-md); background: var(--sui-card); gap: var(--sui-space-xs); transition: border-color var(--sui-duration) ease, background var(--sui-duration) ease; }
+.sui-card { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: var(--sui-space-sm); border: 1px solid var(--sui-border); border-radius: var(--sui-radius-md); background: var(--sui-card); box-shadow: inset 0 1px 0 var(--sui-glass-highlight); gap: var(--sui-space-xs); transition: border-color var(--sui-duration) var(--sui-ease), background var(--sui-duration) var(--sui-ease); }
 .sui-card:hover, .sui-card:focus-within { border-color: var(--sui-border-hover); background: var(--sui-bg-hover); }
 .sui-card-clamp--2xs { max-height: var(--sui-clamp-2xs); }
 .sui-card-clamp--xs { max-height: var(--sui-clamp-xs); }
@@ -517,22 +602,24 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 .sui-card-body--clamped > p { margin: 0; }
 .sui-card-footer { position: absolute; bottom: 4px; right: 4px; display: none; z-index: 1; }
 .sui-card:has(> .sui-card-body[data-sui-overflowing="true"]) > .sui-card-footer { display: flex; }
-.sui-card-show-full { background: var(--sui-bg); border: 1px solid var(--sui-border-strong); color: var(--sui-accent); font: inherit; font-size: 11px; cursor: pointer; padding: 1px 8px; border-radius: var(--sui-radius-sm); box-shadow: 0 1px 3px var(--sui-shadow-color); }
-.sui-card-show-full:hover { background: var(--sui-bg-elevated); border-color: var(--sui-border-hover); color: var(--sui-accent-hover); }
+/* "Show full" floats over the clamped text, so it is real glass. */
+.sui-card-show-full { background-color: var(--sui-glass); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); border: 1px solid var(--sui-glass-edge); color: var(--sui-accent); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; padding: 2px 10px; border-radius: var(--sui-radius-pill); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 2px 8px var(--sui-shadow-color); -webkit-backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-card-show-full:hover { background-color: color-mix(in srgb, var(--sui-accent) 8%, var(--sui-glass)); border-color: var(--sui-border-hover); color: var(--sui-accent-hover); }
+.sui-card-show-full:active { scale: 0.95; }
 /* Card detail popover (HTML5 popover API; positioned by browser) */
-.sui-card-detail-popover { border: 1px solid var(--sui-border-strong); border-radius: var(--sui-radius-lg); background: var(--sui-panel); color: var(--sui-text); padding: var(--sui-space-md); max-width: 80vw; max-height: 80vh; width: min(640px, 80vw); box-shadow: var(--sui-shadow-lg); overflow: auto; }
-.sui-card-detail-popover::backdrop { background: var(--sui-backdrop, rgba(0, 0, 0, 0.45)); backdrop-filter: blur(2px); }
+.sui-card-detail-popover { border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-xl); background-color: var(--sui-glass-thick); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent 120px); color: var(--sui-text); padding: var(--sui-space-lg); max-width: 80vw; max-height: 80vh; width: min(640px, 80vw); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-shadow-lg); overflow: auto; transition: opacity calc(var(--sui-duration) * 2) var(--sui-ease), scale calc(var(--sui-duration) * 2) var(--sui-ease-spring); }
+.sui-card-detail-popover::backdrop { background: var(--sui-backdrop, rgba(0, 0, 0, 0.45)); -webkit-backdrop-filter: blur(calc(var(--sui-glass-blur) / 3)); backdrop-filter: blur(calc(var(--sui-glass-blur) / 3)); transition: opacity calc(var(--sui-duration) * 2) var(--sui-ease); }
 .sui-card-detail-popover-header { display: flex; justify-content: space-between; align-items: center; gap: var(--sui-space-sm); margin-bottom: var(--sui-space-sm); }
-.sui-card-detail-close { background: transparent; border: 0; color: var(--sui-muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: var(--sui-radius-sm); }
+.sui-card-detail-close { background: transparent; border: 0; color: var(--sui-muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: var(--sui-radius-pill); }
 .sui-card-detail-close:hover { background: var(--sui-bg-hover); color: var(--sui-text); }
 .sui-card-detail-popover-body { overflow-wrap: anywhere; }
-.sui-metric-card { padding: 10px; border-radius: var(--sui-radius); background: var(--sui-surface-2); border: 1px solid var(--sui-line); }
+.sui-metric-card { padding: 10px 12px; border-radius: var(--sui-radius); background: var(--sui-surface-2); border: 1px solid var(--sui-line); box-shadow: inset 0 1px 0 var(--sui-glass-highlight); }
 .sui-metric-card span { display: block; color: var(--sui-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
 .sui-metric-card strong { display: block; font-size: 24px; margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 /* ChipList. */
 /* Chip (ChipList) */
-.sui-chip { display: inline-block; padding: 2px 6px; font-size: 11px; font-family: var(--sui-mono); background: var(--sui-tint); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); color: var(--sui-text); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.sui-chip { display: inline-block; padding: 2px 8px; font-size: 11px; font-family: var(--sui-mono); background: var(--sui-tint); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-pill); color: var(--sui-text); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .sui-chip[data-sui-chip-tone="green"] { background: color-mix(in srgb, var(--sui-tone-green) 10%, transparent); border-color: color-mix(in srgb, var(--sui-tone-green) 32%, transparent); color: var(--sui-tone-green-text); }
 .sui-chip[data-sui-chip-tone="yellow"] { background: color-mix(in srgb, var(--sui-tone-yellow) 10%, transparent); border-color: color-mix(in srgb, var(--sui-tone-yellow) 32%, transparent); color: var(--sui-tone-yellow-text); }
 .sui-chip[data-sui-chip-tone="orange"] { background: color-mix(in srgb, var(--sui-tone-orange) 10%, transparent); border-color: color-mix(in srgb, var(--sui-tone-orange) 32%, transparent); color: var(--sui-tone-orange-text); }
@@ -602,8 +689,8 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   align-items: center;
   max-width: 100%;
   border: 1px solid var(--sui-line);
-  border-radius: var(--sui-radius-sm);
-  padding: 2px 6px;
+  border-radius: var(--sui-radius-pill);
+  padding: 2px 8px;
   background: var(--sui-tint);
   color: var(--sui-muted);
   font-size: 11px;
@@ -616,13 +703,14 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 
 /* ToastTray. */
 .sui-toast-tray { position: fixed; bottom: 16px; right: 16px; display: grid; gap: 8px; max-width: min(420px, calc(100vw - 32px)); margin: 0; padding: 0; list-style: none; z-index: 9000; pointer-events: none; }
-.sui-toast { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 8px 10px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius); background: var(--sui-popover); color: var(--sui-text); font-size: 12px; box-shadow: var(--sui-shadow-lg); pointer-events: auto; }
-.sui-toast--success { border-color: color-mix(in srgb, var(--sui-tone-green) 45%, transparent); background: color-mix(in srgb, var(--sui-ok) 12%, var(--sui-popover)); }
-.sui-toast--error { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-popover)); color: var(--sui-tone-red-text); }
-.sui-toast--info { border-color: color-mix(in srgb, var(--sui-accent) 45%, transparent); background: color-mix(in srgb, var(--sui-accent) 12%, var(--sui-popover)); }
+/* A toast is a leaf layer floating over the page: real glass. */
+.sui-toast { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 8px 8px 14px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-lg); background-color: var(--sui-glass); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); color: var(--sui-text); font-size: 12px; box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow); -webkit-backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); pointer-events: auto; transition: opacity calc(var(--sui-duration) * 2) var(--sui-ease), scale calc(var(--sui-duration) * 2) var(--sui-ease-spring), translate calc(var(--sui-duration) * 2) var(--sui-ease-spring); }
+.sui-toast--success { border-color: color-mix(in srgb, var(--sui-tone-green) 45%, transparent); background-color: color-mix(in srgb, var(--sui-ok) 12%, var(--sui-glass)); }
+.sui-toast--error { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); color: var(--sui-tone-red-text); }
+.sui-toast--info { border-color: color-mix(in srgb, var(--sui-accent) 45%, transparent); background-color: color-mix(in srgb, var(--sui-accent) 12%, var(--sui-glass)); }
 .sui-toast-message { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; }
-.sui-toast-dismiss { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: inherit; opacity: 0.8; cursor: pointer; font-size: 14px; line-height: 1; }
-.sui-toast-dismiss:hover { opacity: 1; }
+.sui-toast-dismiss { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--sui-radius-pill); background: transparent; color: inherit; opacity: 0.8; cursor: pointer; font-size: 14px; line-height: 1; transition: opacity var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease); }
+.sui-toast-dismiss:hover { opacity: 1; background-color: var(--sui-tint); }
 
 /* ContextMenu / MoreActionsMenu. */
 .sui-context-menu-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 6px; min-width: 240px; }
@@ -635,15 +723,16 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 6px 8px;
+  padding: 7px 10px;
   border: 0;
-  border-radius: 4px;
+  border-radius: calc(var(--sui-radius-lg) - 6px);
   background: transparent;
   color: var(--sui-text);
   font: inherit;
   font-size: 12px;
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease);
 }
 .sui-context-menu-item > svg, .sui-context-menu-item > [data-sui-component="Icon"] { flex: 0 0 auto; color: var(--sui-muted); }
 .sui-context-menu-item:hover > svg, .sui-context-menu-item:hover > [data-sui-component="Icon"] { color: inherit; }
@@ -665,12 +754,12 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 .sui-data-table-column-menu-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 2px 4px; border-bottom: 1px solid var(--sui-line); }
 .sui-data-table-column-menu-header strong { font-size: 13px; color: var(--sui-text-strong); }
 .sui-data-table-column-menu-list { display: grid; gap: 4px; max-height: min(420px, calc(100vh - 180px)); overflow: auto; padding-right: 2px; }
-.sui-data-table-column-menu-row { display: grid; grid-template-columns: minmax(150px, 1fr) auto auto 78px auto; gap: 5px; align-items: center; padding: 4px; border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); background: var(--sui-tint); }
+.sui-data-table-column-menu-row { display: grid; grid-template-columns: minmax(150px, 1fr) auto auto 78px auto; gap: 5px; align-items: center; padding: 4px; border: 1px solid var(--sui-line); border-radius: calc(var(--sui-radius-lg) - 6px); background: var(--sui-tint); }
 .sui-data-table-column-visibility { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--sui-text); font-size: 12px; }
 .sui-data-table-column-visibility span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sui-data-table-column-width-input { min-width: 0; width: 78px; padding: 4px 5px; border: 1px solid var(--sui-field-border); border-radius: var(--sui-radius-sm); background: var(--sui-field); color: var(--sui-text); font: inherit; font-size: 12px; }
 .sui-data-table-column-width-input:focus { border-color: var(--sui-accent); }
-.sui-data-table-column-order-button { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); background: var(--sui-field); color: var(--sui-muted); cursor: pointer; }
+.sui-data-table-column-order-button { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 1px solid var(--sui-line); border-radius: var(--sui-radius-pill); background: var(--sui-field); color: var(--sui-muted); cursor: pointer; }
 .sui-data-table-column-order-button:hover, .sui-data-table-column-order-button:focus-visible { color: var(--sui-text); border-color: var(--sui-border-hover); background: var(--sui-accent-subtle); }
 .sui-data-table-column-order-button:disabled { opacity: 0.38; cursor: not-allowed; }
 
@@ -707,11 +796,13 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 .sui-collapsible-list-rail-header { display: flex; align-items: center; gap: 6px; min-height: 24px; }
 .sui-collapsible-list-rail-actions { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
 .sui-collapsible-list-rail-toggle {
-  width: 22px;
-  height: 22px;
-  border-radius: 11px;
-  border: 1px solid var(--sui-line);
-  background: var(--sui-card);
+  width: 24px;
+  height: 24px;
+  border-radius: var(--sui-radius-pill);
+  border: 1px solid var(--sui-glass-edge);
+  background-color: var(--sui-glass);
+  background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent);
+  box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 2px var(--sui-shadow-color);
   color: var(--sui-muted);
   display: grid;
   place-items: center;
@@ -736,16 +827,18 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   width: 240px;
   min-width: 0;
   min-height: 0;
-  border: 1px solid var(--sui-border);
+  border: 1px solid var(--sui-glass-edge);
   border-right: 0;
   border-radius: var(--sui-radius-lg);
-  background: var(--sui-card);
+  background-color: var(--sui-glass-thick);
+  background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent 160px);
+  box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow);
   padding-right: 0;
   overflow: hidden;
 }
 .sui-rail-workspace > .sui-collapsible-list-rail.sui-collapsible-list-rail--collapsed { flex: 0 0 36px; width: 36px; }
 .sui-rail-workspace > .sui-collapsible-list-rail .sui-collapsible-list-rail-resize-handle { right: 0; width: 8px; }
-.sui-rail-workspace > .sui-collapsible-list-rail > .sui-collapsible-list-rail-header { padding: 8px 10px; border-bottom: 1px solid var(--sui-border); background: var(--sui-bg-elevated); min-height: 36px; }
+.sui-rail-workspace > .sui-collapsible-list-rail > .sui-collapsible-list-rail-header { padding: 8px 10px; border-bottom: 1px solid var(--sui-glass-edge); background: var(--sui-tint); min-height: 40px; }
 .sui-rail-workspace > .sui-collapsible-list-rail > .sui-collapsible-list-rail-body { padding: 7px; }
 
 /* Responsive, owned here (the component skips the persisted inline width on
@@ -763,13 +856,18 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 /* ============ L1 — FocusTabs inner contract + TabPanelHeader ============ */
 /* FocusTabs: the strip, its buttons and their inner classes; hosts add their
  * own classes through the model. */
-.sui-focus-tabs { display: flex; align-items: center; gap: 4px; min-width: 0; overflow-x: auto; }
-.sui-focus-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-sm); background: transparent; color: var(--sui-muted); padding: 6px 8px; font: inherit; cursor: pointer; }
-.sui-focus-tab[aria-selected="true"] { border-color: color-mix(in srgb, var(--sui-accent) 56%, transparent); background: color-mix(in srgb, var(--sui-accent) 14%, transparent); color: var(--sui-text); }
+/* The strip is a floating capsule of thick glass (no backdrop-filter: tabs can
+ * hold tooltips and menus); its 4px padding leaves room for the focus ring,
+ * which the scrolling strip would otherwise clip, and makes the tabs concentric. */
+.sui-focus-tabs { display: flex; align-items: center; gap: 2px; width: fit-content; max-width: 100%; min-width: 0; box-sizing: border-box; overflow-x: auto; padding: 4px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-xl); background-color: var(--sui-glass-thick); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow); scrollbar-width: thin; }
+.sui-focus-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-pill); background-color: transparent; color: var(--sui-muted); padding: 6px 12px; font: inherit; cursor: pointer; white-space: nowrap; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-focus-tab:not([aria-selected="true"]):not(:disabled):hover { background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
+.sui-focus-tab:active:not(:disabled) { scale: 0.96; }
+.sui-focus-tab[aria-selected="true"] { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); color: var(--sui-accent); font-weight: 600; }
 .sui-focus-tab:disabled { opacity: 0.42; cursor: not-allowed; }
 .sui-focus-tab-icon { font-size: 14px; line-height: 1; }
 .sui-focus-tab-counts { display: inline-flex; flex-wrap: nowrap; gap: 4px; align-items: center; }
-.sui-focus-tab-count { color: var(--sui-muted); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-sm); padding: 1px 5px; background: var(--sui-tint); font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
+.sui-focus-tab-count { color: var(--sui-muted); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-pill); padding: 1px 6px; background: var(--sui-tint); font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
 .sui-focus-tabs-divider { flex: 0 0 1px; align-self: stretch; min-height: 26px; margin: 0 4px; background: var(--sui-line); }
 
 /* TabPanelHeader — the standardized panel header (self-contained; hosts may add
@@ -780,6 +878,21 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 .sui-tab-panel-aside { color: var(--sui-muted); font-size: 12px; white-space: nowrap; }
 .sui-tab-panel-actions { display: inline-flex; align-items: center; gap: 8px; }
 .sui-tab-panel-status { color: var(--sui-muted); font-size: 12px; }
+
+/* ============ Liquid Glass — layers appear from their origin ============
+ * Starting styles for a layer's first frame: it fades in and grows out of the
+ * edge facing its anchor (popovers), rises (toasts) or settles (dialogs). They
+ * are transitions on --sui-duration, so reduced motion makes them instant; no
+ * layer waits on its entrance before it takes input. */
+@starting-style {
+  .sui-popover { opacity: 0; scale: 0.94; }
+  .sui-toast { opacity: 0; scale: 0.94; translate: 0 12px; }
+  .sui-sheet--center { opacity: 0; scale: 0.96; }
+  .sui-sheet--right { opacity: 0; translate: 32px 0; }
+  .sui-sheet::backdrop { opacity: 0; }
+  .sui-card-detail-popover { opacity: 0; scale: 0.96; }
+  .sui-card-detail-popover::backdrop { opacity: 0; }
+}
 
 /* ============ Keyboard focus ============
  * Every focusable element a component renders shows the same ring on

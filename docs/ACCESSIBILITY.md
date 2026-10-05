@@ -27,8 +27,9 @@ shadow token has a value in each (`SUI_TOKENS[].light` / `.dark`, and
 | --- | --- | --- |
 | Keyboard | Every control is a native `button`, `a`, `input`, `select` or `textarea`, or has `tabindex="0"` and key handlers (Copyable: Enter and Space; column and rail resize handles: Left/Right, Shift for larger steps, Home/End, and Enter to reset the rail). No positive `tabindex`. | 2.1.1, 2.4.3 |
 | Focus visible | One rule gives every focusable element inside a component a 2px `--sui-focus-ring` outline on `:focus-visible` (drawn inward inside scrolling or clipping containers). No rule removes the outline. | 2.4.7, 1.4.11 |
-| Contrast | Text tokens reach 4.5:1, and control boundaries (`--sui-field-border`) and the focus ring 3:1, against every surface and tint the stylesheets use, in both themes. | 1.4.3, 1.4.11 |
-| Reduced motion | Every transition runs for `--sui-duration` (120ms), which `prefers-reduced-motion: reduce` sets to `0s`. There are no animations or script-driven motion. | 2.3.3 |
+| Contrast | Text tokens reach 4.5:1, and control boundaries (`--sui-field-border`) and the focus ring 3:1, against every surface and tint the stylesheets use, in both themes. Body text (`--sui-text`, `--sui-text-strong`) on glass reaches 4.5:1 over any backdrop, without counting on the blur. | 1.4.3, 1.4.11 |
+| Reduced motion | Every transition runs for `--sui-duration` (120ms), which `prefers-reduced-motion: reduce` sets to `0s`. Popovers, toasts and sheets appear through `@starting-style` transitions on the same duration, so they appear at once under reduced motion; no layer waits on its entrance before it takes input. There are no keyframe animations or script-driven motion. | 2.3.3 |
+| Reduced transparency | Glass (the translucent controls and floating layers) becomes the opaque `--sui-popover` surface with no blur under `prefers-reduced-transparency: reduce` and `prefers-contrast: more`, and under `data-sui-transparency="reduce"` on the root or a subtree, for browsers that do not report the preference. Increased contrast also darkens the glass rim. Every glass surface has a real border, so it keeps its edge in forced colours. | 1.4.3, 1.4.11 |
 | Names | Icon-only buttons take `aria-label` (IconButton `label`, HoverButton `label`); icons are `aria-hidden`; tables, dialogs, menus, separators and labelled groups carry names. | 4.1.2, 1.1.1 |
 | States | Tabs expose `aria-selected` / `aria-pressed`; toggles `aria-pressed`; resize handles `aria-valuenow`/`-min`/`-max`/`-text`. | 4.1.2 |
 | Errors | `Editor` and `EditableName` render their error with `role="alert"`; `InputField` marks `required`; toasts are `role="status"`, errors `role="alert"`. | 3.3.1, 4.1.3 |
@@ -43,6 +44,7 @@ shadow token has a value in each (`SUI_TOKENS[].light` / `.dark`, and
 | Keyboard focus | `test/keyboard-focus.test.mjs` | For each interactive component: its control is in the sequential focus order (positive `tabindex` first, then document order, skipping disabled, hidden and `tabindex="-1"` elements); pressing Tab to each element in that order focuses it, it matches `:focus-visible`, and its computed outline is a visible solid ring and it is not transparent. Components without controls must render nothing tabbable. No stylesheet rule removes or sets an outline outside `:focus-visible`. |
 | Themes | `test/theme.test.mjs`, `test/tokens.test.mjs` | Every themed token cascades its light value by default and its dark value when pinned (root and subtree); the three stylesheets declare the registry values in the light, preferred-dark and pinned-dark blocks; component rules use tokens, not colour literals. |
 | Reduced motion | `test/motion.test.mjs` | Every transition uses `var(--sui-duration)`; the reduced-motion block sets it to `0s`; no keyframes or script-driven motion. |
+| Glass | `test/glass.test.mjs`, `test/contrast.test.mjs` | Glass is translucent and its fallback opaque in both themes; reduced transparency, increased contrast and `data-sui-transparency="reduce"` make it solid (the attribute in the jsdom cascade too, inside a subtree pinned to the other theme); only leaf layers blur their backdrop; entrances are starting styles on transitioned properties. Body text over glass composited on black and on white reaches 4.5:1, on the same side of the text's luminance, so it does over every backdrop between them. |
 | Namespace | `test/namespace.test.mjs` | Every class and data attribute is in the `sui` namespace (not an accessibility check, but it keeps the render contract the checks above run against). |
 
 Not automated, and why:
@@ -80,6 +82,16 @@ operating system's reduced-motion setting on and off.
 6. **Forced colours / high contrast mode**: focus rings and control
    boundaries stay visible (outlines and borders are used, never
    background-only indication).
+7. **Glass over real content**: open popovers, tooltips and toasts, and
+   place the tab strip, over a photograph, a saturated illustration and
+   scrolling dense text, in both themes. Labels stay readable; secondary
+   (`--sui-muted`) and accent text are only token-checked over the package's
+   surfaces, so check them here. The selected tab stays identifiable at a
+   glance.
+8. **Reduced transparency and increased contrast**: with the operating
+   system's setting (where the browser reports it) and with
+   `data-sui-transparency="reduce"` on the root, glass is solid and nothing
+   blurs; with increased contrast the rims are darker.
 
 ## What the host is responsible for
 
