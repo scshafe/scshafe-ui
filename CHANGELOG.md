@@ -5,6 +5,52 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.5.0 — 2026-10-05
+
+Liquid Glass: the components take on a glass material after Apple's design language. Class
+names, markers and component APIs are unchanged. The look changes and so do two layouts
+(below), hence the minor version.
+
+### Changed
+
+- The functional layer is glass: a translucent fill, a sheen and a bright top edge, a rim and
+  a soft shadow. That covers `Button`/`IconButton`, `Tab`, `FocusTabs`, the server-rendered
+  `navTabs`, `Popover` (tooltips, hover cards, context and column menus), `Toast`, `Sheet`,
+  Card's detail popover and "show full" button, and the rail of a `RailWorkspace`. Popovers,
+  toasts and "show full" blur and saturate their backdrop. Larger layers use the thicker
+  `--sui-glass-thick`, because `backdrop-filter` would capture the fixed-position popovers
+  inside them, and modal layers blur the page through `::backdrop`.
+- Content stays steady: cards, tables, readers, editors and messages keep solid surfaces and
+  get only the new geometry and a lit top edge. The data table's sticky header stays opaque.
+- Geometry: buttons, tabs, badges, chips and record-meta pills are capsules, and corners are
+  larger (`--sui-radius-sm` 6→8px, `-md` 8→12px, `-lg` 10→16px) and concentric (menu items
+  follow the popover's corner, tabs their strip's).
+- Selected tabs (`Tab`, `FocusTabs`, an active `Button variant="tab"`) are a lens of glass
+  with an accent label, no longer an accent-bordered box. Buttons and tabs press in slightly on
+  `:active`, with a spring easing.
+- Layout: `FocusTabs` and `navTabs` strips are now as wide as their tabs (`width:
+  fit-content`, up to the container), with 4px of padding inside a rim. A host that relied on
+  the strip filling its row should give it `width: 100%`.
+- Popovers, toasts, sheets and the card detail popover appear from their origin
+  (`@starting-style` transitions on `--sui-duration`, so instant under reduced motion).
+
+### Added
+
+- Tokens: `--sui-glass`, `--sui-glass-thick`, `--sui-glass-sheen`, `--sui-glass-edge`,
+  `--sui-glass-highlight`, `--sui-glass-shadow` (light and dark), `--sui-glass-blur`,
+  `--sui-glass-saturate`, `--sui-radius-xl`, `--sui-radius-pill`, `--sui-ease` and
+  `--sui-ease-spring`. `SuiTokenCategory` gains `"material"`.
+- Reduced transparency: glass becomes the opaque `--sui-popover` surface without blur under
+  `prefers-reduced-transparency: reduce`, `prefers-contrast: more` (which also darkens the
+  rim) and `data-sui-transparency="reduce"` on the root or a subtree
+  (`SUI_TRANSPARENCY_ATTRIBUTE` from `@scshafe/ui/tokens`).
+- Tests: `test/glass.test.mjs` (the solid fallbacks, including the attribute in the cascade
+  under a subtree pinned to the other theme; blur only on leaf layers; entrances as starting
+  styles). `test/contrast.test.mjs` also checks body text on glass at 4.5:1 over any backdrop
+  in both themes.
+- `docs/ACCESSIBILITY.md`: reduced transparency, and manual checks for glass over real
+  content and with reduced transparency or increased contrast.
+
 ## 0.4.1 — 2026-10-01
 
 Acceptance (U4): the first-app guide, and two fixes it surfaced.
