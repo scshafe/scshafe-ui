@@ -27,6 +27,7 @@ const CASES = [
   ["InputField", h(ui.InputField, { id: "name", label: "Name", value: "", onChange() {} }), /<input/],
   ["SelectField", h(ui.SelectField, { id: "kind", label: "Kind", value: "a", options: [{ value: "a", label: "A" }], onChange() {} }), /<select/],
   ["TextAreaField", h(ui.TextAreaField, { id: "note", label: "Note", value: "", onChange() {} }), /<textarea/],
+  ["CheckboxField", h(ui.CheckboxField, { id: "agree", label: "Agree", checked: true, onChange() {} }), /<input[^>]*type="checkbox"/],
   ["Button", h(ui.Button, { label: "Save", variant: "primary" }), /class="sui-button[^"]*"/],
   // Status
   ["Status", h(ui.Status, { state: "running" }), /class="sui-badge sui-badge--green"/],
@@ -34,6 +35,7 @@ const CASES = [
   ["Kbd", h(ui.Kbd, { keys: ["Ctrl", "K"] }), /sui-kbd/],
   // Empty state
   ["EmptyState", h(ui.EmptyState, { message: "Nothing here yet." }), /Nothing here yet\./],
+  ["Banner", h(ui.Banner, { tone: "warn", title: "Held", text: "Paused." }), /class="sui-banner sui-banner--warn"[^>]*role="alert"/],
 ];
 
 for (const [name, element, shape] of CASES) {

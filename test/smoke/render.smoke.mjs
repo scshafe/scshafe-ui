@@ -3,7 +3,7 @@
 // classes, icons and store state.
 import React from "react";
 import { renderToString } from "react-dom/server";
-import { Button, EmptyState, Stack, Status, InputField } from "@scshafe/ui";
+import { Banner, Button, CheckboxField, EmptyState, Stack, Status, InputField } from "@scshafe/ui";
 import { SuiProviders, ToastTray, Toasts, Popovers, createSuiStore } from "@scshafe/ui/state";
 import { DefaultIconProvider } from "@scshafe/ui/icons";
 
@@ -15,10 +15,12 @@ const html = renderToString(
       h(Stack, { gap: "md" },
         h(Status, { state: "running" }),
         h(InputField, { id: "name", label: "Name", value: "", onChange() {} }),
+        h(CheckboxField, { id: "notify", label: "Notify me", checked: true, onChange() {} }),
+        h(Banner, { tone: "warn", title: "Held", text: "Paused.", dismissible: true }),
         h(Button, { label: "Save", icon: "action.copy", variant: "primary" }),
         h(EmptyState, { message: "Nothing here yet." })),
       h(ToastTray))));
-for (const marker of ["Stack", "Status", "InputField", "Button", "EmptyState", "ToastTray"]) {
+for (const marker of ["Stack", "Status", "InputField", "CheckboxField", "Banner", "Button", "EmptyState", "ToastTray"]) {
   if (!html.includes('data-sui-component="' + marker + '"')) {
     throw new Error("rendered markup lacks data-sui-component=" + marker + ": " + html.slice(0, 400));
   }

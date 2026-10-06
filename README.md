@@ -11,6 +11,9 @@ server-rendered adapter, which needs no React and no other peer.
 
 **New here?** [docs/FIRST-APP.md](docs/FIRST-APP.md) builds a React app and a server-rendered
 app from an empty directory, with the theme, reduced-motion and keyboard checks.
+**Moving an existing app over?** [docs/ADOPTING.md](docs/ADOPTING.md) covers registry access
+(locally, for agents and in CI and deploy builds), npm and pnpm, CommonJS apps, server-rendered
+and React apps, the Docker build secret, and theming.
 
 ## Install
 
@@ -97,10 +100,25 @@ icon-first, model-driven tab strip) and `TabPanelHeader` render inside it.
 
 **Components.** `Kbd` · `Sheet` · `PinnedDataTable` · `Tooltip` · `HoverCard` ·
 `Popover` · `Badge` · `Status` · `StatCount` · `Description` · `InputField` / `SelectField` /
-`TextAreaField` · `Identifier` · `Label` · `Title` · `Copyable` · `MarkdownContent` · `EmptyState` ·
+`TextAreaField` / `CheckboxField` · `Banner` · `Identifier` · `Label` · `Title` · `Copyable` · `MarkdownContent` · `EmptyState` ·
 `List` · `ListRow` · `Panel` / `PanelHeader` · `Reader` · `Button` / `IconButton` · `HoverButton` ·
 `Tab` · `Editor` · `EditableName` · `Card` / `MetricCard` · `ChipList` · `MessageBubble` ·
 `RecordMeta` · `InfiniteScrollSentinel`. `MarkdownEditor` is in `@scshafe/ui/editor`.
+
+**Checkbox and notice.** `CheckboxField` is a native checkbox with its label beside it and optional
+help text (`description`, tied with `aria-describedby`); with `onChange(checked)` it is
+controlled, without it a plain form field. `Banner` is an inline notice, the web counterpart of
+scshafe-qt's `SuiBanner`, with the same tones: `info`, `ok` (success), `warn` (warning) and
+`danger` (error). It takes `title`, `text` (or `children`), `actions`, and `dismissible` with
+`onDismiss` (or a controlled `open`). warn and danger are `role="alert"`, info and ok
+`role="status"`; a visually hidden prefix ("Warning: ") and a glyph carry the tone beyond colour.
+
+```tsx
+<Banner tone="warn" title="Endpoint held" text="Deliveries are paused." dismissible onDismiss={clear}
+  actions={<Button label="Resume" onClick={resume} />} />
+<CheckboxField id="notify" label="Email me when a run fails" checked={notify} onChange={setNotify}
+  description="At most one message an hour." />
+```
 
 **Seams.** A package cannot import its host, so live state is injected: popovers through
 `PopoverControllerContext` (mount `LocalPopoverProvider` for a store-free single-open controller,
@@ -217,9 +235,9 @@ response.end(String(page));
   count: 1–12 }` or `{ kind: "autoFit", minSize: "xs"…"xl" }`, 8–24rem) · `pane` · `scroll`;
   the frame `appShell` · `workspace` · `fill` · `documentPage`; navigation `tab` (a link with
   `href`, `aria-current="page"` when active) · `navTabs`; forms `title` · `description` · `label`
-  · `inputField` · `selectField` · `textAreaField` (with `name`) · `button` (a link with
-  `href`); status `badge` · `status` · `statCount` · `kbd` · `chipList` · `recordMeta` ·
-  `metricCard`; `emptyState` · `list` · `listRow` (title link with `href`) · `panel` ·
+  · `inputField` · `selectField` · `textAreaField` · `checkboxField` (with `name`) · `button` (a
+  link with `href`); status `badge` · `status` · `statCount` · `kbd` · `chipList` · `recordMeta` ·
+  `metricCard` · `banner` (dismissed by a link, `dismissHref`); `emptyState` · `list` · `listRow` (title link with `href`) · `panel` ·
   `panelHeader` · `tabPanelHeader` · `dataTable` (the `PinnedDataTable` markup, static). Low
   level: `html`, `trustedHtml`, `join`, `attrs`, `safeUrl`, `escapeHtml`, `renderContent`.
 - **React-only, by design.** Hover cards and tooltips, icon glyphs, column resizing and the

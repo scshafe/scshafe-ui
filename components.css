@@ -362,6 +362,31 @@
 .sui-select-field { display: inline-flex; align-items: center; gap: 6px; color: var(--sui-muted); font-size: 12px; }
 .sui-select-field select { background: var(--sui-field); border: 1px solid var(--sui-field-border); border-radius: var(--sui-radius-sm); padding: 4px 8px; color: var(--sui-text); font: inherit; }
 
+/* CheckboxField — a native checkbox (accent-color; the theme's color-scheme styles the box),
+ * its label beside it, and optional help text under the label. */
+.sui-checkbox-field { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 8px; row-gap: 2px; align-items: start; }
+.sui-checkbox-field-input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--sui-accent); cursor: pointer; }
+.sui-checkbox-field-label { color: var(--sui-text); font-size: 13px; line-height: 20px; cursor: pointer; }
+.sui-checkbox-field-required { color: var(--sui-tone-red-text); }
+.sui-checkbox-field-description { grid-column: 2; color: var(--sui-muted); font-size: 12px; line-height: 1.4; }
+.sui-checkbox-field-input:disabled, .sui-checkbox-field-input:disabled + .sui-checkbox-field-label { opacity: 0.5; cursor: not-allowed; }
+
+/* Banner — an inline notice across a pane or page. Tones: info (blue), ok (green), warn
+ * (yellow), danger (red), a 12% tone tint under the text (contrast-checked) and a 45% rim. */
+.sui-banner { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--sui-tone-blue) 45%, transparent); border-radius: var(--sui-radius-md); background: color-mix(in srgb, var(--sui-tone-blue) 12%, transparent); color: var(--sui-text); font-size: 13px; line-height: 1.4; }
+.sui-banner--ok { border-color: color-mix(in srgb, var(--sui-tone-green) 45%, transparent); background: color-mix(in srgb, var(--sui-tone-green) 12%, transparent); }
+.sui-banner--warn { border-color: color-mix(in srgb, var(--sui-tone-yellow) 45%, transparent); background: color-mix(in srgb, var(--sui-tone-yellow) 12%, transparent); }
+.sui-banner--danger { border-color: color-mix(in srgb, var(--sui-tone-red) 45%, transparent); background: color-mix(in srgb, var(--sui-tone-red) 12%, transparent); }
+.sui-banner-mark { display: inline-grid; place-items: center; flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; border: 1.5px solid currentColor; border-radius: 50%; color: var(--sui-tone-blue-text); font-size: 11px; font-weight: 700; line-height: 1; }
+.sui-banner-title { display: block; color: var(--sui-tone-blue-text); font-weight: 700; }
+.sui-banner--ok .sui-banner-mark, .sui-banner--ok .sui-banner-title { color: var(--sui-tone-green-text); }
+.sui-banner--warn .sui-banner-mark, .sui-banner--warn .sui-banner-title { color: var(--sui-tone-yellow-text); }
+.sui-banner--danger .sui-banner-mark, .sui-banner--danger .sui-banner-title { color: var(--sui-tone-red-text); }
+.sui-banner-body { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.sui-banner-actions { display: inline-flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sui-banner-dismiss { display: inline-grid; place-items: center; flex: 0 0 auto; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--sui-radius-sm); background: transparent; color: var(--sui-text); font: inherit; font-size: 16px; line-height: 1; text-decoration: none; cursor: pointer; transition: background var(--sui-duration) ease; }
+.sui-banner-dismiss:hover { background: var(--sui-bg-hover); }
+
 /* Copyable. */
 .sui-copyable { display: inline-flex; align-items: baseline; gap: 4px; font: inherit; color: inherit; background: color-mix(in srgb, var(--sui-accent) 8%, transparent); border: 1px solid color-mix(in srgb, var(--sui-accent) 16%, transparent); border-radius: 4px; padding: 0 4px; margin: 0 1px; cursor: copy; max-width: 100%; text-align: left; vertical-align: baseline; transition: background var(--sui-duration) ease, border-color var(--sui-duration) ease, color var(--sui-duration) ease, transform var(--sui-duration) ease; }
 .sui-copyable > * { min-width: 0; }

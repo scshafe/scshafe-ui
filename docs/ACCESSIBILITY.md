@@ -31,7 +31,8 @@ shadow token has a value in each (`SUI_TOKENS[].light` / `.dark`, and
 | Reduced motion | Every transition runs for `--sui-duration` (120ms), which `prefers-reduced-motion: reduce` sets to `0s`. There are no animations or script-driven motion. | 2.3.3 |
 | Names | Icon-only buttons take `aria-label` (IconButton `label`, HoverButton `label`); icons are `aria-hidden`; tables, dialogs, menus, separators and labelled groups carry names. | 4.1.2, 1.1.1 |
 | States | Tabs expose `aria-selected` / `aria-pressed`; toggles `aria-pressed`; resize handles `aria-valuenow`/`-min`/`-max`/`-text`. | 4.1.2 |
-| Errors | `Editor` and `EditableName` render their error with `role="alert"`; `InputField` marks `required`; toasts are `role="status"`, errors `role="alert"`. | 3.3.1, 4.1.3 |
+| Errors | `Editor` and `EditableName` render their error with `role="alert"`; `InputField` and `CheckboxField` mark `required`; toasts are `role="status"`, errors `role="alert"`; a `Banner` is `role="alert"` for warn and danger and `role="status"` for info and ok, and starts with a visually hidden tone prefix ("Warning: "), so the tone is not carried by colour alone. | 3.3.1, 4.1.3, 1.4.1 |
+| Checkboxes | `CheckboxField` is a native `input type="checkbox"` named by its `<label for>`, with its help text tied by `aria-describedby`; the box takes `accent-color: var(--sui-accent)` and the theme's `color-scheme`, so the browser draws it in both themes and in forced colours. The label is part of the click target. | 1.3.1, 4.1.2, 2.5.8 |
 | Target size | Package controls are at least 24px, except HoverButton `size="sm"` (16px) and `"md"` (20px), which rely on the spacing exception. | 2.5.8 |
 
 ## Automated checks (`pnpm test`)
@@ -63,8 +64,9 @@ operating system's reduced-motion setting on and off.
 
 1. **Screen reader pass** (NVDA or VoiceOver) over the catalog components:
    names and roles are announced as intended; toasts are announced once
-   (status politely, errors assertively); a ConfirmDialog announces its title
-   and message. Note where focus lands after a Sheet closes: the Sheet unmounts
+   (status politely, errors assertively); a Banner inserted after load is
+   announced with its tone prefix, and a checkbox reads its label, state and
+   help text; a ConfirmDialog announces its title and message. Note where focus lands after a Sheet closes: the Sheet unmounts
    its dialog, so the host may need to move focus back to the trigger.
 2. **Focus not obscured (2.4.11)**: tabbing through a PinnedDataTable with a
    sticky header and pinned column, and past a ToastTray in the corner, never

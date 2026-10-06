@@ -650,6 +650,48 @@ export function textAreaField(props: TextAreaFieldProps): SafeHtml {
   ]);
 }
 
+export interface CheckboxFieldProps {
+  id: string;
+  /** The visible label; it names the checkbox through `<label for>`. */
+  label: Content;
+  /** The form field name (a checked box sends name=value; an unchecked one sends nothing). */
+  name?: string;
+  /** What a checked box sends (the browser default is "on"). */
+  value?: string;
+  checked?: boolean;
+  /** Help text under the label, tied to the checkbox with aria-describedby. */
+  description?: Content;
+  required?: boolean;
+  disabled?: boolean;
+  className?: string;
+  attributes?: ExtraAttributes;
+}
+
+/** A labelled checkbox (the React CheckboxField's markup). */
+export function checkboxField(props: CheckboxFieldProps): SafeHtml {
+  const descriptionId = hasContent(props.description ?? null) ? `${props.id}-description` : undefined;
+  const describedBy = [props.attributes?.["aria-describedby"], descriptionId].filter(Boolean).join(" ") || undefined;
+  return element("div", { class: classes("sui-checkbox-field", props.className), "data-sui-component": "CheckboxField" }, [
+    voidElement("input", {
+      ...props.attributes,
+      id: props.id,
+      type: "checkbox",
+      class: "sui-checkbox-field-input",
+      name: props.name,
+      value: props.value,
+      checked: props.checked ?? false,
+      disabled: props.disabled ?? false,
+      required: props.required ?? false,
+      "aria-describedby": describedBy
+    }),
+    element("label", { class: "sui-checkbox-field-label", for: props.id }, [
+      props.label,
+      props.required ? safe('<span class="sui-checkbox-field-required" aria-hidden="true"> *</span>') : null
+    ]),
+    descriptionId ? element("span", { class: "sui-checkbox-field-description", id: descriptionId }, props.description) : null
+  ]);
+}
+
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
 export interface ButtonProps {
@@ -816,6 +858,64 @@ export function metricCard(props: MetricCardProps): SafeHtml {
     element("span", {}, props.label),
     element("strong", {}, props.value),
     props.detail ? element("small", {}, props.detail) : null
+  ]);
+}
+
+// ---------------------------------------------------------------------------------------------
+// Banner: an inline notice (the React Banner's markup)
+
+/** info, ok (success), warn (warning), danger (error): the native SuiBanner's tones. */
+export type BannerTone = "info" | "ok" | "warn" | "danger";
+
+const BANNER_TONES: Readonly<Record<BannerTone, { mark: string; label: string }>> = {
+  info: { mark: "i", label: "Information" },
+  ok: { mark: "✓", label: "Success" },
+  warn: { mark: "!", label: "Warning" },
+  danger: { mark: "!", label: "Error" }
+};
+
+export interface BannerProps {
+  tone?: BannerTone;
+  title?: Content;
+  /** The message. `children` takes its place when given. */
+  text?: Content;
+  children?: Content;
+  /** Links or form buttons beside the message. */
+  actions?: Content;
+  /** The Dismiss link's target, where the page is without the notice (e.g. the same page without the query
+   * parameter that raised it). No client JavaScript, so dismissing is a navigation. */
+  dismissHref?: string;
+  /** The dismiss link's accessible name. */
+  dismissLabel?: string;
+  /** The live-region role; by default warn and danger are "alert", info and ok "status". `null` renders none. */
+  role?: "alert" | "status" | "note" | null;
+  /** The visually hidden prefix (default by tone, e.g. "Warning"); `null` renders none. */
+  toneLabel?: string | null;
+  id?: string;
+  className?: string;
+}
+
+export function banner(props: BannerProps): SafeHtml {
+  const tone: BannerTone = Object.hasOwn(BANNER_TONES, String(props.tone ?? "info")) ? (props.tone ?? "info") : "info";
+  const details = BANNER_TONES[tone];
+  const role = props.role === null ? undefined : oneOf(props.role ?? undefined, ["alert", "status", "note"], tone === "warn" || tone === "danger" ? "alert" : "status", "role");
+  const prefix = props.toneLabel === undefined ? details.label : props.toneLabel;
+  const message = props.children ?? props.text;
+  return element("div", {
+    id: props.id,
+    class: classes("sui-banner", `sui-banner--${tone}`, props.className),
+    role,
+    "data-sui-component": "Banner",
+    "data-sui-tone": tone
+  }, [
+    element("span", { class: "sui-banner-mark", "aria-hidden": "true" }, details.mark),
+    element("div", { class: "sui-banner-body" }, [
+      prefix ? element("span", { class: "sui-visually-hidden" }, `${prefix}: `) : null,
+      hasContent(props.title ?? null) ? element("strong", { class: "sui-banner-title" }, props.title) : null,
+      hasContent(message ?? null) ? element("div", { class: "sui-banner-text" }, message) : null
+    ]),
+    hasContent(props.actions ?? null) ? element("div", { class: "sui-banner-actions" }, props.actions) : null,
+    props.dismissHref !== undefined ? element("a", { class: "sui-banner-dismiss", href: props.dismissHref, "aria-label": props.dismissLabel ?? "Dismiss" }, "×") : null
   ]);
 }
 
