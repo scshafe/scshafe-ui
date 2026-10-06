@@ -25,9 +25,9 @@ No pnpm? `corepack enable pnpm` installs the shim. If that fails with a permissi
 (a system-wide Node), use a directory you own that is on your `PATH`:
 `corepack enable --install-directory ~/.local/bin pnpm`.
 
-**Read access to the package.** `@scshafe/ui` is a private package on GitHub Packages. You need
-a GitHub personal access token (classic) with the `read:packages` scope, from an account that
-may read the `scshafe` packages. It lives in your **user-level** `~/.npmrc` only, never in a
+**Read access to the package.** `@scshafe/ui` is a public package on GitHub Packages, whose npm
+registry still requires a token for every install. You need a GitHub personal access token
+(classic) with the `read:packages` scope. It lives in your **user-level** `~/.npmrc` only, never in a
 project and never in a terminal's output. Check whether one is configured (this prints a count,
 never the token):
 
@@ -461,6 +461,8 @@ handler.
   still owns.
 - Pin exact versions (`--save-exact`) and upgrade deliberately: read the
   [CHANGELOG](../CHANGELOG.md) first.
+- Moving an existing app over (npm, CommonJS, CI and the Docker build secret)?
+  [ADOPTING.md](ADOPTING.md).
 - In GitHub Actions, install with the job token (`actions/setup-node` with `registry-url:
   https://npm.pkg.github.com` and `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`) after the
   package's owner grants your repository read access. Never put a personal token in CI.
