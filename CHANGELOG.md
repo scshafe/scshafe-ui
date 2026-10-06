@@ -5,6 +5,45 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.5.0 — 2026-10-05
+
+Adoption (moving existing apps onto the library): a migration guide and the two components the
+audit of the remaining apps found missing.
+
+### Added
+
+- `CheckboxField` and `@scshafe/ui/ssr` `checkboxField`: a native checkbox named by its
+  `<label for>`, with optional help text (`description`, tied with `aria-describedby`) and
+  `required`. In React, `onChange(checked, event)` makes it controlled; without `onChange` it is
+  an uncontrolled form field whose `checked` is the initial state. Marker `CheckboxField`;
+  classes `sui-checkbox-field`, `-input`, `-label`, `-required`, `-description`.
+- `Banner` and `@scshafe/ui/ssr` `banner`: an inline notice with scshafe-qt `SuiBanner`'s
+  tones, `info`, `ok` (success), `warn` (warning) and `danger` (error) (unknown tones fall back to
+  `info`), a `title`, `text` or `children`, `actions`, and an optional Dismiss: in React
+  `dismissible` with `onDismiss` and an optional controlled `open`; on the server a link,
+  `dismissHref` (no client JavaScript). warn and danger are `role="alert"`, info and ok
+  `role="status"` (`role` overrides, `null` removes it); a visually hidden tone prefix
+  ("Warning: ", `toneLabel`) and a glyph carry the tone beyond colour. Marker `Banner` with
+  `data-sui-tone`; classes `sui-banner`, `sui-banner--<tone>`, `-mark`, `-body`, `-title`, `-text`,
+  `-actions`, `-dismiss`. Also exported: `BANNER_TONES`, `BANNER_TONE_DETAILS`, `bannerTone`,
+  `bannerRole`.
+- `components.css`: their styles, from existing tokens only (tone tints at 12% under text, within
+  the contrast-checked maximum; the checkbox uses `accent-color: var(--sui-accent)` and the theme's
+  `color-scheme`).
+- `docs/ADOPTING.md` (in the repository, not the package): registry access by context, the
+  per-repository package grant, npm with `package-lock.json` vs pnpm, CommonJS apps, server-rendered
+  and React migrations, CI, the Docker build secret, and theming. Linked from the README and
+  FIRST-APP.md.
+- Tests: both components in the catalog (axe in both themes, keyboard focus, namespace), the
+  marker contract and the SSR parity pairs, hostile strings, the server-rendered catalog, and their
+  behaviour (`test/banner-checkbox.test.mjs`); `test/commonjs.test.mjs` loads every subpath with
+  `require()`; the SSR-alone install also runs a CommonJS consumer (`require()` and `import()`);
+  the packed smokes render and typecheck both components.
+
+### Changed
+
+- FIRST-APP.md: the package is public; GitHub Packages still needs a token to install it.
+
 ## 0.4.1 — 2026-10-01
 
 Acceptance (U4): the first-app guide, and two fixes it surfaced.

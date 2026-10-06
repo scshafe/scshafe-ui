@@ -30,7 +30,7 @@ for `//npm.pkg.github.com/`), never in the project. In GitHub Actions use the jo
 package grants your repository read access. Then install an exact version:
 
 ```sh
-pnpm add --save-exact @scshafe/ui@0.4.1 react react-dom
+pnpm add --save-exact @scshafe/ui@0.5.0 react react-dom
 ```
 
 ### Peer dependencies
@@ -200,7 +200,7 @@ its empty shell.
 String helpers that emit the **same** `sui-` classes and `data-sui-component` markers as the
 React components, for apps that render HTML on the server with no React and no client
 JavaScript. Install the package alone (`pnpm add --save-exact --config.auto-install-peers=false
-@scshafe/ui@0.4.1`): the subpath imports nothing but the package's own `format` helpers.
+@scshafe/ui@0.5.0`): the subpath imports nothing but the package's own `format` helpers.
 
 ```js
 import { documentPage, appShell, navTabs, stack, list, listRow, inputField, button, html } from "@scshafe/ui/ssr";
