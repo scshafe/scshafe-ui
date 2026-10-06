@@ -85,6 +85,8 @@ const PAIRS = [
   ["SelectField", h(ui.SelectField, { id: "k", label: "Kind", field: "kind", value: "b", name: "kind", options: [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta", title: "B" }, { value: "c", label: "Gamma", disabled: true }], onChange: noop }), ssr.selectField({ id: "k", label: "Kind", field: "kind", value: "b", name: "kind", options: [{ value: "a", label: "Alpha" }, { value: "b", label: "Beta", title: "B" }, { value: "c", label: "Gamma", disabled: true }] })],
   ["SelectField empty", h(ui.SelectField, { id: "k2", label: "Kind", value: "", options: [], onChange: noop }), ssr.selectField({ id: "k2", label: "Kind", value: "", options: [] })],
   ["TextAreaField", h(ui.TextAreaField, { id: "t", label: "Note", value: "line one\nline two", rows: 5, onChange: noop }), ssr.textAreaField({ id: "t", label: "Note", value: "line one\nline two", rows: 5 })],
+  ["CheckboxField", h(ui.CheckboxField, { id: "c", label: "Notify me", name: "notify", value: "yes", checked: true, required: true, description: "Once an hour.", onChange: noop }), ssr.checkboxField({ id: "c", label: "Notify me", name: "notify", value: "yes", checked: true, required: true, description: "Once an hour." })],
+  ["CheckboxField uncontrolled", h(ui.CheckboxField, { id: "c2", label: "Archive", disabled: true, className: "extra", "aria-describedby": "hint" }), ssr.checkboxField({ id: "c2", label: "Archive", disabled: true, className: "extra", attributes: { "aria-describedby": "hint" } })],
   ["Button", h(ui.Button, { label: "Save", variant: "primary" }), ssr.button({ label: "Save", variant: "primary" })],
   ["Button submit", h(ui.Button, { label: "Go", type: "submit", size: "mini", disabled: true, name: "action", value: "go" }), ssr.button({ label: "Go", type: "submit", size: "mini", disabled: true, name: "action", value: "go" })],
   ["Badge", h(ui.Badge, { value: 3, label: "open", tone: "green" }), ssr.badge({ value: 3, label: "open", tone: "green" })],
@@ -97,6 +99,11 @@ const PAIRS = [
   ["RecordMeta", h(ui.RecordMeta, { entries: [{ label: "id", value: "r-1" }, null, { label: "by", value: "ada" }] }), ssr.recordMeta({ entries: [{ label: "id", value: "r-1" }, null, { label: "by", value: "ada" }] })],
   ["MetricCard", h(ui.MetricCard, { label: "Open", value: 12, detail: "since Monday" }), ssr.metricCard({ label: "Open", value: 12, detail: "since Monday" })],
   ["EmptyState", h(ui.EmptyState, { message: "Nothing here yet.", role: "status" }), ssr.emptyState({ message: "Nothing here yet.", role: "status" })],
+  ["Banner info", h(ui.Banner, { title: "Heads up", text: "Sync runs hourly." }), ssr.banner({ title: "Heads up", text: "Sync runs hourly." })],
+  ["Banner ok", h(ui.Banner, { tone: "ok", text: "Saved.", id: "b", className: "extra" }), ssr.banner({ tone: "ok", text: "Saved.", id: "b", className: "extra" })],
+  ["Banner warn", h(ui.Banner, { tone: "warn", title: "Endpoint held", actions: h("a", { href: "/resume" }, "Resume") }, h("p", null, "Paused.")), ssr.banner({ tone: "warn", title: "Endpoint held", actions: ssr.html`<a href="/resume">Resume</a>`, children: ssr.html`<p>Paused.</p>` })],
+  ["Banner danger", h(ui.Banner, { tone: "danger", title: "Save failed", text: "No answer.", toneLabel: null, role: "status" }), ssr.banner({ tone: "danger", title: "Save failed", text: "No answer.", toneLabel: null, role: "status" })],
+  ["Banner unknown tone", h(ui.Banner, { tone: "nonsense", text: "x", role: null, toneLabel: "Note" }), ssr.banner({ tone: "nonsense", text: "x", role: null, toneLabel: "Note" })],
   ["ListRow", h(ui.ListRow, { title: "Nightly", subtitle: "main", status: "running", chips: ["retry_scheduled"], timestamp: STAMP }), ssr.listRow({ title: "Nightly", subtitle: "main", status: "running", chips: ["retry_scheduled"], timestamp: STAMP })],
   ["ListRow li", h(ui.ListRow, { title: "Row", as: "li", titleLevel: 4, actions: h("span", null, "act") }, h("p", null, "detail")), ssr.listRow({ title: "Row", as: "li", titleLevel: 4, actions: ssr.html`<span>act</span>`, children: ssr.html`<p>detail</p>` })],
   ["List", h(ui.List, { title: "Runs", count: 1, description: "Recent runs." }, h(ui.ListRow, { title: "Nightly", subtitle: "main" })), ssr.list({ title: "Runs", count: 1, description: "Recent runs.", children: ssr.listRow({ title: "Nightly", subtitle: "main" }) })],
@@ -127,7 +134,7 @@ test("List empty state shows its message and passes no stray attributes", () => 
 
 test("parity covers every server-rendered marker family", () => {
   const markers = new Set(PAIRS.flatMap(([, , markup]) => [...String(markup).matchAll(/data-sui-component="([^"]+)"/g)].map((match) => match[1])));
-  for (const marker of ["Stack", "Inline", "Grid", "Pane", "Scroll", "Title", "Description", "Label", "InputField", "SelectField", "TextAreaField", "Button", "Badge", "Status", "StatCount", "StatCountValue", "Kbd", "ChipList", "RecordMeta", "MetricCard", "EmptyState", "List", "ListRow", "Panel", "PanelHeader", "Tab", "TabPanelHeader", "PinnedDataTable"]) {
+  for (const marker of ["Stack", "Inline", "Grid", "Pane", "Scroll", "Title", "Description", "Label", "InputField", "SelectField", "TextAreaField", "CheckboxField", "Button", "Badge", "Status", "StatCount", "StatCountValue", "Kbd", "ChipList", "RecordMeta", "MetricCard", "EmptyState", "Banner", "List", "ListRow", "Panel", "PanelHeader", "Tab", "TabPanelHeader", "PinnedDataTable"]) {
     assert.ok(markers.has(marker), marker);
   }
 });
@@ -200,6 +207,9 @@ test("hostile strings in every text and attribute position stay text", () => {
     selectField: ssr.selectField({ id: x, label: x, value: x, name: x, field: x, preserveUnknownValue: true, options: [{ value: x, label: x, title: x }] }),
     selectFieldEmpty: ssr.selectField({ id: "e", label: "e", options: [], emptyLabel: x }),
     textAreaField: ssr.textAreaField({ id: x, label: x, value: x, placeholder: x, name: x }),
+    checkboxField: ssr.checkboxField({ id: x, label: x, name: x, value: x, description: x, className: x, attributes: { "aria-describedby": x, "data-y": x } }),
+    banner: ssr.banner({ title: x, text: x, actions: x, dismissHref: x, dismissLabel: x, toneLabel: x, id: x, className: x, tone: x }),
+    bannerChildren: ssr.banner({ children: x, dismissHref: "/" }),
     button: ssr.button({ label: x, name: x, value: x, className: x, "aria-label": x }),
     linkButton: ssr.button({ label: x, href: x }),
     badge: ssr.badge({ value: x, label: x, tone: x, componentName: x }),
@@ -309,6 +319,7 @@ const CATALOG = [
     ssr.inputField({ id: "q", name: "q", label: "Search", value: "invoice", type: "search" }),
     ssr.selectField({ id: "b", name: "bucket", label: "Bucket", value: "jobs", options: [{ value: "jobs", label: "Jobs" }, { value: "otp", label: "OTP" }] }),
     ssr.textAreaField({ id: "n", name: "note", label: "Note" }),
+    ssr.checkboxField({ id: "cb", name: "archived", value: "1", label: "Include archived", checked: true, description: "Older than a year." }),
     ssr.label({ htmlFor: "q", children: "Search label" }),
     ssr.button({ label: "Search", type: "submit", variant: "primary" }),
     ssr.button({ label: "Help", href: "/help", variant: "ghost" })
@@ -319,6 +330,12 @@ const CATALOG = [
     ssr.list({ title: "Nothing", empty: { message: "No runs yet." } }),
     ssr.panel({ children: [ssr.panelHeader({ title: "Panel", aside: "3 items" }), ssr.emptyState({ message: "Empty." })] }),
     ssr.tabPanelHeader({ title: "Plans", aside: "12 open", statusLabel: "refreshed", actions: ssr.button({ label: "Refresh", href: "/plans" }) })
+  ] }), focus: "a" },
+  { name: "banners", render: () => ssr.stack({ children: [
+    ssr.banner({ tone: "info", title: "Heads up", text: "Sync runs hourly." }),
+    ssr.banner({ tone: "ok", text: "Saved.", dismissHref: "/?" }),
+    ssr.banner({ tone: "warn", title: "Endpoint held", text: "Deliveries are paused.", actions: ssr.button({ label: "Resume", href: "/resume" }), dismissHref: "/" }),
+    ssr.banner({ tone: "danger", title: "Save failed", text: "The server did not answer." })
   ] }), focus: "a" },
   { name: "table", render: () => ssr.dataTable({ ariaLabel: "Files", tableId: "files", columns: tableColumns, rows: tableRows }), focus: "[role=region]" },
   { name: "layout", render: () => ssr.grid({ columns: { kind: "autoFit", minSize: "sm" }, children: [ssr.pane({ header: ssr.title({ level: 2, children: "Pane" }), children: ssr.scroll({ children: "Long content" }) }), ssr.pane({ footer: "f", children: "b" })] }) },

@@ -101,3 +101,9 @@ export * from "./widget/RecordMetaComponent.js";
 // .sui-workspace-panel / .sui-fill) ship in layout.css.
 export * from "./widget/FocusTabsComponent.js";
 export * from "./widget/TabPanelHeaderComponent.js";
+
+// Eighth layer (0.5.0): the adoption gaps. CheckboxField (a labelled checkbox with optional help
+// text) and Banner (an inline info / ok / warn / danger notice, optionally dismissible), each with
+// a server-rendered twin in "@scshafe/ui/ssr" (checkboxField, banner).
+export * from "./primitive/CheckboxFieldComponent.js";
+export * from "./widget/BannerComponent.js";

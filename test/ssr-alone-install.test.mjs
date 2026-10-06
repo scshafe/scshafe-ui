@@ -10,7 +10,10 @@
 // and nothing else, and prove there that react, react-dom and @types/react do
 // not resolve, the React root does not import, and @scshafe/ui/ssr, /format,
 // /tokens and the stylesheets import, render and typecheck (skipLibCheck off,
-// so the shipped .d.ts may not reach for @types/react either).
+// so the shipped .d.ts may not reach for @types/react either). A CommonJS
+// script in the same consumer loads @scshafe/ui/ssr with require() (Node's
+// require(esm)) and with import(), the two recipes docs/ADOPTING.md gives
+// CommonJS apps, and resolves the stylesheets with require.resolve.
 //
 // The publish workflow installs the registry version back and requires its
 // integrity to equal a pack of the tag; this check runs inside `verify` on
@@ -74,11 +77,13 @@ const smoke = `
         ssr.button({ label: "Search", type: "submit", variant: "primary" }),
         ssr.status({ state: "running" }),
         ssr.list({ title: "Messages", children: ssr.listRow({ title: "Hello", status: "queued" }) }),
-        ssr.emptyState({ message: "Nothing else." })
+        ssr.emptyState({ message: "Nothing else." }),
+        ssr.checkboxField({ id: "all", name: "all", label: "Show all", checked: true }),
+        ssr.banner({ tone: "warn", title: "Held", text: "Paused.", dismissHref: "/" })
       ] })
     })
   }));
-  for (const marker of ["AppFrame", "AppShell", "NavTabs", "Tab", "Stack", "InputField", "Button", "Status", "List", "ListRow", "EmptyState"]) {
+  for (const marker of ["AppFrame", "AppShell", "NavTabs", "Tab", "Stack", "InputField", "Button", "Status", "List", "ListRow", "EmptyState", "CheckboxField", "Banner"]) {
     expect(page.includes('data-sui-component="' + marker + '"'), "ssr markup lacks " + marker);
   }
   expect(page.includes('value="&lt;b&gt;"') && !/\\sstyle=|<script/.test(page), "escaping or CSP shape");
@@ -88,6 +93,32 @@ const smoke = `
   }
   expect(readFileSync(fileURLToPath(import.meta.resolve("@scshafe/ui/layout.css")), "utf8").includes(".sui-grid-columns--3 "), "grid column classes");
   console.log("SSR smoke passed without React (" + page.length + " bytes).");
+`;
+
+// The CommonJS recipe: no "type": "module" applies to a .cjs file, so this is
+// what an Express app written in CommonJS runs.
+const cjsSmoke = `
+  "use strict";
+  const { readFileSync } = require("node:fs");
+  const expect = (condition, message) => { if (!condition) throw new Error(message); };
+  // 1. require(esm): synchronous, Node 22.12+ (the package needs 22.22+ anyway).
+  const ui = require("@scshafe/ui/ssr");
+  const page = String(ui.documentPage({ title: "Jobs", body: ui.stack({ children: [
+    ui.banner({ tone: "ok", text: "Saved." }),
+    ui.checkboxField({ id: "remote", name: "remote", label: "Remote only" }),
+    ui.listRow({ title: "<b>escaped</b>", status: "running" })
+  ] }) }));
+  expect(page.includes('data-sui-component="Banner"') && page.includes('data-sui-component="CheckboxField"'), "require(): markup");
+  expect(page.includes("&lt;b&gt;escaped&lt;/b&gt;"), "require(): escaping");
+  // 2. the stylesheets, for a static route.
+  for (const sheet of ["tokens.css", "layout.css", "components.css"]) {
+    expect(readFileSync(require.resolve("@scshafe/ui/" + sheet), "utf8").includes("--sui-"), "require.resolve " + sheet);
+  }
+  // 3. import(): the asynchronous recipe, the same module instance.
+  import("@scshafe/ui/ssr").then((loaded) => {
+    expect(loaded.banner === ui.banner, "import() and require() load one module");
+    console.log("CommonJS smoke passed (require and import).");
+  }).catch((error) => { console.error(error); process.exitCode = 1; });
 `;
 
 const typeSmoke = `
@@ -120,6 +151,8 @@ test("the packed package installed ALONE renders and typechecks @scshafe/ui/ssr 
 
     await writeFile(join(consumer, "ssr-smoke.mjs"), smoke);
     await run(process.execPath, ["ssr-smoke.mjs"], { cwd: consumer });
+    await writeFile(join(consumer, "ssr-smoke.cjs"), cjsSmoke);
+    await run(process.execPath, ["ssr-smoke.cjs"], { cwd: consumer });
     await writeFile(join(consumer, "ssr-smoke.ts"), typeSmoke);
     await writeFile(join(consumer, "tsconfig.ssr.json"), `${JSON.stringify({
       compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext", target: "ES2022", lib: ["ES2022"], strict: true, noEmit: true, skipLibCheck: false, types: [] },

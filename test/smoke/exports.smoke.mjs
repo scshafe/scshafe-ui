@@ -18,7 +18,7 @@ import metadata from "@scshafe/ui/package.json" with { type: "json" };
 
 const expect = (condition, message) => { if (!condition) throw new Error(message); };
 expect(metadata.name === "@scshafe/ui", "package identity mismatch");
-for (const exported of ["Stack", "Inline", "Grid", "Pane", "Scroll", "Button", "Status", "EmptyState", "FocusTabs", "InputField", "Card"]) {
+for (const exported of ["Stack", "Inline", "Grid", "Pane", "Scroll", "Button", "Status", "EmptyState", "FocusTabs", "InputField", "Card", "CheckboxField", "Banner"]) {
   expect(typeof root[exported] === "function" || typeof root[exported] === "object", "root export missing: " + exported);
 }
 expect(typeof state.SuiProviders === "function" && typeof state.createSuiStore === "function", "state exports missing");
@@ -29,6 +29,7 @@ expect(typeof testing.bundleEntry === "function" && typeof testing.createSpaRend
 expect(Array.isArray(tokens.SUI_TOKENS) && tokens.SUI_TOKENS.length > 0, "token registry missing");
 expect(typeof format.timestamp === "function", "format export missing");
 expect(typeof ssr.stack === "function" && typeof ssr.html === "function", "ssr exports missing");
+expect(typeof ssr.checkboxField === "function" && typeof ssr.banner === "function", "ssr checkboxField/banner missing");
 build.assertSuiResolvable(process.cwd());
 
 const exportNames = [root, state, icons, identity, build, testing, tokens, format, ssr].flatMap((ns) => Object.keys(ns));
