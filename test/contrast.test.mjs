@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { SUI_THEMES, SUI_TOKENS } from "@scshafe/ui/tokens";
 import { declarations, parseRules, readStylesheet, styleRules } from "./support/css.mjs";
-import { color, composite, contrastRatio, luminance, withAlpha } from "./support/contrast.mjs";
+import { color, colorMix, composite, contrastRatio, luminance, withAlpha } from "./support/contrast.mjs";
 
 const TEXT_MIN = 4.5;
 const UI_MIN = 3;
@@ -100,6 +100,102 @@ for (const theme of SUI_THEMES) {
     assert.deepEqual(failures, []);
   });
 }
+
+// Text on glass, as components.css paints it: the glass fill (tinted with color-mix, and over
+// the thick strip a tab sits in), the sheen at the height of the text (a gradient across the
+// element puts the glyphs of centred text between 30% and 70% of its alpha; a popover's 48px
+// gradient runs out over its items, a rail's 160px one is nearly full at its header), the overlays under the text, then
+// the text. Black and white bound every backdrop, as in the test above; a modal layer sees
+// them through its --sui-backdrop scrim.
+const GLASS_TEXT = [
+  { label: "button", selector: ".sui-button", glass: "--sui-glass", text: "--sui-text" },
+  { label: "button, hovered", glass: "--sui-glass", tint: ["--sui-accent", 0.08], text: "--sui-text" },
+  { label: "primary button", selector: ".sui-button-primary", glass: "--sui-glass", tint: ["--sui-accent", 0.14], text: "--sui-text-strong" },
+  { label: "primary button, hovered", glass: "--sui-glass", tint: ["--sui-accent", 0.2], text: "--sui-text-strong" },
+  { label: "pressed button", selector: '.sui-button-active, .sui-button[aria-pressed="true"]', glass: "--sui-glass", overlays: [["--sui-accent", 0.2], ["--sui-tone-purple", 0.12]], text: "--sui-text" },
+  { label: "danger button", selector: ".sui-button-danger", glass: "--sui-glass", tint: ["--sui-tone-red", 0.12], text: "--sui-glass-danger-text" },
+  { label: "selected tab", selector: ".sui-tab-active", glass: "--sui-glass", tint: ["--sui-accent", 0.14], text: "--sui-glass-accent-text" },
+  { label: "selected tab button", selector: ".sui-button-tab.sui-button-active", glass: "--sui-glass", tint: ["--sui-accent", 0.14], text: "--sui-glass-accent-text" },
+  { label: "selected tab in a strip", selector: '.sui-focus-tab[aria-selected="true"]', under: "--sui-glass-thick", glass: "--sui-glass", tint: ["--sui-accent", 0.14], text: "--sui-glass-accent-text" },
+  { label: "tab in a strip", selector: ".sui-focus-tab", glass: "--sui-glass-thick", text: "--sui-glass-muted" },
+  { label: "link tab in a strip", selector: ".sui-tab", glass: "--sui-glass-thick", text: "--sui-glass-muted" },
+  { label: "tab badge in a strip", selector: ".sui-tab-badge", glass: "--sui-glass-thick", overlays: [["--sui-accent", 0.16]], text: "--sui-text-strong" },
+  { label: "tab badge on the selected tab", under: "--sui-glass-thick", glass: "--sui-glass", tint: ["--sui-accent", 0.14], overlays: [["--sui-accent", 0.16]], text: "--sui-text-strong" },
+  { label: "tab count in a strip", selector: ".sui-focus-tab-count", glass: "--sui-glass-thick", overlays: [["--sui-tint"]], text: "--sui-glass-muted" },
+  { label: "tab count on the selected tab", under: "--sui-glass-thick", glass: "--sui-glass", tint: ["--sui-accent", 0.14], overlays: [["--sui-tint"]], text: "--sui-glass-muted" },
+  { label: "toast", selector: ".sui-toast", glass: "--sui-glass", text: "--sui-text" },
+  { label: "success toast", glass: "--sui-glass", tint: ["--sui-ok", 0.12], text: "--sui-text" },
+  { label: "info toast", glass: "--sui-glass", tint: ["--sui-accent", 0.12], text: "--sui-text" },
+  { label: "error toast", selector: ".sui-toast--error", glass: "--sui-glass", tint: ["--sui-tone-red", 0.12], text: "--sui-glass-danger-text" },
+  { label: "popover", selector: ".sui-popover", glass: "--sui-glass", sheen: [0, 0.6], text: "--sui-text" },
+  { label: "menu item, hovered", selector: ".sui-context-menu-item:hover, .sui-context-menu-item:focus-visible", glass: "--sui-glass", sheen: [0, 0.6], overlays: [["--sui-accent-subtle"]], text: "--sui-text-strong" },
+  { label: "destructive menu item", selector: ".sui-context-menu-item--danger", glass: "--sui-glass", sheen: [0, 0.6], text: "--sui-glass-danger-text" },
+  { label: "destructive menu item, hovered", selector: ".sui-context-menu-item--danger:hover, .sui-context-menu-item--danger:focus-visible", glass: "--sui-glass", sheen: [0, 0.6], overlays: [["--sui-tone-red", 0.12]], text: "--sui-glass-danger-text" },
+  { label: "menu shortcut", selector: ".sui-context-menu-item-kbd", glass: "--sui-glass", sheen: [0, 0.6], text: "--sui-glass-muted" },
+  { label: "hover card note", selector: ".sui-hover-card-content small", glass: "--sui-glass", sheen: [0, 0.6], text: "--sui-glass-muted" },
+  { label: "show full", selector: ".sui-card-show-full", glass: "--sui-glass", text: "--sui-glass-accent-text" },
+  { label: "show full, hovered", selector: ".sui-card-show-full:hover", glass: "--sui-glass", tint: ["--sui-accent", 0.08], text: "--sui-accent-hover" },
+  { label: "rail toggle", selector: ".sui-collapsible-list-rail-toggle", glass: "--sui-glass", text: "--sui-glass-muted" },
+  { label: "rail title", selector: ".sui-collapsible-list-rail-title", glass: "--sui-glass-thick", sheen: [0.8, 1], overlays: [["--sui-tint"]], text: "--sui-glass-muted" },
+  { label: "sheet", selector: ".sui-sheet", modal: true, glass: "--sui-glass-thick", sheen: [0, 1], text: "--sui-text" },
+  { label: "sheet description", selector: ".sui-sheet__description", modal: true, glass: "--sui-glass-thick", sheen: [0, 1], text: "--sui-glass-muted" },
+  { label: "card detail", selector: ".sui-card-detail-popover", modal: true, glass: "--sui-glass-thick", sheen: [0, 1], text: "--sui-text" }
+];
+// Dark glass (0.72) over a light backdrop is a mid grey, on which accent, danger and secondary
+// text, and body text on tinted glass, stay under 4.5:1 (the tinted toasts only just: 4.4:1 here,
+// 4.8:1 rendered). Recorded here until the dark glass is settled (docs/ACCESSIBILITY.md); the
+// test fails on a new gap and when a recorded one is fixed.
+const DARK_GLASS_GAPS = [
+  "primary button, hovered", "pressed button", "danger button", "selected tab", "selected tab button",
+  "selected tab in a strip", "tab count in a strip", "success toast", "info toast", "tab count on the selected tab", "error toast", "destructive menu item", "destructive menu item, hovered",
+  "menu shortcut", "hover card note", "show full", "show full, hovered", "rail toggle", "rail title"
+];
+
+function glassTextFailures(theme) {
+  const black = { r: 0, g: 0, b: 0, a: 1 };
+  const white = { r: 255, g: 255, b: 255, a: 1 };
+  const sheen = color("--sui-glass-sheen", theme);
+  const layer = (ground, glass, tint, at) => {
+    const fill = tint ? colorMix(color(tint[0], theme), tint[1], color(glass, theme)) : color(glass, theme);
+    return composite(withAlpha(sheen, at), composite(fill, ground));
+  };
+  const failures = new Map();
+  for (const entry of GLASS_TEXT) {
+    const foreground = color(entry.text, theme);
+    for (const [name, page] of [["black", black], ["white", white]]) {
+      const backdrop = entry.modal ? composite(color("--sui-backdrop", theme), page) : page;
+      for (const at of new Set(entry.sheen ?? [0.3, 0.7])) {
+        let ground = entry.under ? layer(backdrop, entry.under, null, 0.5) : backdrop;
+        ground = layer(ground, entry.glass, entry.tint, at);
+        for (const [overlay, alpha = 1] of entry.overlays ?? []) ground = composite(withAlpha(color(overlay, theme), alpha), ground);
+        const ratio = contrastRatio(foreground, ground);
+        if (ratio < TEXT_MIN) failures.set(entry.label, `${theme}: ${entry.label} (${entry.text}) over ${name}, sheen ${at} = ${ratio.toFixed(2)}:1`);
+      }
+    }
+  }
+  return failures;
+}
+
+test(`light theme: text on every glass surface reaches ${TEXT_MIN}:1 over any backdrop`, () => {
+  assert.deepEqual([...glassTextFailures("light").values()], []);
+});
+
+test("dark theme: text on glass over any backdrop has only the recorded gaps", () => {
+  const failures = glassTextFailures("dark");
+  assert.deepEqual([...failures.keys()].filter((label) => !DARK_GLASS_GAPS.includes(label)), [], "a new gap");
+  assert.deepEqual(DARK_GLASS_GAPS.filter((label) => !failures.has(label)), [], "a recorded gap is fixed: remove it from DARK_GLASS_GAPS");
+});
+
+test("the glass text table matches the colours components.css gives those selectors", () => {
+  const rules = styleRules(parseRules(readStylesheet("components.css"))).filter((rule) => rule.context.length === 0);
+  const mismatches = [];
+  for (const entry of GLASS_TEXT.filter((candidate) => candidate.selector)) {
+    const colours = rules.filter((rule) => rule.prelude === entry.selector)
+      .flatMap((rule) => declarations(rule.body).filter(([property]) => property === "color").map(([, value]) => value));
+    if (colours.at(-1) !== `var(${entry.text})`) mismatches.push(`${entry.selector}: ${colours.at(-1)} (table: ${entry.text})`);
+  }
+  assert.deepEqual(mismatches, []);
+});
 
 test("the contrast math matches WCAG reference values", () => {
   const black = { r: 0, g: 0, b: 0, a: 1 };

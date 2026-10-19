@@ -46,6 +46,13 @@ export function withAlpha(color, alpha) {
   return { ...color, a: color.a * alpha };
 }
 
+/** color-mix(in srgb, a p, b) as browsers compute it: premultiplied by alpha. */
+export function colorMix(a, p, b) {
+  const alpha = a.a * p + b.a * (1 - p);
+  const mix = (key) => (alpha ? (a[key] * a.a * p + b[key] * b.a * (1 - p)) / alpha : 0);
+  return { r: mix("r"), g: mix("g"), b: mix("b"), a: alpha };
+}
+
 function channel(value) {
   const c = value / 255;
   return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;

@@ -274,7 +274,7 @@ The full registry ships as `@scshafe/ui/tokens.css` and as data from `@scshafe/u
 | Surfaces | `--sui-bg` `--sui-panel` `--sui-card` `--sui-bg-elevated` `--sui-surface-2` `--sui-popover` `--sui-field` `--sui-bg-hover` `--sui-tint` `--sui-code-bg` `--sui-backdrop` |
 | Hairlines and controls | `--sui-line` `--sui-border` `--sui-border-strong` `--sui-border-hover` `--sui-field-border` `--sui-focus-ring` |
 | Floating layers | `--sui-shadow` `--sui-shadow-lg` `--sui-shadow-color` |
-| Glass | `--sui-glass` `--sui-glass-thick` `--sui-glass-sheen` `--sui-glass-edge` `--sui-glass-highlight` `--sui-glass-shadow` `--sui-glass-blur` `--sui-glass-saturate` |
+| Glass | `--sui-glass` `--sui-glass-thick` `--sui-glass-sheen` `--sui-glass-edge` `--sui-glass-highlight` `--sui-glass-shadow` `--sui-glass-blur` `--sui-glass-saturate`; text on glass: `--sui-glass-accent-text` `--sui-glass-danger-text` `--sui-glass-muted` |
 | Corners | `--sui-radius-sm` `--sui-radius-md` `--sui-radius` `--sui-radius-lg` `--sui-radius-xl` `--sui-radius-pill` |
 | Type | `--sui-mono` `--sui-chat-text-size` |
 | Motion | `--sui-duration` (0s under `prefers-reduced-motion: reduce`) `--sui-ease` `--sui-ease-spring` |
@@ -324,9 +324,13 @@ set the attribute itself (`SUI_TRANSPARENCY_ATTRIBUTE` from `@scshafe/ui/tokens`
 ```
 
 To tune the material, re-declare the glass tokens like any other: a thinner `--sui-glass` or a
-smaller `--sui-glass-blur`, for example. Body text on glass is checked at 4.5:1 over *any*
-backdrop; secondary text is checked over the package's surfaces, so check it over your own
-imagery if you put glass over photographs.
+smaller `--sui-glass-blur`, for example. Accent, danger and secondary text on glass use their
+own tokens (`--sui-glass-accent-text`, `--sui-glass-danger-text`, `--sui-glass-muted`), so it
+stays readable whatever shows through. In the light theme, every text colour on every glass
+surface is checked at 4.5:1 over *any* backdrop. In the dark theme only body text on untinted
+glass is: over light imagery, accent, danger and secondary text on dark glass, and text on
+tinted glass, can fall under 4.5:1, so check your own imagery, or set
+`data-sui-transparency="reduce"` where dark glass floats over light pictures.
 
 ## Accessibility
 

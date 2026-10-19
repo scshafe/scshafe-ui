@@ -88,6 +88,9 @@
   --sui-glass-sheen: rgba(255, 255, 255, 0.55);
   --sui-glass-edge: rgba(31, 45, 66, 0.14);
   --sui-glass-highlight: rgba(255, 255, 255, 0.9);
+  --sui-glass-accent-text: #083f78;
+  --sui-glass-danger-text: #7d0a1d;
+  --sui-glass-muted: #3a4552;
   --sui-glass-shadow: 0 8px 24px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
@@ -142,6 +145,9 @@
     --sui-glass-sheen: rgba(255, 255, 255, 0.07);
     --sui-glass-edge: rgba(183, 203, 231, 0.16);
     --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+    --sui-glass-accent-text: var(--sui-accent);
+    --sui-glass-danger-text: var(--sui-tone-red-text);
+    --sui-glass-muted: var(--sui-muted);
     --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }
@@ -196,5 +202,8 @@
   --sui-glass-sheen: rgba(255, 255, 255, 0.07);
   --sui-glass-edge: rgba(183, 203, 231, 0.16);
   --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+  --sui-glass-accent-text: var(--sui-accent);
+  --sui-glass-danger-text: var(--sui-tone-red-text);
+  --sui-glass-muted: var(--sui-muted);
   --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
