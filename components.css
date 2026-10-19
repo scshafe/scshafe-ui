@@ -75,6 +75,9 @@
   --sui-glass-sheen: rgba(255, 255, 255, 0.55);
   --sui-glass-edge: rgba(31, 45, 66, 0.14);
   --sui-glass-highlight: rgba(255, 255, 255, 0.9);
+  --sui-glass-accent-text: #083f78;
+  --sui-glass-danger-text: #7d0a1d;
+  --sui-glass-muted: #3a4552;
   --sui-glass-shadow: 0 8px 24px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
@@ -129,6 +132,9 @@
     --sui-glass-sheen: rgba(255, 255, 255, 0.07);
     --sui-glass-edge: rgba(183, 203, 231, 0.16);
     --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+    --sui-glass-accent-text: var(--sui-accent);
+    --sui-glass-danger-text: var(--sui-tone-red-text);
+    --sui-glass-muted: var(--sui-muted);
     --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }
@@ -183,6 +189,9 @@
   --sui-glass-sheen: rgba(255, 255, 255, 0.07);
   --sui-glass-edge: rgba(183, 203, 231, 0.16);
   --sui-glass-highlight: rgba(255, 255, 255, 0.14);
+  --sui-glass-accent-text: var(--sui-accent);
+  --sui-glass-danger-text: var(--sui-tone-red-text);
+  --sui-glass-muted: var(--sui-muted);
   --sui-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -268,7 +277,7 @@
 .sui-sheet--center { width: min(460px, calc(100vw - 32px)); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
 .sui-sheet__header { padding: 14px 18px; border-bottom: 1px solid var(--sui-line); display: grid; gap: 4px; }
 .sui-sheet__title { margin: 0; font-size: 15px; font-weight: 700; color: var(--sui-text-strong); }
-.sui-sheet__description { margin: 0; color: var(--sui-muted); font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
+.sui-sheet__description { margin: 0; color: var(--sui-glass-muted); font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
 .sui-sheet__body { padding: 12px 18px; overflow: auto; min-height: 0; }
 .sui-sheet__body:empty { padding: 0; }
 .sui-sheet__footer { padding: 10px 18px; border-top: 1px solid var(--sui-line); display: inline-flex; gap: 8px; align-items: center; justify-content: flex-end; background: var(--sui-tint); }
@@ -366,7 +375,7 @@
 
 /* HoverCard content + Tooltip. */
 .sui-hover-card-content { display: flex; flex-direction: column; gap: 6px; min-width: 200px; font-size: 12px; color: var(--sui-text); }
-.sui-hover-card-content small { color: var(--sui-muted); }
+.sui-hover-card-content small { color: var(--sui-glass-muted); }
 .sui-hover-card-content strong { font-size: 13px; color: var(--sui-text-strong); }
 .sui-tooltip { display: contents; }
 .sui-tooltip-block { display: contents; }
@@ -535,11 +544,11 @@
 .sui-button-ghost:hover:not(:disabled) { border-color: transparent; background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
 .sui-button-tab { border-color: transparent; background-color: transparent; background-image: none; box-shadow: none; color: var(--sui-muted); }
 .sui-button-tab:hover:not(:disabled) { border-color: transparent; background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
-.sui-button-tab.sui-button-active { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); color: var(--sui-accent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); }
+.sui-button-tab.sui-button-active { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); color: var(--sui-glass-accent-text); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); }
 .sui-button-chip { padding: 3px 9px; font-size: 11px; }
 .sui-button-active, .sui-button[aria-pressed="true"] { border-color: color-mix(in srgb, var(--sui-accent) 62%, transparent); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent), linear-gradient(135deg, color-mix(in srgb, var(--sui-accent) 20%, transparent), color-mix(in srgb, var(--sui-tone-purple) 12%, transparent)); color: var(--sui-text); }
 .sui-button-icon { min-width: 28px; height: 28px; padding: 0 8px; font-size: 14px; font-weight: 700; }
-.sui-button-danger { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); color: var(--sui-tone-red-text); }
+.sui-button-danger { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); color: var(--sui-glass-danger-text); }
 .sui-button-danger:hover:not(:disabled) { border-color: color-mix(in srgb, var(--sui-tone-red) 70%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); }
 .sui-button-mini { padding: 4px 9px; font-size: 12px; }
 
@@ -550,13 +559,13 @@
 
 /* Tab — single tab button in a strip: a clear capsule; the selected tab is a
  * lens of glass with an accent label. */
-.sui-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-pill); background-color: transparent; color: var(--sui-muted); padding: 6px 12px; font: inherit; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-pill); background-color: transparent; color: var(--sui-glass-muted); padding: 6px 12px; font: inherit; font-size: 13px; line-height: 1; cursor: pointer; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
 .sui-tab:not(.sui-tab-active):not(:disabled):hover { background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
 .sui-tab:active:not(:disabled) { scale: 0.96; }
-.sui-tab-active { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); color: var(--sui-accent); font-weight: 600; }
+.sui-tab-active { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); color: var(--sui-glass-accent-text); font-weight: 600; }
 .sui-tab:disabled { opacity: 0.42; cursor: not-allowed; }
 .sui-tab-label { white-space: nowrap; }
-.sui-tab-badge { background: color-mix(in srgb, var(--sui-accent) 16%, transparent); color: var(--sui-text); border: 1px solid color-mix(in srgb, var(--sui-accent) 32%, transparent); border-radius: var(--sui-radius-pill); padding: 0 6px; min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
+.sui-tab-badge { background: color-mix(in srgb, var(--sui-accent) 16%, transparent); color: var(--sui-text-strong); border: 1px solid color-mix(in srgb, var(--sui-accent) 32%, transparent); border-radius: var(--sui-radius-pill); padding: 0 6px; min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
 /* Server-rendered navigation (@scshafe/ui/ssr): a strip of link tabs, and links styled as
  * tabs or buttons. */
 .sui-nav-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; width: fit-content; max-width: 100%; box-sizing: border-box; padding: 4px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-xl); background-color: var(--sui-glass-thick); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow); }
@@ -628,7 +637,7 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 .sui-card-footer { position: absolute; bottom: 4px; right: 4px; display: none; z-index: 1; }
 .sui-card:has(> .sui-card-body[data-sui-overflowing="true"]) > .sui-card-footer { display: flex; }
 /* "Show full" floats over the clamped text, so it is real glass. */
-.sui-card-show-full { background-color: var(--sui-glass); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); border: 1px solid var(--sui-glass-edge); color: var(--sui-accent); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; padding: 2px 10px; border-radius: var(--sui-radius-pill); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 2px 8px var(--sui-shadow-color); -webkit-backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-card-show-full { background-color: var(--sui-glass); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); border: 1px solid var(--sui-glass-edge); color: var(--sui-glass-accent-text); font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; padding: 2px 10px; border-radius: var(--sui-radius-pill); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 2px 8px var(--sui-shadow-color); -webkit-backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
 .sui-card-show-full:hover { background-color: color-mix(in srgb, var(--sui-accent) 8%, var(--sui-glass)); border-color: var(--sui-border-hover); color: var(--sui-accent-hover); }
 .sui-card-show-full:active { scale: 0.95; }
 /* Card detail popover (HTML5 popover API; positioned by browser) */
@@ -731,11 +740,11 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
 /* A toast is a leaf layer floating over the page: real glass. */
 .sui-toast { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 8px 8px 14px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-lg); background-color: var(--sui-glass); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); color: var(--sui-text); font-size: 12px; box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow); -webkit-backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); backdrop-filter: blur(var(--sui-glass-blur)) saturate(var(--sui-glass-saturate)); pointer-events: auto; transition: opacity calc(var(--sui-duration) * 2) var(--sui-ease), scale calc(var(--sui-duration) * 2) var(--sui-ease-spring), translate calc(var(--sui-duration) * 2) var(--sui-ease-spring); }
 .sui-toast--success { border-color: color-mix(in srgb, var(--sui-tone-green) 45%, transparent); background-color: color-mix(in srgb, var(--sui-ok) 12%, var(--sui-glass)); }
-.sui-toast--error { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); color: var(--sui-tone-red-text); }
+.sui-toast--error { border-color: color-mix(in srgb, var(--sui-tone-red) 50%, transparent); background-color: color-mix(in srgb, var(--sui-tone-red) 12%, var(--sui-glass)); color: var(--sui-glass-danger-text); }
 .sui-toast--info { border-color: color-mix(in srgb, var(--sui-accent) 45%, transparent); background-color: color-mix(in srgb, var(--sui-accent) 12%, var(--sui-glass)); }
 .sui-toast-message { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; }
-.sui-toast-dismiss { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--sui-radius-pill); background: transparent; color: inherit; opacity: 0.8; cursor: pointer; font-size: 14px; line-height: 1; transition: opacity var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease); }
-.sui-toast-dismiss:hover { opacity: 1; background-color: var(--sui-tint); }
+.sui-toast-dismiss { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--sui-radius-pill); background: transparent; color: inherit; cursor: pointer; font-size: 14px; line-height: 1; transition: background-color var(--sui-duration) var(--sui-ease); }
+.sui-toast-dismiss:hover { background-color: var(--sui-tint); }
 
 /* ContextMenu / MoreActionsMenu. */
 .sui-context-menu-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 6px; min-width: 240px; }
@@ -759,7 +768,7 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   cursor: pointer;
   transition: background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease);
 }
-.sui-context-menu-item > svg, .sui-context-menu-item > [data-sui-component="Icon"] { flex: 0 0 auto; color: var(--sui-muted); }
+.sui-context-menu-item > svg, .sui-context-menu-item > [data-sui-component="Icon"] { flex: 0 0 auto; color: var(--sui-glass-muted); }
 .sui-context-menu-item:hover > svg, .sui-context-menu-item:hover > [data-sui-component="Icon"] { color: inherit; }
 .sui-context-menu-item-label { flex: 1 1 auto; min-width: 0; }
 .sui-context-menu-item:hover, .sui-context-menu-item:focus-visible {
@@ -767,11 +776,11 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   color: var(--sui-text-strong);
 }
 .sui-context-menu-item:disabled { color: var(--sui-muted); cursor: not-allowed; }
-.sui-context-menu-item--danger { color: var(--sui-tone-red-text); }
+.sui-context-menu-item--danger { color: var(--sui-glass-danger-text); }
 .sui-context-menu-item--danger:hover, .sui-context-menu-item--danger:focus-visible {
-  background: color-mix(in srgb, var(--sui-tone-red) 12%, transparent); color: var(--sui-tone-red-text);
+  background: color-mix(in srgb, var(--sui-tone-red) 12%, transparent); color: var(--sui-glass-danger-text);
 }
-.sui-context-menu-item-kbd { color: var(--sui-muted); font-family: var(--sui-mono); font-size: 11px; }
+.sui-context-menu-item-kbd { color: var(--sui-glass-muted); font-family: var(--sui-mono); font-size: 11px; }
 
 /* DataTableColumnMenu. ConfirmDialog reuses .sui-sheet + .sui-button. */
 .sui-data-table-column-menu { display: inline-flex; align-items: center; }
@@ -828,7 +837,7 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   background-color: var(--sui-glass);
   background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent);
   box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 2px var(--sui-shadow-color);
-  color: var(--sui-muted);
+  color: var(--sui-glass-muted);
   display: grid;
   place-items: center;
   font-size: 12px;
@@ -837,7 +846,7 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
   padding: 0;
 }
 .sui-collapsible-list-rail-toggle:hover, .sui-collapsible-list-rail-toggle:focus-visible { color: var(--sui-text-strong); border-color: color-mix(in srgb, var(--sui-accent) 55%, transparent); }
-.sui-collapsible-list-rail-title { color: var(--sui-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.sui-collapsible-list-rail-title { color: var(--sui-glass-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
 .sui-collapsible-list-rail-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0; flex: 1 1 0; overflow-y: auto; overflow-x: hidden; width: 100%; }
 .sui-collapsible-list-rail-body > * { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; flex-shrink: 0; }
 .sui-collapsible-list-rail-body * { min-width: 0; }
@@ -885,14 +894,14 @@ a.sui-tab[aria-disabled="true"], a.sui-button[aria-disabled="true"] { opacity: 0
  * hold tooltips and menus); its 4px padding leaves room for the focus ring,
  * which the scrolling strip would otherwise clip, and makes the tabs concentric. */
 .sui-focus-tabs { display: flex; align-items: center; gap: 2px; width: fit-content; max-width: 100%; min-width: 0; box-sizing: border-box; overflow-x: auto; padding: 4px; border: 1px solid var(--sui-glass-edge); border-radius: var(--sui-radius-xl); background-color: var(--sui-glass-thick); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), var(--sui-glass-shadow); scrollbar-width: thin; }
-.sui-focus-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-pill); background-color: transparent; color: var(--sui-muted); padding: 6px 12px; font: inherit; cursor: pointer; white-space: nowrap; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
+.sui-focus-tab { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: var(--sui-radius-pill); background-color: transparent; color: var(--sui-glass-muted); padding: 6px 12px; font: inherit; cursor: pointer; white-space: nowrap; transition: border-color var(--sui-duration) var(--sui-ease), background-color var(--sui-duration) var(--sui-ease), color var(--sui-duration) var(--sui-ease), box-shadow var(--sui-duration) var(--sui-ease), scale var(--sui-duration) var(--sui-ease-spring); }
 .sui-focus-tab:not([aria-selected="true"]):not(:disabled):hover { background-color: color-mix(in srgb, var(--sui-accent) 8%, transparent); color: var(--sui-text); }
 .sui-focus-tab:active:not(:disabled) { scale: 0.96; }
-.sui-focus-tab[aria-selected="true"] { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); color: var(--sui-accent); font-weight: 600; }
+.sui-focus-tab[aria-selected="true"] { border-color: var(--sui-glass-edge); background-color: color-mix(in srgb, var(--sui-accent) 14%, var(--sui-glass)); background-image: linear-gradient(180deg, var(--sui-glass-sheen), transparent); box-shadow: inset 0 1px 0 var(--sui-glass-highlight), 0 1px 3px var(--sui-shadow-color); color: var(--sui-glass-accent-text); font-weight: 600; }
 .sui-focus-tab:disabled { opacity: 0.42; cursor: not-allowed; }
 .sui-focus-tab-icon { font-size: 14px; line-height: 1; }
 .sui-focus-tab-counts { display: inline-flex; flex-wrap: nowrap; gap: 4px; align-items: center; }
-.sui-focus-tab-count { color: var(--sui-muted); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-pill); padding: 1px 6px; background: var(--sui-tint); font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
+.sui-focus-tab-count { color: var(--sui-glass-muted); border: 1px solid var(--sui-line); border-radius: var(--sui-radius-pill); padding: 1px 6px; background: var(--sui-tint); font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
 .sui-focus-tabs-divider { flex: 0 0 1px; align-self: stretch; min-height: 26px; margin: 0 4px; background: var(--sui-line); }
 
 /* TabPanelHeader — the standardized panel header (self-contained; hosts may add
