@@ -50,6 +50,11 @@ them in code, so "follow the doctrine" is mostly "use the factory".*
 - Keep what the package checks: 4.5:1 text contrast and 3:1 for control boundaries and
   the focus ring in both themes, the shared `:focus-visible` ring, and transitions on
   `--sui-duration` (docs/ACCESSIBILITY.md).
+- Glass is for the functional layer — controls and navigation floating over content —
+  and the package's components already carry it. Don't put glass on content (cards,
+  tables, long text) in host CSS. An app with an appearance setting sets
+  `data-sui-transparency="reduce"` for solid surfaces; the package already follows
+  `prefers-reduced-transparency` and `prefers-contrast` where the browser reports them.
   Never fork the package CSS; deliberate same-selector overrides after the package
   links are the escape hatch.
 

@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { SUI_THEMES, SUI_TOKENS } from "@scshafe/ui/tokens";
 import { declarations, parseRules, readStylesheet, styleRules } from "./support/css.mjs";
-import { color, composite, contrastRatio, withAlpha } from "./support/contrast.mjs";
+import { color, composite, contrastRatio, luminance, withAlpha } from "./support/contrast.mjs";
 
 const TEXT_MIN = 4.5;
 const UI_MIN = 3;
@@ -72,6 +72,32 @@ for (const theme of SUI_THEMES) {
     const indicators = byRole("indicator");
     assert.deepEqual(indicators.sort(), ["--sui-field-border", "--sui-focus-ring"]);
     assert.deepEqual(check(indicators, () => neutral, UI_MIN, theme).failures, []);
+  });
+
+  test(`${theme} theme: body text on glass reaches ${TEXT_MIN}:1 over any backdrop`, () => {
+    // Glass floats over whatever the page shows (photos, other content), not only
+    // the package surfaces checked above. Compositing is linear in the backdrop, so
+    // black and white bound every backdrop: when both extremes reach the minimum
+    // on the same side of the text's luminance, everything between them does too.
+    // Blur only averages the backdrop, so this holds without it.
+    const black = { r: 0, g: 0, b: 0, a: 1 };
+    const white = { r: 255, g: 255, b: 255, a: 1 };
+    const failures = [];
+    for (const glass of ["--sui-glass", "--sui-glass-thick"]) {
+      const fill = color(glass, theme);
+      assert.ok(fill.a < 1, `${glass} is translucent in ${theme}`);
+      for (const text of ["--sui-text", "--sui-text-strong"]) {
+        const foreground = color(text, theme);
+        const extremes = [black, white].map((backdrop) => composite(fill, backdrop));
+        const sides = new Set(extremes.map((ground) => Math.sign(luminance(ground) - luminance(foreground))));
+        if (sides.size !== 1) failures.push(`${theme}: some backdrop matches ${text} through ${glass}`);
+        for (const [index, ground] of extremes.entries()) {
+          const ratio = contrastRatio(foreground, ground);
+          if (ratio < TEXT_MIN) failures.push(`${theme}: ${text} on ${glass} over ${index ? "white" : "black"} = ${ratio.toFixed(2)}:1`);
+        }
+      }
+    }
+    assert.deepEqual(failures, []);
   });
 }
 
