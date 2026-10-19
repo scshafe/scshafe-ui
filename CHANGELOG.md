@@ -5,6 +5,16 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.6.1 — 2026-10-19
+
+### Fixed
+
+- `Sheet` opened as a modal only if it mounted with `open` true. A host that kept the Sheet
+  mounted and flipped `open` from false to true got a dialog that was inserted but never
+  opened: no top layer or backdrop, focus left outside, Esc did nothing, and the sheet showed
+  inline in the page. `Sheet` now calls `showModal()` whenever `open` turns true.
+  `ConfirmDialog` was not affected.
+
 ## 0.6.0 — 2026-10-19
 
 Liquid Glass: the components take on a glass material after Apple's design language. Class

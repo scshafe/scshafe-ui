@@ -13,17 +13,18 @@ interface SheetProps {
 // The "open" state lives in RTK (per-editor slice for edit forms, ConfirmDialog
 // slice for confirms); this component just owns the imperative showModal /
 // close on the underlying DOM element. When closed, the entire dialog (and
-// its subtree) unmounts — tearing down hidden DOM per the project rule.
+// its subtree) unmounts — tearing down hidden DOM per the project rule. The
+// effect follows `open`, so a host may keep the Sheet mounted and flip the prop.
 export function Sheet({ open, onClose, side = "right", ariaLabel, dataSuiComponent = "Sheet", children }: SheetProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!open || !dialog) return;
     if (!dialog.open) {
       dialog.showModal();
     }
-  }, []);
+  }, [open]);
 
   if (!open) return null;
 
