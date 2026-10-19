@@ -5,6 +5,38 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.7.0 — 2026-10-19
+
+Text on glass reaches WCAG AA (4.5:1) over any backdrop in the light theme. The dark theme is
+unchanged; its gaps over light backdrops are recorded below and in `docs/ACCESSIBILITY.md`.
+
+### Added
+
+- Tokens for text on glass: `--sui-glass-accent-text`, `--sui-glass-danger-text` and
+  `--sui-glass-muted`. In the light theme they are deeper shades of the accent, danger red and
+  secondary text (`#083f78`, `#7d0a1d`, `#3a4552`); in the dark theme they are the current
+  colours (`--sui-accent`, `--sui-tone-red-text`, `--sui-muted`).
+
+### Fixed
+
+- Light glass over a dark backdrop put accent, danger and secondary text under 4.5:1: the
+  selected tab's label (4.1:1 over black), the danger button and error toast (3.9:1), a
+  destructive menu item (4.0:1), menu shortcuts and tab counts. The glass components now use
+  the glass text tokens: selected tabs (`Tab`, `FocusTabs`, `navTabs`, an active
+  `Button variant="tab"`), unselected tabs in a strip, tab counts, the danger button, error
+  toasts, destructive menu items, menu shortcuts and icons, hover card notes, Card's "show
+  full", the rail title and toggle, and the sheet description.
+- The toast's dismiss "×" was drawn at 0.8 opacity (3.5:1); it now has the toast's full text
+  colour. The tab badge's number uses `--sui-text-strong`.
+
+### Known gaps
+
+- Dark theme: dark glass (0.72) over a light backdrop is a mid grey, on which accent, danger and
+  secondary text, and text on tinted glass, can stay under 4.5:1 (the selected tab's label down
+  to 2.2:1 over white). `test/contrast.test.mjs` lists each case. Reduced transparency,
+  increased contrast and `data-sui-transparency="reduce"` make glass solid, and every text on
+  it then passes.
+
 ## 0.6.1 — 2026-10-19
 
 ### Fixed
