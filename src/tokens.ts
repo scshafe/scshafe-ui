@@ -146,16 +146,16 @@ export const SUI_TOKENS: readonly SuiToken[] = Object.freeze([
   themed("--sui-shadow-color", { light: "rgba(15, 23, 42, 0.12)", dark: "rgba(0, 0, 0, 0.22)" }, "shadow", "decorative", "Colour of small, directional shadows (pinned columns, raised buttons)."),
   // Liquid Glass: the material of the functional layer (controls and navigation
   // floating over content). Solid (--sui-popover) under reduced transparency.
-  themed("--sui-glass", { light: "rgba(255, 255, 255, 0.72)", dark: "rgba(24, 36, 56, 0.72)" }, "surface", "surface", "Glass fill of controls and floating layers (buttons, tab strips, popovers, toasts)."),
+  themed("--sui-glass", { light: "rgba(255, 255, 255, 0.72)", dark: "rgba(24, 36, 56, 0.82)" }, "surface", "surface", "Glass fill of controls and floating layers (buttons, tab strips, popovers, toasts)."),
   themed("--sui-glass-thick", { light: "rgba(255, 255, 255, 0.88)", dark: "rgba(17, 29, 47, 0.88)" }, "surface", "surface", "Thicker glass for larger, longer-lived surfaces (sheets, rails, detail popovers)."),
   themed("--sui-glass-sheen", { light: "rgba(255, 255, 255, 0.55)", dark: "rgba(255, 255, 255, 0.07)" }, "surface", "overlay", "Light caught across the top of a glass surface (the start of its sheen gradient)."),
   themed("--sui-glass-edge", { light: "rgba(31, 45, 66, 0.14)", dark: "rgba(183, 203, 231, 0.16)" }, "border", "decorative", "Glass rim: the edge that separates glass from what is behind it."),
   themed("--sui-glass-highlight", { light: "rgba(255, 255, 255, 0.9)", dark: "rgba(255, 255, 255, 0.14)" }, "border", "decorative", "Bright inner highlight along the top edge of glass."),
   // Text on glass: glass lets a dark or light backdrop through, so accent, danger and secondary
   // text on it take shades that reach 4.5:1 over any backdrop (test/contrast.test.mjs).
-  themed("--sui-glass-accent-text", { light: "#083f78", dark: "var(--sui-accent)" }, "color", "text", "Accent text on glass: the selected tab's label, Card's \"show full\"."),
-  themed("--sui-glass-danger-text", { light: "#7d0a1d", dark: "var(--sui-tone-red-text)" }, "color", "text", "Danger text on glass: the danger button, error toasts, destructive menu items."),
-  themed("--sui-glass-muted", { light: "#3a4552", dark: "var(--sui-muted)" }, "color", "text", "Secondary text on glass: unselected tabs, counts, menu shortcuts, rail titles, sheet descriptions."),
+  themed("--sui-glass-accent-text", { light: "#083f78", dark: "#c4e2ff" }, "color", "text", "Accent text on glass: the selected tab's label, Card's \"show full\"."),
+  themed("--sui-glass-danger-text", { light: "#7d0a1d", dark: "#ffd6d6" }, "color", "text", "Danger text on glass: the danger button, error toasts, destructive menu items."),
+  themed("--sui-glass-muted", { light: "#3a4552", dark: "#cbd5e3" }, "color", "text", "Secondary text on glass: unselected tabs, counts, menu shortcuts, rail titles, sheet descriptions."),
   themed("--sui-glass-shadow", { light: "0 8px 24px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.08)", dark: "0 10px 30px rgba(0, 0, 0, 0.36), 0 1px 3px rgba(0, 0, 0, 0.3)" }, "shadow", "decorative", "Elevation of floating glass."),
   fixed("--sui-glass-blur", "24px", "material", "components.css", "Backdrop blur of glass; 0px under reduced transparency."),
   fixed("--sui-glass-saturate", "180%", "material", "components.css", "Backdrop saturation of glass, so colour from behind carries through; 100% under reduced transparency."),

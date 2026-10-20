@@ -134,23 +134,13 @@ const GLASS_TEXT = [
   { label: "menu shortcut", selector: ".sui-context-menu-item-kbd", glass: "--sui-glass", sheen: [0, 0.6], text: "--sui-glass-muted" },
   { label: "hover card note", selector: ".sui-hover-card-content small", glass: "--sui-glass", sheen: [0, 0.6], text: "--sui-glass-muted" },
   { label: "show full", selector: ".sui-card-show-full", glass: "--sui-glass", text: "--sui-glass-accent-text" },
-  { label: "show full, hovered", selector: ".sui-card-show-full:hover", glass: "--sui-glass", tint: ["--sui-accent", 0.08], text: "--sui-accent-hover" },
+  { label: "show full, hovered", selector: ".sui-card-show-full:hover", glass: "--sui-glass", tint: ["--sui-accent", 0.08], text: "--sui-glass-accent-text" },
   { label: "rail toggle", selector: ".sui-collapsible-list-rail-toggle", glass: "--sui-glass", text: "--sui-glass-muted" },
   { label: "rail title", selector: ".sui-collapsible-list-rail-title", glass: "--sui-glass-thick", sheen: [0.8, 1], overlays: [["--sui-tint"]], text: "--sui-glass-muted" },
   { label: "sheet", selector: ".sui-sheet", modal: true, glass: "--sui-glass-thick", sheen: [0, 1], text: "--sui-text" },
   { label: "sheet description", selector: ".sui-sheet__description", modal: true, glass: "--sui-glass-thick", sheen: [0, 1], text: "--sui-glass-muted" },
   { label: "card detail", selector: ".sui-card-detail-popover", modal: true, glass: "--sui-glass-thick", sheen: [0, 1], text: "--sui-text" }
 ];
-// Dark glass (0.72) over a light backdrop is a mid grey, on which accent, danger and secondary
-// text, and body text on tinted glass, stay under 4.5:1 (the tinted toasts only just: 4.4:1 here,
-// 4.8:1 rendered). Recorded here until the dark glass is settled (docs/ACCESSIBILITY.md); the
-// test fails on a new gap and when a recorded one is fixed.
-const DARK_GLASS_GAPS = [
-  "primary button, hovered", "pressed button", "danger button", "selected tab", "selected tab button",
-  "selected tab in a strip", "tab count in a strip", "success toast", "info toast", "tab count on the selected tab", "error toast", "destructive menu item", "destructive menu item, hovered",
-  "menu shortcut", "hover card note", "show full", "show full, hovered", "rail toggle", "rail title"
-];
-
 function glassTextFailures(theme) {
   const black = { r: 0, g: 0, b: 0, a: 1 };
   const white = { r: 255, g: 255, b: 255, a: 1 };
@@ -176,15 +166,11 @@ function glassTextFailures(theme) {
   return failures;
 }
 
-test(`light theme: text on every glass surface reaches ${TEXT_MIN}:1 over any backdrop`, () => {
-  assert.deepEqual([...glassTextFailures("light").values()], []);
-});
-
-test("dark theme: text on glass over any backdrop has only the recorded gaps", () => {
-  const failures = glassTextFailures("dark");
-  assert.deepEqual([...failures.keys()].filter((label) => !DARK_GLASS_GAPS.includes(label)), [], "a new gap");
-  assert.deepEqual(DARK_GLASS_GAPS.filter((label) => !failures.has(label)), [], "a recorded gap is fixed: remove it from DARK_GLASS_GAPS");
-});
+for (const theme of SUI_THEMES) {
+  test(`${theme} theme: text on every glass surface reaches ${TEXT_MIN}:1 over any backdrop`, () => {
+    assert.deepEqual([...glassTextFailures(theme).values()], []);
+  });
+}
 
 test("the glass text table matches the colours components.css gives those selectors", () => {
   const rules = styleRules(parseRules(readStylesheet("components.css"))).filter((rule) => rule.context.length === 0);
