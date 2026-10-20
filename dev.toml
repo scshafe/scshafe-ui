@@ -23,8 +23,8 @@ selected = []
 # repository's files, and the files that differ from it were left as they are.
 [template]
 source = "scshafe/scshafe-dev"
-version = "0.6.0"
-commit = "d2836d8e7efac8cc24b6662e58b0f56df6e2c461"
+version = "0.14.0"
+commit = "1c3329871cb04f7ea4aedd96175e01c8c3bbda6b"
 released = true
 dirty = false
 mode = "adopted"
@@ -35,3 +35,10 @@ params = { kind = "library", name = "scshafe-ui", description = "The SCSHAFE sta
 [identity]
 agent = "agent-scshafe-ui"
 github = ["contents=write", "pull_requests=write", "issues=write", "workflows=write", "actions=write"]
+
+# Agent requests (scshafe/infra docs/platform/agent-requests.md): other projects' agents may file
+# requests here as issues, and automatic runs may open draft PRs from request/<n> branches.
+[requests]
+accept = true
+from = ["*"]
+auto = "pr"
