@@ -5,6 +5,35 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.8.0 — 2026-10-19
+
+Text on glass reaches WCAG AA (4.5:1) over any backdrop in the dark theme too. The dark glass
+looks different: thicker, with paler coloured labels.
+
+### Changed
+
+- Dark theme: `--sui-glass` goes from 0.72 to 0.82 opacity, so less of the backdrop shows
+  through, and the glass text tokens get their own paler values: `--sui-glass-accent-text`
+  `#c4e2ff` (was `--sui-accent`), `--sui-glass-danger-text` `#ffd6d6` (was
+  `--sui-tone-red-text`) and `--sui-glass-muted` `#cbd5e3` (was `--sui-muted`). Labels stay
+  blue and red, paler. The light theme is unchanged.
+- Card's "show full" keeps `--sui-glass-accent-text` on hover instead of `--sui-accent-hover`
+  (the same colour in the light theme); the hover tint and rim mark the hover.
+
+### Fixed
+
+- The 0.7.0 known gaps: over a light backdrop, accent, danger and secondary text on dark glass,
+  and text on tinted dark glass, fell under 4.5:1 (the selected tab's label to 2.2:1 over
+  white). Rendered in Chrome over a photograph, an illustration, dense text, black and white,
+  the lowest text on dark glass is now 4.6:1. `test/contrast.test.mjs` checks both themes with
+  no recorded gaps.
+
+### Decision
+
+- Of the ways to close the dark gaps, thicker glass with paler text was chosen over near-white
+  labels on the 0.72 glass (which still left a lone selected tab and its badge at 4.1–4.4:1
+  over white and dense text) and over keeping the gap documented.
+
 ## 0.7.0 — 2026-10-19
 
 Text on glass reaches WCAG AA (4.5:1) over any backdrop in the light theme. The dark theme is

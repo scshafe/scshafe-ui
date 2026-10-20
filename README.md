@@ -30,7 +30,7 @@ for `//npm.pkg.github.com/`), never in the project. In GitHub Actions use the jo
 package grants your repository read access. Then install an exact version:
 
 ```sh
-pnpm add --save-exact @scshafe/ui@0.7.0 react react-dom
+pnpm add --save-exact @scshafe/ui@0.8.0 react react-dom
 ```
 
 ### Peer dependencies
@@ -200,7 +200,7 @@ its empty shell.
 String helpers that emit the **same** `sui-` classes and `data-sui-component` markers as the
 React components, for apps that render HTML on the server with no React and no client
 JavaScript. Install the package alone (`pnpm add --save-exact --config.auto-install-peers=false
-@scshafe/ui@0.7.0`): the subpath imports nothing but the package's own `format` helpers.
+@scshafe/ui@0.8.0`): the subpath imports nothing but the package's own `format` helpers.
 
 ```js
 import { documentPage, appShell, navTabs, stack, list, listRow, inputField, button, html } from "@scshafe/ui/ssr";
@@ -326,11 +326,12 @@ set the attribute itself (`SUI_TRANSPARENCY_ATTRIBUTE` from `@scshafe/ui/tokens`
 To tune the material, re-declare the glass tokens like any other: a thinner `--sui-glass` or a
 smaller `--sui-glass-blur`, for example. Accent, danger and secondary text on glass use their
 own tokens (`--sui-glass-accent-text`, `--sui-glass-danger-text`, `--sui-glass-muted`), so it
-stays readable whatever shows through. In the light theme, every text colour on every glass
-surface is checked at 4.5:1 over *any* backdrop. In the dark theme only body text on untinted
-glass is: over light imagery, accent, danger and secondary text on dark glass, and text on
-tinted glass, can fall under 4.5:1, so check your own imagery, or set
-`data-sui-transparency="reduce"` where dark glass floats over light pictures.
+stays readable whatever shows through. In both themes, every text colour on every glass
+surface is checked at 4.5:1 over *any* backdrop. The dark glass is thicker than the light
+(0.82 against 0.72) and its accent, danger and secondary text paler (`#c4e2ff`, `#ffd6d6`,
+`#cbd5e3`): dark glass over a light picture would otherwise be a mid grey on which coloured
+text cannot reach 4.5:1. A thinner glass or other text colours in your theme give up that
+check, so measure them over your own imagery.
 
 ## Accessibility
 
