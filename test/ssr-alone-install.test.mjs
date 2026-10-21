@@ -101,7 +101,7 @@ const cjsSmoke = `
   "use strict";
   const { readFileSync } = require("node:fs");
   const expect = (condition, message) => { if (!condition) throw new Error(message); };
-  // 1. require(esm): synchronous, Node 22.12+ (the package needs 22.22+ anyway).
+  // 1. require(esm): synchronous, Node 22.12+ (the package needs 22.23.4+ anyway).
   const ui = require("@scshafe/ui/ssr");
   const page = String(ui.documentPage({ title: "Jobs", body: ui.stack({ children: [
     ui.banner({ tone: "ok", text: "Saved." }),

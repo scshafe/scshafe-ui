@@ -121,7 +121,7 @@ pnpm add --save-exact @scshafe/ui@0.5.0
 | `@scshafe/ui/editor` | + the tiptap packages ([README](../README.md#editor-scshafeuieditor)) |
 | `@scshafe/ui/build`, `/testing` | + `esbuild` |
 
-The engines are Node `>=22.22.0 <23` or `>=24.18.0 <25`: raise the app's `engines.node` and its
+The engines are Node `>=22.23.4 <23` or `>=24.22.1 <25`: raise the app's `engines.node` and its
 Docker base image to match if they are older.
 
 ## 4. CommonJS apps
@@ -392,7 +392,7 @@ What that means for an existing app:
       command; `dev identity verify` passes.
 - [ ] The package grant for the repository (`dev grants <project>`), made by the owner.
 - [ ] `@scshafe/ui` pinned exactly, the lockfile committed; pnpm: `autoInstallPeers: false`.
-- [ ] Node `>=22.22` (22.x) or `>=24.18` (24.x) in `engines` and the Docker base image.
+- [ ] Node `>=22.23.4` (22.x) or `>=24.22.1` (24.x) in `engines` and the Docker base image.
 - [ ] CommonJS: `require("@scshafe/ui/ssr")` (or `import()` at startup).
 - [ ] The stylesheets served or imported once; `body` takes `--sui-bg` and `--sui-text`.
 - [ ] CI: `packages: read`, `actions/setup-node` with `registry-url` and `scope`.

@@ -5,6 +5,24 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.9.0 — 2026-10-21
+
+Node security releases: the package now requires a patched Node.
+
+### Changed
+
+- `engines.node` is `>=22.23.4 <23 || >=24.22.1 <25` (was `>=22.22.0 <23 || >=24.18.0 <25`),
+  the Node security releases of 2026-10-20. A consumer on an older 22.x or 24.x patch release
+  gets an unsupported-engine warning (an error under `engine-strict`): upgrade Node, and the
+  Docker base image if the app has one. `.node-version` (the release job) is 24.22.1.
+
+### Security
+
+- Development dependencies (not in the package): `markdown-it` 14.3.2 → 14.3.3 (through
+  `tiptap-markdown`; GHSA-gfr2-rv44-r23c, high, and GHSA-vfgh-jcmw-g37q, low) and `undici`
+  7.30.0 → 7.30.1 (through jsdom). Consumers who install the `tiptap-markdown` peer resolve
+  their own `markdown-it`: make sure it is 14.3.3 or newer.
+
 ## 0.8.0 — 2026-10-19
 
 Text on glass reaches WCAG AA (4.5:1) over any backdrop in the dark theme too. The dark glass

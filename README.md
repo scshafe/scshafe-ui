@@ -6,7 +6,7 @@ layers. Every component renders a stable `data-sui-component` marker and `sui-` 
 are the test contract hosts pin. Light and dark themes, reduced motion and keyboard focus
 are built in, checked against WCAG 2.2 AA ([docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)).
 
-Requires Node 22.22+ or 24.18+ and React 18 or newer — except `@scshafe/ui/ssr`, the
+Requires Node 22.23.4+ or 24.22.1+ and React 18 or newer — except `@scshafe/ui/ssr`, the
 server-rendered adapter, which needs no React and no other peer.
 
 **New here?** [docs/FIRST-APP.md](docs/FIRST-APP.md) builds a React app and a server-rendered
@@ -30,7 +30,7 @@ for `//npm.pkg.github.com/`), never in the project. In GitHub Actions use the jo
 package grants your repository read access. Then install an exact version:
 
 ```sh
-pnpm add --save-exact @scshafe/ui@0.8.0 react react-dom
+pnpm add --save-exact @scshafe/ui@0.9.0 react react-dom
 ```
 
 ### Peer dependencies
@@ -200,7 +200,7 @@ its empty shell.
 String helpers that emit the **same** `sui-` classes and `data-sui-component` markers as the
 React components, for apps that render HTML on the server with no React and no client
 JavaScript. Install the package alone (`pnpm add --save-exact --config.auto-install-peers=false
-@scshafe/ui@0.8.0`): the subpath imports nothing but the package's own `format` helpers.
+@scshafe/ui@0.9.0`): the subpath imports nothing but the package's own `format` helpers.
 
 ```js
 import { documentPage, appShell, navTabs, stack, list, listRow, inputField, button, html } from "@scshafe/ui/ssr";

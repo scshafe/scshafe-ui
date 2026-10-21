@@ -17,8 +17,8 @@ cd ~/src/scshafe-ui
 ## Toolchain
 
 pnpm comes from corepack, pinned by `packageManager` in `package.json`
-(`pnpm@10.34.5`); no global or root install is needed. Node is 22.22+ or
-24.18+ (`.node-version` names the release-job version).
+(`pnpm@10.34.5`); no global or root install is needed. Node is 22.23.4+ or
+24.22.1+ (`.node-version` names the release-job version).
 
 ```sh
 corepack enable --install-directory ~/.local/bin   # once per user, no root
