@@ -14,10 +14,10 @@ POSIX shell (bash or zsh) on Linux or macOS.
 
 ## 0. Prerequisites
 
-**Node and pnpm.** Node 22.22+ or 24.18+, and pnpm 10:
+**Node and pnpm.** Node 22.23.4+ or 24.22.1+, and pnpm 10:
 
 ```sh
-node --version     # v22.22.0 or newer 22.x, or v24.18.0 or newer 24.x
+node --version     # v22.23.4 or newer 22.x, or v24.22.1 or newer 24.x
 pnpm --version     # 10.x
 ```
 
