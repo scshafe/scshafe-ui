@@ -5,6 +5,73 @@ All notable changes to `@scshafe/ui` are recorded here. Versions follow
 commit on `main` whose `package.json` version is `<x.y.z>`; published versions
 are never deleted, replaced or reused.
 
+## 0.9.1 — 2026-11-12
+
+Fixes for defects a review found in component behaviour, and hardening of the server-rendered
+`html` template, `safeUrl` and the `webApiJson` fetch seam.
+
+### Changes a host may notice
+
+- `safeUrl` (and every URL the `@scshafe/ui/ssr` helpers and `html` emit) refuses a
+  protocol-relative URL, `//host/…`, also when it is spelled with backslashes, which browsers
+  read as slashes: it renders as `#`. Such a value names another host, so a path built from
+  request data could send the reader elsewhere. Pass `safeUrl(url, { allowProtocolRelative:
+  true })` where you mean it, or write the URL with its scheme. `MarkdownContent` renders such
+  a link as plain text.
+- `webApiJson` (and `webApiMutation`) throws `WebApiError` when a successful response's body is
+  not JSON, an HTML page from a proxy or an empty body, instead of returning `{}`. A 204 No
+  Content still resolves to `{}`. An endpoint that answers 200 with an empty body now throws:
+  answer 204, or a JSON body.
+- `html` refuses more templates: a value inside an HTML comment or declaration, inside a
+  raw-text element (`<noscript>`, `<xmp>`, `<iframe>`, `<noembed>`, `<noframes>`,
+  `<plaintext>`, as before `<script>` and `<style>`), markup (`SafeHtml`) inside `<textarea>`
+  or `<title>`, any value inside or after an inline `<svg>` or `<math>` in the same template
+  (build the drawing as its own `html` and interpolate it), a CDATA section, and a template
+  that ends inside a tag, a comment, raw text or an open `<svg>`/`<math>`. A `<` at the very
+  end of a template renders as `&lt;`.
+- `Status` renders without the hover-card wrapper (`sui-tooltip`) unless a `tooltip` is passed:
+  its component metadata appears only in developer mode, as for every other component.
+  `StatCount`, `Card` and `ListRow` show statuses the same way.
+- `ConfirmDialog` opens a `kind: "danger"` prompt with focus on Cancel, so Enter right away
+  does not run the destructive action.
+- `DataTableColumnMenu`'s width field applies a typed width on Enter or when focus leaves it,
+  not on each keystroke.
+
+### Fixed
+
+- `html` read the template with a scanner that had no comment state and did not know unquoted
+  attribute values: a quote character in a comment, or inside an unquoted value, in the
+  template's own text could make it misjudge where later values landed, and skip the URL check
+  or the refusals that follow from it. It now tokenizes the template as a browser does,
+  including the escaped sections of `<script>` and the raw-text elements.
+- `html` checked each value in a URL attribute on its own, so several values, or a value and
+  the template text around it, could together form a URL that no single value would. A URL
+  attribute is now checked as a whole once its tag is complete: its template text, with
+  character references decoded, and every value in place.
+- The URL attributes `html` checked and those `attrs()` checked were two different lists. One
+  list now serves both, and adds `srcset` and `ping` (each URL in the list), `data`,
+  `background`, `longdesc`, `manifest`, `codebase`, and the `content` of a
+  `<meta http-equiv="refresh">`. A refused `srcset`, `ping` or refresh `content` renders
+  empty.
+- `Status` passed its developer metadata as the tooltip, so every status badge showed it on
+  hover.
+- `DataTableColumnMenu`'s width field stored each keystroke, and the store clamps to 48–1200
+  pixels, so typing "180" stored 48 at the first digit. The field keeps a draft and commits it;
+  an emptied field resets the column to its default.
+- `Copyable` flashed "copied" even when nothing was copied (no clipboard on a plain-HTTP origin,
+  or a refused write). It now shows success only after the write succeeds, shows a failure
+  state (`data-sui-copied="false"`) otherwise, and announces "Copied" or "Could not copy" in a
+  polite live region.
+- `MarkdownEditor` read `ref` as a prop, which only React 19 passes, so its handle (`clear`,
+  `setContent`, `getMarkdown`, `focus`) never attached on React 18. It now forwards its ref.
+
+### Added
+
+- `webApiJson` and `webApiMutation` take `signal` (to abort, or `AbortSignal.timeout(ms)`) and
+  `credentials`, and a type parameter for the payload (`webApiJson<Plan>(…)`; the default stays
+  `any`).
+- `SafeUrlOptions` (`allowProtocolRelative`) for `safeUrl`.
+
 ## 0.9.0 — 2026-10-21
 
 Node security releases: the package now requires a patched Node.
