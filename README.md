@@ -136,6 +136,12 @@ The Redux Toolkit memory model as library code. Import it through the subpath on
 `RailToggle`, `FocusSelectionList`, `RailWorkspace`); and the app root. Every factory takes
 host-injected fetchers; the package never knows an endpoint.
 
+`webApiJson<T>(path, options)` sends `accept: application/json` and JSON bodies, and takes
+`signal` (abort or `AbortSignal.timeout(ms)`) and `credentials`. A response that is not ok, a
+body with `ok: false`, and a successful response whose body is not JSON (a proxy's HTML login
+or error page, an empty body) throw `WebApiError` with the status; 204 No Content resolves to
+`{}`.
+
 ```tsx
 import { createSuiStore, createResourceSlice, SuiProviders, Popovers, Toasts, webApiJson } from "@scshafe/ui/state";
 
@@ -222,12 +228,21 @@ response.end(String(page));
 - **Escaping.** Every string or number is escaped. Only `SafeHtml` passes through: what the
   helpers return, `` html`…` `` (a tagged template that escapes its values), and the explicit
   `trustedHtml(markup)` for markup you produced yourself (never user input).
-- **Template contexts.** In `` html`…` `` a value may sit in text or in a quoted attribute
-  value; in `href`/`src`/`action`/`formaction` it must be a plain string and is URL-checked. A
-  value as a tag name, in an unquoted attribute, bare inside a tag, in an `on*`/`style`/`srcdoc`
-  attribute, or inside `<script>`/`<style>` throws.
+- **Template contexts.** `` html`…` `` reads its template as a browser does (comments, quoted
+  and unquoted attribute values, raw text), and a value may sit only in text or in a quoted
+  attribute value. In a URL attribute (`href`, `src`, `action`, `formaction`, `cite`, `poster`,
+  `data`, `srcset`, `ping`, … and the `content` of a refresh `<meta>`) a value must be a plain
+  string, and the attribute's whole value, its own text and every value together, is
+  URL-checked. A value as a tag name, in an unquoted attribute, bare inside a tag, in an
+  `on*`/`style`/`srcdoc` attribute, inside a comment, `<script>`, `<style>` or another raw-text
+  element, or inside or after an inline `<svg>`/`<math>` throws (build a drawing as its own
+  `` html`…` `` and interpolate it). A template must end as text, not inside a tag, a comment
+  or an open element of those kinds.
 - **URLs.** URL attributes accept `http(s)`, `mailto`, `tel` and relative URLs; anything else
-  (`javascript:`, `data:`, …) renders as `#` (`safeUrl`).
+  (`javascript:`, `data:`, …) renders as `#` (`safeUrl`; a refused `srcset`, `ping` or refresh
+  `content` renders empty). A protocol-relative URL (`//host/…`, also with backslashes) names
+  another host, so it is refused too; `safeUrl(url, { allowProtocolRelative: true })` accepts it
+  where you mean it, or write the URL with its scheme.
 - **CSP.** No helper emits a `style` attribute, a `<script>` or an event-handler attribute, so
   pages run under `default-src 'self'; style-src 'self'; script-src 'none'`. Serve
   `tokens.css`, `layout.css` and `components.css` from the package.

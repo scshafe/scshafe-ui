@@ -33,6 +33,46 @@ function widthPlaceholder<Row>(column: PinnedDataTableColumn<Row>): string | und
   return undefined;
 }
 
+interface ColumnWidthInputProps {
+  width: number | "";
+  placeholder?: string;
+  label: string;
+  onCommit: (width: number | null) => void;
+}
+
+// The typed width is a draft until Enter or leaving the field: committing each keystroke would
+// clamp "1" (on the way to "180") to the 48px minimum. An empty field resets to the default.
+function ColumnWidthInput({ width, placeholder, label, onCommit }: ColumnWidthInputProps) {
+  const [draft, setDraft] = React.useState<string | null>(null);
+  const commit = () => {
+    if (draft === null) return;
+    const parsed = Number.parseFloat(draft);
+    setDraft(null);
+    if (draft.trim() === "") onCommit(null);
+    else if (Number.isFinite(parsed)) onCommit(parsed);
+  };
+  return (
+    <input
+      className="sui-data-table-column-width-input"
+      type="number"
+      min={48}
+      max={1200}
+      step={10}
+      value={draft ?? width}
+      placeholder={placeholder}
+      aria-label={label}
+      onChange={(event) => setDraft(event.currentTarget.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          commit();
+        }
+      }}
+    />
+  );
+}
+
 export function DataTableColumnMenu<Row>({
   tableId,
   columns,
@@ -106,23 +146,13 @@ export function DataTableColumnMenu<Row>({
                   >
                     {renderIcon("action.expand", { size: 12, "aria-hidden": "true" })}
                   </button>
-                  <input
-                    className="sui-data-table-column-width-input"
-                    type="number"
-                    min={48}
-                    max={1200}
-                    step={10}
-                    value={widthValue}
+                  <ColumnWidthInput
+                    width={widthValue}
                     placeholder={widthPlaceholder(column)}
-                    aria-label={`${columnLabel} width`}
-                    onChange={(event) => {
-                      const parsed = Number.parseFloat(event.currentTarget.value);
-                      if (Number.isFinite(parsed)) {
-                        dispatch(dataTableColumnWidthSet({ tableId, columnId: column.id, width: parsed }));
-                      } else {
-                        dispatch(dataTableColumnWidthReset({ tableId, columnId: column.id }));
-                      }
-                    }}
+                    label={`${columnLabel} width`}
+                    onCommit={(width) => dispatch(width === null
+                      ? dataTableColumnWidthReset({ tableId, columnId: column.id })
+                      : dataTableColumnWidthSet({ tableId, columnId: column.id, width }))}
                   />
                   <button
                     type="button"
