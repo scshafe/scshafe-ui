@@ -36,16 +36,27 @@ export interface WebApiJsonOptions {
   idempotencyKey?: string;
   label?: string;
   cache?: RequestCache;
+  /** Aborts the request: an AbortController's signal, or AbortSignal.timeout(ms). */
+  signal?: AbortSignal;
+  /** Whether cookies and HTTP authentication go with the request; fetch's default
+   * ("same-origin") when unset. */
+  credentials?: RequestCredentials;
 }
 
-export async function webApiJson(path: string, {
+/** Fetch JSON. A response that is not ok, or a JSON body with `ok: false`, throws WebApiError;
+ * so does a successful response whose body is not JSON (an HTML login or error page from a
+ * proxy, an empty body), except 204 No Content, which resolves to `{}`. `T` is the caller's
+ * claim about the payload's shape; nothing checks it. */
+export async function webApiJson<T = any>(path: string, {
   method = "GET",
   body,
   headers = {},
   idempotencyKey,
   label = "Request",
-  cache = "no-store"
-}: WebApiJsonOptions = {}): Promise<any> {
+  cache = "no-store",
+  signal,
+  credentials
+}: WebApiJsonOptions = {}): Promise<T> {
   const requestHeaders: Record<string, string> = { accept: "application/json", ...headers };
   if (body !== undefined && requestHeaders["content-type"] === undefined && requestHeaders["Content-Type"] === undefined) {
     requestHeaders["content-type"] = "application/json";
@@ -58,9 +69,21 @@ export async function webApiJson(path: string, {
     method,
     headers: requestHeaders,
     cache,
-    body: body === undefined ? undefined : JSON.stringify(body)
+    body: body === undefined ? undefined : JSON.stringify(body),
+    ...(signal ? { signal } : {}),
+    ...(credentials ? { credentials } : {})
   });
-  const payload: any = await response.json().catch(() => ({}));
+  if (response.ok && response.status === 204) return {} as T;
+  const text = await response.text();
+  let payload: any;
+  try {
+    payload = JSON.parse(text);
+  } catch {
+    if (response.ok) {
+      throw new WebApiError(`${label} returned a response that is not JSON (HTTP ${response.status})`, { status: response.status, payload: null, path, label });
+    }
+    payload = {};
+  }
 
   if (!response.ok) {
     const message = payload?.error ?? payload?.message ?? `${label} request failed: HTTP ${response.status}`;
@@ -70,7 +93,7 @@ export async function webApiJson(path: string, {
     const message = payload?.error ?? `${label} returned ok=false`;
     throw new WebApiError(message, { status: response.status, payload, path, label });
   }
-  return payload;
+  return payload as T;
 }
 
 export interface WebApiMutationOptions {
@@ -78,13 +101,17 @@ export interface WebApiMutationOptions {
   idempotencyKey?: string;
   idempotencyPrefix?: string;
   label?: string;
+  signal?: AbortSignal;
+  credentials?: RequestCredentials;
 }
 
-export function webApiMutation(path: string, body: unknown, { method = "POST", idempotencyKey, idempotencyPrefix, label = "Mutation" }: WebApiMutationOptions = {}): Promise<any> {
-  return webApiJson(path, {
+export function webApiMutation<T = any>(path: string, body: unknown, { method = "POST", idempotencyKey, idempotencyPrefix, label = "Mutation", signal, credentials }: WebApiMutationOptions = {}): Promise<T> {
+  return webApiJson<T>(path, {
     method,
     body,
     idempotencyKey: idempotencyKey ?? (idempotencyPrefix ? webApiIdempotencyKey(idempotencyPrefix) : undefined),
-    label
+    label,
+    signal,
+    credentials
   });
 }

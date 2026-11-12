@@ -1,6 +1,26 @@
 import React from "react";
 import { Tooltip } from "./widget/TooltipComponent.js";
 
+// One visually hidden polite live region, made on first use, announces copy results.
+function announce(message) {
+  const doc = globalThis.document;
+  if (!doc?.body) return;
+  let region = doc.querySelector("[data-sui-live-region='copyable']");
+  const created = !region;
+  if (!region) {
+    region = doc.createElement("div");
+    region.className = "sui-visually-hidden";
+    region.setAttribute("role", "status");
+    region.setAttribute("aria-live", "polite");
+    region.setAttribute("data-sui-live-region", "copyable");
+    doc.body.append(region);
+  }
+  // A region must exist before its text changes to be announced, and the same text twice in a
+  // row is announced again only after a change: clear it, then set it on the next task.
+  region.textContent = "";
+  setTimeout(() => { region.textContent = message; }, created ? 100 : 30);
+}
+
 /**
  * Inline copy-to-clipboard token. Renders a real <button type="button"> so
  * the affordance is keyboard-reachable and discoverable; styling makes it
@@ -19,10 +39,13 @@ import { Tooltip } from "./widget/TooltipComponent.js";
  *  - className: extra classes forwarded to the button.
  *  - title: tooltip override; defaults to `Click to copy · <value>`.
  *
- * Feedback: on click, the click handler sets data-sui-copied="true" on the DOM
- * node for ~700ms and removes it after the timeout. CSS animates the
- * transient confirmation flash. No React state — keeps the affordance
- * compatible with the "render directly from RTK" rule for everything else.
+ * Feedback: once the clipboard write succeeds, the handler sets
+ * data-sui-copied="true" on the DOM node for ~700ms; when there is no
+ * clipboard (a plain-HTTP origin) or the write is refused, it sets
+ * data-sui-copied="false" instead. CSS animates the transient flash, and a
+ * polite live region announces the outcome to screen readers. No React
+ * state — keeps the affordance compatible with the "render directly from
+ * RTK" rule for everything else.
  */
 /** @param {{ value: any, kind?: string, className?: any, children?: any, title?: any, tooltip?: any, ariaLabel?: any, nested?: boolean }} props */
 export function Copyable({
@@ -53,15 +76,24 @@ export function Copyable({
     event.stopPropagation();
     const text = typeof value === "string" ? value : String(value ?? "");
     if (!text) return;
-    const clipboard = globalThis.navigator?.clipboard;
-    if (clipboard?.writeText) void clipboard.writeText(text);
+    // currentTarget is gone once the event has been handled: keep the node for the async result.
     const element = event.currentTarget;
-    if (element) {
-      element.dataset.suiCopied = "true";
-      setTimeout(() => {
-        if (element.dataset.suiCopied === "true") delete element.dataset.suiCopied;
-      }, 700);
+    const report = (copied) => {
+      const state = copied ? "true" : "false";
+      if (element) {
+        element.dataset.suiCopied = state;
+        setTimeout(() => {
+          if (element.dataset.suiCopied === state) delete element.dataset.suiCopied;
+        }, 700);
+      }
+      announce(copied ? "Copied" : "Could not copy");
+    };
+    const clipboard = globalThis.navigator?.clipboard;
+    if (!clipboard?.writeText) {
+      report(false);
+      return;
     }
+    clipboard.writeText(text).then(() => report(true), () => report(false));
   };
   const onKeyDown = (event) => {
     if (event.key === "Enter" || event.key === " ") {

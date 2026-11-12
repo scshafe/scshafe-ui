@@ -244,13 +244,21 @@ test("hostile strings in every text and attribute position stay text", () => {
 
 test("URL attributes take http(s), mailto, tel and relative URLs only", () => {
   const href = (url) => parse(String(ssr.button({ label: "x", href: url }))).querySelector("a").getAttribute("href");
-  for (const url of ["https://example.test/a?b=c#d", "http://example.test", "mailto:ada@example.test", "tel:+15555550100", "/inbox", "./x", "../y", "?q=1", "#top", "inbox/item:1", "/a:b", "//cdn.example.test/x"]) {
+  for (const url of ["https://example.test/a?b=c#d", "http://example.test", "mailto:ada@example.test", "tel:+15555550100", "/inbox", "./x", "../y", "?q=1", "#top", "inbox/item:1", "/a:b", "\\inbox"]) {
     assert.equal(href(url), url, url);
   }
   for (const url of ["javascript:alert(1)", "JaVaScRiPt:alert(1)", " javascript:alert(1)", "\u0001javascript:alert(1)", "java\tscript:alert(1)", "java\nscript:alert(1)", "javascript\r:alert(1)", "data:text/html,<script>alert(1)</script>", "vbscript:msgbox", "file:///etc/passwd", "blob:https://x/y", "x:y"]) {
     assert.equal(href(url), "#", JSON.stringify(url));
   }
   assert.equal(ssr.safeUrl("  https://example.test/  "), "https://example.test/");
+  // 0.9.1: a protocol-relative URL names another host, also spelled with backslashes (browsers
+  // read them as slashes) or split by a tab; refused unless the caller asks for it.
+  for (const url of ["//cdn.example.test/x", "///cdn.example.test/x", "\\\\cdn.example.test", "/\\cdn.example.test", "\\/cdn.example.test", "/\t/cdn.example.test", " //cdn.example.test"]) {
+    assert.equal(href(url), "#", JSON.stringify(url));
+    assert.equal(ssr.safeUrl(url), "#", JSON.stringify(url));
+  }
+  assert.equal(ssr.safeUrl("//cdn.example.test/x", { allowProtocolRelative: true }), "//cdn.example.test/x");
+  assert.equal(ssr.safeUrl("javascript:x", { allowProtocolRelative: true }), "#", "the option widens nothing else");
   // An entity in the attribute cannot spell a scheme: & is escaped.
   assert.equal(href("javascript&colon;alert(1)"), "javascript&colon;alert(1)");
   assert.match(String(ssr.button({ label: "x", href: "javascript&colon;alert(1)" })), /href="javascript&amp;colon;alert\(1\)"/);
@@ -304,6 +312,77 @@ test("html`` is context-aware: URL attributes are checked, unsafe positions refu
     [() => ssr.html`<p title="${ssr.html`<b>`}">`, /markup cannot go in an attribute/]
   ];
   for (const [render, message] of refused) assert.throws(render, message);
+});
+
+test("html`` reads the template as a browser does: comments, unquoted values and raw text", () => {
+  const evil = "javascript:alert(1)";
+  // Quote characters in a comment or inside an unquoted value open no attribute value.
+  assert.equal(String(ssr.html`<!-- it's "quoted" --><a href="${evil}">t</a>`), '<!-- it\'s "quoted" --><a href="#">t</a>');
+  assert.equal(String(ssr.html`<!--><a href="${evil}">t</a>`), '<!--><a href="#">t</a>', "an abruptly closed comment");
+  assert.equal(String(ssr.html`<a title=it's class=x"y href="${evil}">t</a>`), `<a title=it's class=x"y href="#">t</a>`);
+  assert.equal(String(ssr.html`<!DOCTYPE html><a href="${evil}">t</a>`), '<!DOCTYPE html><a href="#">t</a>');
+  assert.equal(String(ssr.html`<a "x="${"v"}" href="${evil}">t</a>`), '<a "x="v" href="#">t</a>', "a quote in an attribute name");
+  // A <script> that opened an escaped section ends only where the browser ends it.
+  assert.throws(() => ssr.html`<script><!--<script></script>${"x"}</script>-->`, /inside <script>/);
+  assert.equal(String(ssr.html`<script><!-- x --></script><p>${"<b>"}</p>`), "<script><!-- x --></script><p>&lt;b&gt;</p>");
+  const refused = [
+    [() => ssr.html`<!-- ${"x"} -->`, /comment/],
+    [() => ssr.html`<!DOCTYPE ${"x"}>`, /comment or declaration/],
+    [() => ssr.html`<!${"-"}->`, /comment/],
+    [() => ssr.html`<a title=x${"y"}>`, /quote attribute values/],
+    [() => ssr.html`<noscript>${"x"}</noscript>`, /inside <noscript>/],
+    [() => ssr.html`<xmp>${"x"}</xmp>`, /inside <xmp>/],
+    [() => ssr.html`<iframe>${"x"}</iframe>`, /inside <iframe>/],
+    [() => ssr.html`<plaintext>${"x"}`, /inside <plaintext>/],
+    [() => ssr.html`<textarea>${ssr.html`<b>`}</textarea>`, /markup cannot go inside <textarea>/],
+    [() => ssr.html`<svg><title>${"x"}</title></svg>`, /svg/],
+    [() => ssr.html`<svg></svg><p>${"x"}</p>`, /after an inline <svg>/],
+    [() => ssr.html`<math></math>${"x"}`, /<math>/],
+    [() => ssr.html`<svg><![CDATA[ x ]]></svg>`, /CDATA/],
+    [() => ssr.html`<p title="x`, /ends inside a tag/],
+    [() => ssr.html`<!-- x`, /ends inside a comment/],
+    [() => ssr.html`<script>`, /ends inside <script>/],
+    [() => ssr.html`<svg><path/>`, /ends inside <svg>/]
+  ];
+  for (const [render, message] of refused) assert.throws(render, message);
+  // Allowed around them: values before an inline drawing, a drawing as its own template, text.
+  assert.equal(String(ssr.html`<p>${"a"}</p><svg viewBox="0 0 1 1"><title>t</title><path d="M0 0"/></svg>`), '<p>a</p><svg viewBox="0 0 1 1"><title>t</title><path d="M0 0"/></svg>');
+  assert.equal(String(ssr.html`<button>${ssr.html`<svg><g/></svg>`} ${"Save"}</button>`), "<button><svg><g/></svg> Save</button>");
+  assert.equal(String(ssr.html`<textarea>${"</textarea><b>"}</textarea>`), "<textarea>&lt;/textarea&gt;&lt;b&gt;</textarea>");
+  assert.equal(String(ssr.html`a < b, c <`), "a < b, c &lt;", "a trailing < cannot start a tag in what follows");
+});
+
+test("html`` checks a URL attribute's whole value: template text and every value together", () => {
+  const cases = [
+    [ssr.html`<a href="${"javascript"}:${"alert(1)"}">t</a>`, '<a href="#">t</a>'],
+    [ssr.html`<a href="${"java"}${"script:alert(1)"}">t</a>`, '<a href="#">t</a>'],
+    [ssr.html`<a href="${"javascript"}&#58;alert(1)">t</a>`, '<a href="#">t</a>'],
+    [ssr.html`<a href="${"javascript"}&colon;alert(1)">t</a>`, '<a href="#">t</a>'],
+    [ssr.html`<a href="/${"/elsewhere.example"}">t</a>`, '<a href="#">t</a>'],
+    [ssr.html`<a href="${"/"}&#92;elsewhere.example">t</a>`, '<a href="#">t</a>'],
+    [ssr.html`<a href="/items/${"42"}?q=${"a b&c"}&amp;page=2">t</a>`, '<a href="/items/42?q=a b&amp;c&amp;page=2">t</a>'],
+    [ssr.html`<a href="https://example.test/${"x"}">t</a>`, '<a href="https://example.test/x">t</a>'],
+    [ssr.html`<img alt="" srcset="${"/a.png"} 1x, ${"/b.png"} 2x">`, '<img alt="" srcset="/a.png 1x, /b.png 2x">'],
+    [ssr.html`<img alt="" srcset="${"/a.png"} 1x, ${"javascript:x"} 2x">`, '<img alt="" srcset="">'],
+    [ssr.html`<a href="/x" ping="${"/p"} ${"//elsewhere.example/p"}">t</a>`, '<a href="/x" ping="">t</a>'],
+    [ssr.html`<object data="${"data:text/html,x"}"></object>`, '<object data="#"></object>'],
+    [ssr.html`<meta http-equiv="refresh" content="0; url=${"javascript:x"}">`, '<meta http-equiv="refresh" content="">'],
+    [ssr.html`<meta http-equiv=Refresh content="${"5;URL='//elsewhere.example'"}">`, '<meta http-equiv=Refresh content="">'],
+    [ssr.html`<meta http-equiv="refresh" content="5; url=${"/next"}">`, '<meta http-equiv="refresh" content="5; url=/next">'],
+    [ssr.html`<meta name="description" content="${"Time: 5pm"}">`, '<meta name="description" content="Time: 5pm">']
+  ];
+  for (const [markup, expected] of cases) assert.equal(String(markup), expected);
+  assert.throws(() => ssr.html`<a href="${"javascript"}&fjlig;x">t</a>`, /character reference &fjlig;/);
+  assert.throws(() => ssr.html`<img srcset="${ssr.html`/a.png`}">`, /plain string/);
+  assert.throws(() => ssr.html`<meta http-equiv="refresh" content="${["/a"]}">`, /plain string/);
+});
+
+test("attrs() shares the URL attribute list and rules with html``", () => {
+  assert.equal(ssr.attrs({ data: "javascript:x", srcset: "/a.png 1x, javascript:x 2x", ping: "/p //elsewhere.example", poster: "/p.png" }), ' data="#" srcset="" ping="" poster="/p.png"');
+  assert.equal(ssr.attrs({ "http-equiv": "refresh", content: "0; url=//elsewhere.example" }), ' http-equiv="refresh" content=""');
+  assert.equal(ssr.attrs({ "http-equiv": "refresh", content: "0; url=/next" }), ' http-equiv="refresh" content="0; url=/next"');
+  assert.equal(ssr.attrs({ name: "description", content: "Time: 5pm" }), ' name="description" content="Time: 5pm"');
+  assert.equal(ssr.attrs({ href: "//cdn.example.test/x" }), ' href="#"');
 });
 
 // ---------------------------------------------------------------------------------------------

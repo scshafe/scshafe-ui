@@ -68,13 +68,15 @@ operating system's reduced-motion setting on and off.
    names and roles are announced as intended; toasts are announced once
    (status politely, errors assertively); a Banner inserted after load is
    announced with its tone prefix, and a checkbox reads its label, state and
-   help text; a ConfirmDialog announces its title and message. Note where focus lands after a Sheet closes: the Sheet unmounts
+   help text; a ConfirmDialog announces its title and message, and a danger
+   prompt opens with focus on Cancel; Copyable announces "Copied" or "Could not
+   copy" (on a plain-HTTP origin there is no clipboard). Note where focus lands after a Sheet closes: the Sheet unmounts
    its dialog, so the host may need to move focus back to the trigger.
 2. **Focus not obscured (2.4.11)**: tabbing through a PinnedDataTable with a
    sticky header and pinned column, and past a ToastTray in the corner, never
    hides the focused element completely.
 3. **Dragging alternatives (2.5.7)**: column widths can also be set in
-   DataTableColumnMenu's width field; the rail width has keyboard steps and a
+   DataTableColumnMenu's width field (type a width, then Enter or Tab); the rail width has keyboard steps and a
    reset, but no single-pointer alternative to dragging — a known gap.
 4. **Target size (2.5.8)**: HoverButton `sm` and `md` meet the spacing
    exception where they are used (no other target within 24px).

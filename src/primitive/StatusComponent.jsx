@@ -11,7 +11,8 @@ import { Badge } from "./BadgeComponent.js";
  *
  * Props:
  *  - state: the workflow state string (e.g. "active", "blocked", "completed")
- *  - tooltip: tooltip metadata object or string
+ *  - tooltip: tooltip text or metadata object; none by default (the component
+ *    metadata shows only in developer mode, as Badge's fallback)
  *  - icon: "auto" (default — resolve the state glyph from iconByState), a
  *    semantic icon name to override, or null to render text-only
  */
@@ -23,11 +24,7 @@ export function Status({ state, tooltip = null, icon = "auto" }) {
   // root bundle stays iconoir-clean) and renders through Badge's icon seam — pass
   // icon={null} to opt out, or a semantic name to override.
   const resolvedIcon = icon === "auto" ? iconNameForState(label) : icon;
-  const resolvedTooltip = tooltip ?? {
-    component: "Status",
-    layer: "primitive",
-    description: "Workflow-state badge with tone mapped from the canonical state vocabulary.",
-    values: { state: label, tone }
-  };
-  return <Badge value={label} tone={tone} tooltip={resolvedTooltip} componentName="Status" icon={resolvedIcon} />;
+  // Badge supplies the component metadata as its developer-mode fallback; passing metadata as
+  // the tooltip would show it to everyone.
+  return <Badge value={label} tone={tone} tooltip={tooltip} componentName="Status" icon={resolvedIcon} />;
 }

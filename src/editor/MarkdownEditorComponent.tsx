@@ -1,4 +1,4 @@
-import React, { useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -23,7 +23,9 @@ export interface MarkdownEditorProps {
   ref?: React.Ref<MarkdownEditorHandle>;
 }
 
-export function MarkdownEditor({
+// forwardRef, not a `ref` prop: React 18 (the peer floor) passes `ref` to a function component
+// only through forwardRef; React 19 does both.
+export const MarkdownEditor = forwardRef<MarkdownEditorHandle, Omit<MarkdownEditorProps, "ref">>(function MarkdownEditor({
   id,
   initialValue,
   placeholder,
@@ -31,8 +33,7 @@ export function MarkdownEditor({
   ariaLabel,
   onChange,
   onSubmit,
-  ref,
-}: MarkdownEditorProps) {
+}, ref) {
   const editor = useEditor({
     // Create the editor after mount: identical server and first client render
     // (SSR-safe), as tiptap requires under server rendering.
@@ -108,4 +109,4 @@ export function MarkdownEditor({
       <EditorContent editor={editor} />
     </section>
   );
-}
+});

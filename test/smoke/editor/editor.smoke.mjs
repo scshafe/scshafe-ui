@@ -6,7 +6,8 @@ import { renderToString } from "react-dom/server";
 import { MarkdownEditor } from "@scshafe/ui/editor";
 import * as root from "@scshafe/ui";
 
-if (typeof MarkdownEditor !== "function") throw new Error("editor export missing");
+// A forwardRef component (since 0.9.1, so its handle attaches on React 18) is an object.
+if (typeof MarkdownEditor !== "function" && MarkdownEditor?.$$typeof !== Symbol.for("react.forward_ref")) throw new Error("editor export missing");
 if ("MarkdownEditor" in root) throw new Error("MarkdownEditor is still in the root export");
 const html = renderToString(React.createElement(MarkdownEditor, { ariaLabel: "Message", initialValue: "**hi**" }));
 if (!html.includes('data-sui-component="MarkdownEditor"')) throw new Error("editor markup lacks its marker: " + html);

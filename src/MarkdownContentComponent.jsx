@@ -6,8 +6,12 @@ function markdownText(value) {
 }
 
 function safeMarkdownHref(value) {
-  const href = typeof value === "string" ? value.trim() : "";
+  // Read as a browser reads it: outer spaces and controls trimmed, tabs and newlines dropped.
+  const href = typeof value === "string" ? value.replace(/^[\u0000- ]+|[\u0000- ]+$/g, "").replace(/[\t\n\r]/g, "") : "";
   if (!href) return null;
+  // "//host", also spelled with backslashes (browsers read them as slashes), leaves the page's
+  // origin: not a path. Same rule as safeUrl in @scshafe/ui/ssr.
+  if (/^[/\\]{2}/.test(href)) return null;
   if (href.startsWith("#") || href.startsWith("/")) return href;
   try {
     const url = new URL(href);

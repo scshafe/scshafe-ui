@@ -4,8 +4,8 @@
 // React apps. Rules:
 //   - every interpolated value is escaped; only SafeHtml (from these helpers, `html`, or the
 //     explicit `trustedHtml` escape hatch) passes through unescaped;
-//   - URL attributes (href, action, formaction, src) accept http(s), mailto, tel and relative
-//     URLs only; anything else renders as "#";
+//   - URL attributes (href, src, action, srcset, …) accept http(s), mailto, tel and relative
+//     URLs only, and no protocol-relative "//host" unless asked; anything else renders as "#";
 //   - no style attribute and no event-handler attribute is ever emitted (CSP `style-src 'self'`
 //     and no inline script); Grid columns are classes here (the React Grid uses a style);
 //   - no client JavaScript: hover cards / tooltips, resize handles and icon glyphs are React-only.
@@ -55,93 +55,495 @@ export function renderContent(content: Content): string {
   return escapeHtml(content);
 }
 
-// Where a template value lands, from a scan of the template text before it. Escaping makes a
-// value safe in text and in a QUOTED attribute value; other contexts are not made safe by
-// escaping, so `html` refuses them (and, in URL attributes, also checks the scheme).
-type TemplateContext =
-  | { kind: "text" }
-  | { kind: "raw"; element: string }
-  | { kind: "tag-name" }
-  | { kind: "tag" }
-  | { kind: "unquoted"; attribute: string }
-  | { kind: "quoted"; attribute: string };
+// ---------------------------------------------------------------------------------------------
+// URLs
 
-const URL_TEMPLATE_ATTRIBUTES = new Set(["href", "src", "action", "formaction", "cite", "poster", "ping", "xlink:href"]);
+const ALLOWED_SCHEMES = new Set(["http", "https", "mailto", "tel"]);
 
-function scanContext(prefix: string): TemplateContext {
-  let state: "text" | "tag" | "quoted" | "raw" = "text";
-  let quote = "";
-  let tagStart = 0;
-  let attribute = "";
-  let raw = "";
-  for (let index = 0; index < prefix.length; index += 1) {
-    const char = prefix[index] as string;
-    if (state === "raw") {
-      if (char === "<" && prefix.slice(index + 1, index + 2 + raw.length).toLowerCase() === `/${raw}`) { state = "tag"; tagStart = index; }
-    } else if (state === "text") {
-      if (char === "<" && /[a-zA-Z/!?]/.test(prefix[index + 1] ?? "")) { state = "tag"; tagStart = index; }
-    } else if (state === "tag") {
-      if (char === '"' || char === "'") {
-        state = "quoted";
-        quote = char;
-        attribute = (/([^\s"'=<>/]+)\s*=\s*$/.exec(prefix.slice(tagStart, index))?.[1] ?? "").toLowerCase();
-      } else if (char === ">") {
-        const opened = /^<([a-zA-Z][a-zA-Z0-9-]*)/.exec(prefix.slice(tagStart, index))?.[1]?.toLowerCase() ?? "";
-        state = opened === "script" || opened === "style" ? "raw" : "text";
-        raw = opened;
-      }
-    } else if (char === quote) {
-      state = "tag";
-    }
-  }
-  // A trailing "<" (or "<" + spaces is still text): the value would become the tag name.
-  if (state === "text") return prefix.endsWith("<") ? { kind: "tag-name" } : { kind: "text" };
-  if (state === "raw") return { kind: "raw", element: raw };
-  if (state === "quoted") return { kind: "quoted", attribute };
-  const tagText = prefix.slice(tagStart);
-  if (/^<\/?[a-zA-Z0-9-]*$/.test(tagText)) return { kind: "tag-name" };
-  const unquoted = /([^\s"'=<>/]+)\s*=\s*$/.exec(tagText);
-  if (unquoted) return { kind: "unquoted", attribute: (unquoted[1] ?? "").toLowerCase() };
-  return { kind: "tag" };
+// One list for `html` and attrs(): the attributes that hold a URL, and those that hold several
+// (srcset, with its width or density descriptors, and ping). The content of a
+// <meta http-equiv="refresh"> holds one too ("5; url=/next").
+const URL_ATTRIBUTES = new Set(["href", "src", "action", "formaction", "cite", "poster", "data", "background", "longdesc", "manifest", "codebase", "xlink:href"]);
+const URL_LIST_ATTRIBUTES = new Set(["srcset", "ping"]);
+
+type UrlKind = "url" | "list" | "refresh";
+
+// What a refused value becomes: a dead link, or no URL at all.
+const REFUSED_URL_VALUE: Record<UrlKind, string> = { url: "#", list: "", refresh: "" };
+
+export interface SafeUrlOptions {
+  /** Accept a protocol-relative URL ("//host/path", also spelled with backslashes), which leaves
+   * the page's origin. Off by default: a value meant as a path must not name another host. */
+  allowProtocolRelative?: boolean;
 }
 
-function interpolate(prefix: string, value: Content): string {
-  const context = scanContext(prefix);
-  switch (context.kind) {
-    case "text":
-      return renderContent(value);
-    case "raw":
-      throw new TypeError(`@scshafe/ui/ssr html\`\`: no values inside <${context.element}>`);
-    case "tag-name":
-      throw new TypeError("@scshafe/ui/ssr html``: a value cannot be (part of) a tag name");
-    case "tag":
-      throw new TypeError("@scshafe/ui/ssr html``: inside a tag, a value goes in a quoted attribute value (use attrs() for whole attributes)");
-    case "unquoted":
-      throw new TypeError("@scshafe/ui/ssr html``: quote attribute values (attr=\"${…}\")");
-    case "quoted":
-      if (/^on/.test(context.attribute) || context.attribute === "style" || context.attribute === "srcdoc") {
-        throw new TypeError(`@scshafe/ui/ssr html\`\`: no values in the ${context.attribute} attribute`);
-      }
-      if (URL_TEMPLATE_ATTRIBUTES.has(context.attribute)) {
-        if (typeof value !== "string" && typeof value !== "number") throw new TypeError("@scshafe/ui/ssr html``: a URL attribute takes a plain string");
-        return escapeHtml(safeUrl(value));
-      }
-      if (SafeHtml.is(value)) throw new TypeError("@scshafe/ui/ssr html``: markup cannot go in an attribute value");
-      return renderContent(value);
+function checkedUrl(value: unknown, { allowProtocolRelative = false }: SafeUrlOptions = {}): string | null {
+  // What the URL parser does first: strip leading/trailing C0 controls and spaces, drop every
+  // tab and newline (so "java\tscript:" is still a javascript: URL).
+  const cleaned = String(value ?? "").replace(/^[\u0000- ]+|[\u0000- ]+$/g, "").replace(/[\t\n\r]/g, "");
+  // Browsers read a backslash as a slash in http(s) URLs, so two of either start a host.
+  if (!allowProtocolRelative && /^[/\\]{2}/.test(cleaned)) return null;
+  const colon = cleaned.indexOf(":");
+  if (colon === -1) return cleaned;
+  const delimiter = cleaned.search(/[/?#]/);
+  if (delimiter !== -1 && delimiter < colon) return cleaned; // a colon in a path, query or fragment
+  const scheme = cleaned.slice(0, colon);
+  return /^[a-zA-Z][a-zA-Z0-9+.-]*$/.test(scheme) && ALLOWED_SCHEMES.has(scheme.toLowerCase()) ? cleaned : null;
+}
+
+/** A URL safe for href/action/src: http(s), mailto, tel or relative; otherwise "#". A
+ * protocol-relative URL ("//host", or with backslashes) is refused unless allowProtocolRelative. */
+export function safeUrl(value: unknown, options: SafeUrlOptions = {}): string {
+  return checkedUrl(value, options) ?? "#";
+}
+
+// The URL a refresh declaration ("5; url=/next", "0;URL='/next'") navigates to, as browsers
+// read it: both the text after the delay and, when it is quoted, the text inside the quotes.
+function refreshTargets(content: string): string[] {
+  const rest = content.replace(/^[\t\n\f\r ]*[0-9.]*[\t\n\f\r ]*[;,]?[\t\n\f\r ]*/, "").replace(/^url[\t\n\f\r ]*=[\t\n\f\r ]*/i, "");
+  const quote = rest[0];
+  if (quote !== '"' && quote !== "'") return [rest];
+  const end = rest.indexOf(quote, 1);
+  return [rest, end === -1 ? rest.slice(1) : rest.slice(1, end)];
+}
+
+function urlKind(name: string, refresh: boolean): UrlKind | null {
+  if (URL_ATTRIBUTES.has(name)) return "url";
+  if (URL_LIST_ATTRIBUTES.has(name)) return "list";
+  return name === "content" && refresh ? "refresh" : null;
+}
+
+function urlValueAllowed(kind: UrlKind, value: string): boolean {
+  const candidates = kind === "url" ? [value] : kind === "list" ? value.split(/[\s,]+/).filter(Boolean) : refreshTargets(value).filter(Boolean);
+  return candidates.every((candidate) => checkedUrl(candidate) !== null);
+}
+
+const isRefresh = (value: unknown): boolean => typeof value === "string" && value.trim().toLowerCase() === "refresh";
+
+// ---------------------------------------------------------------------------------------------
+// html``: where each value lands
+//
+// The template text is tokenized as a browser tokenizes HTML: text; comments and declarations;
+// tags with their attribute names and quoted or unquoted values; the raw text of <script>,
+// <style> and the other raw-text elements; and the text of <textarea> and <title>. Escaping
+// makes a value safe in text and in a QUOTED attribute value, so those are the only places a
+// value may go; every other place throws. A URL-bearing attribute is checked once its tag is
+// complete, as the browser will read it: its template text (character references decoded) with
+// the values in place, so values cannot spell a scheme or a protocol-relative URL between them
+// or with the text around them. Markup inside <svg> and <math> is tokenized by other rules, so
+// no value may follow an inline <svg> or <math> start tag in the same template (interpolate the
+// drawing as its own html`` instead). A template must end as text: not inside a tag, a comment,
+// raw text or an open <svg> or <math>, so its result can be placed in another template.
+
+const RAW_TEXT_ELEMENTS = new Set(["script", "style", "xmp", "iframe", "noembed", "noframes", "noscript", "plaintext"]);
+const ESCAPABLE_RAW_TEXT_ELEMENTS = new Set(["textarea", "title"]);
+const VOID_ELEMENTS = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"]);
+// HTML start tags that end <svg> or <math> content (the "breakout" tags of the HTML parser).
+const FOREIGN_BREAKOUT = new Set(["b", "big", "blockquote", "body", "br", "center", "code", "dd", "div", "dl", "dt", "em", "embed", "h1", "h2", "h3", "h4", "h5", "h6", "head", "hr", "i", "img", "li", "listing", "menu", "meta", "nobr", "ol", "p", "pre", "ruby", "s", "small", "span", "strong", "strike", "sub", "sup", "table", "tt", "u", "ul", "var"]);
+// Elements inside <svg> or <math> whose content is parsed as HTML again.
+const HTML_INTEGRATION_POINTS: Record<"svg" | "math", ReadonlySet<string>> = {
+  svg: new Set(["foreignobject", "desc", "title"]),
+  math: new Set(["mi", "mo", "mn", "ms", "mtext"])
+};
+
+// Character references a URL attribute's template text may use around a value. Another named
+// reference is refused rather than guessed: some spell ASCII letters or slashes.
+const URL_CHARACTER_REFERENCES: Readonly<Record<string, string>> = {
+  amp: "&", AMP: "&", lt: "<", LT: "<", gt: ">", GT: ">", quot: '"', QUOT: '"', apos: "'", colon: ":",
+  sol: "/", bsol: "\\", Tab: "\t", NewLine: "\n", num: "#", quest: "?", period: ".", excl: "!",
+  lpar: "(", rpar: ")", equals: "=", plus: "+", comma: ",", semi: ";", percnt: "%", nbsp: " "
+};
+
+function decodeCharacterReferences(text: string, strict: boolean): string {
+  return text.replace(/&(?:#([0-9]+)|#[xX]([0-9a-fA-F]+)|([a-zA-Z][a-zA-Z0-9]*));?/g, (match: string, decimal?: string, hex?: string, name?: string) => {
+    if (name === undefined) {
+      const code = decimal !== undefined ? Number.parseInt(decimal, 10) : Number.parseInt(hex ?? "", 16);
+      return code > 0 && code <= 0x10ffff && (code < 0xd800 || code > 0xdfff) ? String.fromCodePoint(code) : "�";
+    }
+    // Without ";", only legacy references (none of which spells a URL delimiter) decode.
+    if (!match.endsWith(";")) return match;
+    const decoded = URL_CHARACTER_REFERENCES[name];
+    if (decoded !== undefined) return decoded;
+    if (strict) throw new TypeError(`@scshafe/ui/ssr html\`\`: the character reference &${name}; cannot be checked in a URL attribute that takes a value`);
+    return match;
+  });
+}
+
+interface TemplateValue {
+  /** The value as text, for the URL check; null when it is not a plain string or number. */
+  raw: string | null;
+  rendered: string;
+}
+
+interface TemplateAttribute {
+  name: string;
+  parts: Array<string | TemplateValue>;
+}
+
+interface TemplateTag {
+  name: string;
+  end: boolean;
+  selfClosing: boolean;
+  attributes: TemplateAttribute[];
+  /** The tag's markup in order: text, and the quoted attribute values to render at its end. */
+  chunks: Array<string | TemplateAttribute>;
+}
+
+interface ForeignFrame {
+  /** "svg" or "math", or an HTML integration point inside them. */
+  kind: "svg" | "math" | "html";
+  name: string;
+  /** HTML elements open inside an integration point; "stuck" once their nesting is unclear. */
+  open: string[] | "stuck";
+}
+
+type TokenizerState =
+  | "data" | "tag-open" | "end-tag-open" | "tag-name" | "before-name" | "name" | "after-name"
+  | "before-value" | "double-quoted" | "single-quoted" | "unquoted" | "after-quoted" | "self-closing"
+  | "comment-start" | "comment-start-dash" | "comment" | "bogus-comment" | "raw" | "rcdata";
+
+const WHITESPACE = /[\t\n\f ]/;
+const LETTER = /[a-zA-Z]/;
+
+class TemplateScanner {
+  #out = "";
+  #state: TokenizerState = "data";
+  #tag: TemplateTag | null = null;
+  #attribute: TemplateAttribute | null = null;
+  #commentTail = "";
+  #rawElement = "";
+  #scriptEscape: "none" | "escaped" | "double" = "none";
+  #frames: ForeignFrame[] = [];
+  #foreignSeen = false;
+
+  text(segment: string): void {
+    let index = 0;
+    while (index < segment.length) index = this.#step(segment, index);
   }
+
+  value(value: Content): void {
+    if (this.#foreignSeen) throw new TypeError("@scshafe/ui/ssr html``: no values inside or after an inline <svg> or <math> (put the drawing in its own html`` and interpolate it)");
+    switch (this.#state) {
+      case "data":
+        this.#out += renderContent(value);
+        return;
+      case "rcdata":
+        if (SafeHtml.is(value)) throw new TypeError(`@scshafe/ui/ssr html\`\`: markup cannot go inside <${this.#rawElement}>`);
+        this.#out += renderContent(value);
+        return;
+      case "raw":
+        throw new TypeError(`@scshafe/ui/ssr html\`\`: no values inside <${this.#rawElement}>`);
+      case "tag-open":
+      case "end-tag-open":
+      case "tag-name":
+        throw new TypeError("@scshafe/ui/ssr html``: a value cannot be (part of) a tag name");
+      case "comment-start":
+      case "comment-start-dash":
+      case "comment":
+      case "bogus-comment":
+        throw new TypeError("@scshafe/ui/ssr html``: no values inside an HTML comment or declaration");
+      case "before-value":
+      case "unquoted":
+        throw new TypeError("@scshafe/ui/ssr html``: quote attribute values (attr=\"${…}\")");
+      case "double-quoted":
+      case "single-quoted":
+        this.#attributeValue(value);
+        return;
+      default:
+        throw new TypeError("@scshafe/ui/ssr html``: inside a tag, a value goes in a quoted attribute value (use attrs() for whole attributes)");
+    }
+  }
+
+  finish(): string {
+    const open = this.#state === "data" || this.#state === "tag-open" || this.#state === "end-tag-open"
+      ? (this.#frames.length > 0 ? `<${this.#frames[0]?.name}>` : null)
+      : this.#state === "raw" || this.#state === "rcdata" ? `<${this.#rawElement}>`
+      : this.#state.startsWith("comment") || this.#state === "bogus-comment" ? "a comment" : "a tag";
+    if (open) throw new TypeError(`@scshafe/ui/ssr html\`\`: the template ends inside ${open}`);
+    // A "<" or "</" at the very end is text.
+    if (this.#state !== "data") this.#out += this.#state === "tag-open" ? "&lt;" : "&lt;/";
+    return this.#out;
+  }
+
+  #attributeValue(value: Content): void {
+    const attribute = this.#attribute as TemplateAttribute;
+    const name = attribute.name;
+    if (/^on/.test(name) || name === "style" || name === "srcdoc") throw new TypeError(`@scshafe/ui/ssr html\`\`: no values in the ${name} attribute`);
+    const plain = typeof value === "string" || typeof value === "number";
+    const mayHoldUrl = URL_ATTRIBUTES.has(name) || URL_LIST_ATTRIBUTES.has(name) || (name === "content" && this.#tag?.name === "meta");
+    if (mayHoldUrl && !plain) throw new TypeError("@scshafe/ui/ssr html``: a URL attribute takes a plain string");
+    if (SafeHtml.is(value)) throw new TypeError("@scshafe/ui/ssr html``: markup cannot go in an attribute value");
+    attribute.parts.push({ raw: plain ? String(value) : null, rendered: renderContent(value) });
+  }
+
+  // One tokenizer step from `index`; returns the index of the next character to read.
+  #step(segment: string, index: number): number {
+    const char = segment[index] as string;
+    const tag = this.#tag;
+    switch (this.#state) {
+      case "data":
+        if (char === "<") this.#state = "tag-open";
+        else this.#out += char;
+        return index + 1;
+      case "tag-open":
+        if (char === "!") return this.#markupDeclaration(segment, index + 1);
+        if (char === "/") { this.#state = "end-tag-open"; return index + 1; }
+        if (LETTER.test(char)) { this.#openTag(false); return index; }
+        if (char === "?") { this.#out += "<"; this.#state = "bogus-comment"; return index; }
+        this.#out += "<";
+        this.#state = "data";
+        return index;
+      case "end-tag-open":
+        if (LETTER.test(char)) { this.#openTag(true); return index; }
+        if (char === ">") { this.#out += "</>"; this.#state = "data"; return index + 1; }
+        this.#out += "</";
+        this.#state = "bogus-comment";
+        return index;
+      case "tag-name":
+        if (WHITESPACE.test(char)) this.#state = "before-name";
+        else if (char === "/") this.#state = "self-closing";
+        else if (char === ">") { this.#closeTag(); return index + 1; }
+        else (tag as TemplateTag).name += char.toLowerCase();
+        (tag as TemplateTag).chunks.push(char);
+        return index + 1;
+      case "before-name":
+        if (WHITESPACE.test(char)) { (tag as TemplateTag).chunks.push(char); return index + 1; }
+        if (char === "/" || char === ">") { this.#state = "after-name"; return index; }
+        this.#startAttribute();
+        if (char === "=") { (this.#attribute as TemplateAttribute).name += char; (tag as TemplateTag).chunks.push(char); return index + 1; }
+        return index;
+      case "name":
+        if (WHITESPACE.test(char) || char === "/" || char === ">") { this.#state = "after-name"; return index; }
+        (tag as TemplateTag).chunks.push(char);
+        if (char === "=") this.#state = "before-value";
+        else (this.#attribute as TemplateAttribute).name += char.toLowerCase();
+        return index + 1;
+      case "after-name":
+        if (WHITESPACE.test(char)) { (tag as TemplateTag).chunks.push(char); return index + 1; }
+        if (char === "/") { (tag as TemplateTag).chunks.push(char); this.#state = "self-closing"; return index + 1; }
+        if (char === "=") { (tag as TemplateTag).chunks.push(char); this.#state = "before-value"; return index + 1; }
+        if (char === ">") { this.#closeTag(); return index + 1; }
+        this.#startAttribute();
+        return index;
+      case "before-value":
+        if (WHITESPACE.test(char)) { (tag as TemplateTag).chunks.push(char); return index + 1; }
+        if (char === '"' || char === "'") {
+          (tag as TemplateTag).chunks.push(char, this.#attribute as TemplateAttribute);
+          this.#state = char === '"' ? "double-quoted" : "single-quoted";
+          return index + 1;
+        }
+        if (char === ">") { this.#closeTag(); return index + 1; }
+        this.#state = "unquoted";
+        return index;
+      case "double-quoted":
+      case "single-quoted":
+        if (char === (this.#state === "double-quoted" ? '"' : "'")) {
+          (tag as TemplateTag).chunks.push(char);
+          this.#state = "after-quoted";
+        } else {
+          appendText(this.#attribute as TemplateAttribute, char);
+        }
+        return index + 1;
+      case "unquoted":
+        if (WHITESPACE.test(char)) { (tag as TemplateTag).chunks.push(char); this.#state = "before-name"; return index + 1; }
+        if (char === ">") { this.#closeTag(); return index + 1; }
+        (tag as TemplateTag).chunks.push(char);
+        appendText(this.#attribute as TemplateAttribute, char);
+        return index + 1;
+      case "after-quoted":
+        if (WHITESPACE.test(char)) { (tag as TemplateTag).chunks.push(char); this.#state = "before-name"; return index + 1; }
+        if (char === "/") { (tag as TemplateTag).chunks.push(char); this.#state = "self-closing"; return index + 1; }
+        if (char === ">") { this.#closeTag(); return index + 1; }
+        this.#state = "before-name";
+        return index;
+      case "self-closing":
+        if (char === ">") { (tag as TemplateTag).selfClosing = true; this.#closeTag(); return index + 1; }
+        this.#state = "before-name";
+        return index;
+      case "comment-start":
+        this.#out += char;
+        if (char === ">") this.#state = "data";
+        else if (char === "-") this.#state = "comment-start-dash";
+        else { this.#state = "comment"; this.#commentTail = char; }
+        return index + 1;
+      case "comment-start-dash":
+        this.#out += char;
+        if (char === ">") this.#state = "data";
+        else { this.#state = "comment"; this.#commentTail = `-${char}`; }
+        return index + 1;
+      case "comment":
+        this.#out += char;
+        this.#commentTail = (this.#commentTail + char).slice(-4);
+        if (this.#commentTail.endsWith("-->") || this.#commentTail === "--!>") this.#state = "data";
+        return index + 1;
+      case "bogus-comment":
+        this.#out += char;
+        if (char === ">") this.#state = "data";
+        return index + 1;
+      case "raw":
+      case "rcdata":
+        return this.#rawStep(segment, index);
+    }
+  }
+
+  // After "<!": a comment, a declaration (<!DOCTYPE …>) or a CDATA section.
+  #markupDeclaration(segment: string, index: number): number {
+    if (segment.startsWith("[CDATA[", index)) throw new TypeError("@scshafe/ui/ssr html``: no CDATA sections (their end depends on where the parser is)");
+    this.#out += "<!";
+    if (segment.startsWith("--", index)) {
+      this.#out += "--";
+      this.#state = "comment-start";
+      return index + 2;
+    }
+    this.#state = "bogus-comment";
+    return index;
+  }
+
+  // Raw text (<script>, <style>, …) and the text of <textarea> and <title> end only at their own
+  // end tag; a <script> also has the escaped states a "<!--" inside it opens.
+  #rawStep(segment: string, index: number): number {
+    const char = segment[index] as string;
+    const name = this.#rawElement;
+    const endsHere = (text: string): boolean => {
+      if (segment.slice(index, index + text.length).toLowerCase() !== text) return false;
+      const next = segment[index + text.length];
+      return next !== undefined && (WHITESPACE.test(next) || next === "/" || next === ">");
+    };
+    if (name === "script") {
+      if (this.#scriptEscape === "none" && segment.startsWith("<!--", index)) {
+        this.#out += "<!--";
+        this.#scriptEscape = "escaped";
+        this.#commentTail = "--";
+        return index + 4;
+      }
+      if (this.#scriptEscape !== "none") {
+        this.#commentTail = (this.#commentTail + char).slice(-3);
+        if (this.#commentTail === "-->") { this.#scriptEscape = "none"; this.#out += char; return index + 1; }
+        if (this.#scriptEscape === "escaped" && endsHere("<script")) { this.#scriptEscape = "double"; this.#out += char; return index + 1; }
+        if (this.#scriptEscape === "double" && endsHere("</script")) { this.#scriptEscape = "escaped"; this.#out += char; return index + 1; }
+      }
+    }
+    if (name !== "plaintext" && this.#scriptEscape !== "double" && endsHere(`</${name}`)) {
+      this.#scriptEscape = "none";
+      this.#state = "end-tag-open";
+      return index + 2;
+    }
+    this.#out += char;
+    return index + 1;
+  }
+
+  #openTag(end: boolean): void {
+    this.#tag = { name: "", end, selfClosing: false, attributes: [], chunks: [end ? "</" : "<"] };
+    this.#state = "tag-name";
+  }
+
+  #startAttribute(): void {
+    const attribute: TemplateAttribute = { name: "", parts: [] };
+    (this.#tag as TemplateTag).attributes.push(attribute);
+    this.#attribute = attribute;
+    this.#state = "name";
+  }
+
+  #closeTag(): void {
+    const tag = this.#tag as TemplateTag;
+    tag.chunks.push(">");
+    const httpEquiv = tag.attributes.find((attribute) => attribute.name === "http-equiv");
+    const refresh = tag.name === "meta" && httpEquiv !== undefined && isRefresh(composedText(httpEquiv, false));
+    for (const chunk of tag.chunks) this.#out += typeof chunk === "string" ? chunk : renderAttribute(chunk, refresh);
+    this.#tag = null;
+    this.#attribute = null;
+    this.#state = "data";
+    this.#afterTag(tag);
+  }
+
+  // What the tag does to the parser: raw text after <script> and its kin, and the <svg> and
+  // <math> content where other rules apply.
+  #afterTag(tag: TemplateTag): void {
+    const frames = this.#frames;
+    const top = frames.at(-1);
+    const foreign = top !== undefined && top.kind !== "html";
+    const name = tag.name;
+    if (tag.end) {
+      if (top?.kind === "html" && Array.isArray(top.open) && top.open.length > 0) {
+        const at = top.open.lastIndexOf(name);
+        if (at === top.open.length - 1) top.open.pop();
+        else if (at !== -1) top.open = "stuck";
+        return;
+      }
+      if (top?.kind === "html" && top.open === "stuck") return;
+      if (foreign && (name === "p" || name === "br")) { this.#leaveForeign(); return; }
+      const at = frames.map((frame) => frame.name).lastIndexOf(name);
+      if (at !== -1) frames.length = at;
+      return;
+    }
+    if (foreign && (FOREIGN_BREAKOUT.has(name) || (name === "font" && tag.attributes.some((attribute) => ["color", "face", "size"].includes(attribute.name))))) {
+      this.#leaveForeign();
+    }
+    const current = frames.at(-1);
+    if (current !== undefined && current.kind !== "html") {
+      if (tag.selfClosing) return;
+      const encoding = tag.attributes.find((attribute) => attribute.name === "encoding");
+      const htmlAnnotation = current.kind === "math" && name === "annotation-xml" && encoding !== undefined && /^(text\/html|application\/xhtml\+xml)$/i.test(composedText(encoding, false));
+      if (HTML_INTEGRATION_POINTS[current.kind].has(name) || htmlAnnotation) frames.push({ kind: "html", name, open: [] });
+      else if (name === "svg" || name === "math") frames.push({ kind: name, name, open: [] });
+      return;
+    }
+    if (name === "svg" || name === "math") {
+      this.#foreignSeen = true;
+      if (!tag.selfClosing) frames.push({ kind: name, name, open: [] });
+      return;
+    }
+    if (RAW_TEXT_ELEMENTS.has(name) || ESCAPABLE_RAW_TEXT_ELEMENTS.has(name)) {
+      this.#state = RAW_TEXT_ELEMENTS.has(name) ? "raw" : "rcdata";
+      this.#rawElement = name;
+      return;
+    }
+    if (current?.kind === "html" && Array.isArray(current.open) && !VOID_ELEMENTS.has(name)) current.open.push(name);
+  }
+
+  #leaveForeign(): void {
+    const frames = this.#frames;
+    while (frames.length > 0 && frames.at(-1)?.kind !== "html") frames.pop();
+  }
+}
+
+// Template text joins the attribute's last text part, so a character reference is decoded whole.
+function appendText(attribute: TemplateAttribute, text: string): void {
+  const last = attribute.parts.length - 1;
+  if (typeof attribute.parts[last] === "string") attribute.parts[last] += text;
+  else attribute.parts.push(text);
+}
+
+function composedText(attribute: TemplateAttribute, strict: boolean): string {
+  return attribute.parts.map((part) => typeof part === "string" ? decodeCharacterReferences(part, strict) : part.raw ?? "").join("");
+}
+
+function renderAttribute(attribute: TemplateAttribute, refresh: boolean): string {
+  const hasValue = attribute.parts.some((part) => typeof part !== "string");
+  const kind = hasValue ? urlKind(attribute.name, refresh) : null;
+  if (kind) {
+    if (attribute.parts.some((part) => typeof part !== "string" && part.raw === null)) throw new TypeError("@scshafe/ui/ssr html``: a URL attribute takes a plain string");
+    if (!urlValueAllowed(kind, composedText(attribute, true))) return REFUSED_URL_VALUE[kind];
+  }
+  return attribute.parts.map((part) => typeof part === "string" ? part : part.rendered).join("");
 }
 
 /** Tagged template: `html\`<p>${name}</p>\`` escapes every value that is not SafeHtml. A value
- * may sit in text or in a quoted attribute value; in href/src/action/formaction/cite/poster/ping
- * it must be a plain string and goes through safeUrl. Refused (throws): a tag name, an unquoted
- * attribute value, a bare position inside a tag, markup in an attribute value, an on*, style or
- * srcdoc attribute, and the inside of <script> or <style>. */
+ * may sit in text or in a quoted attribute value. In a URL attribute (href, src, action,
+ * formaction, cite, poster, data, srcset, ping, …, and the content of a refresh <meta>) it must
+ * be a plain string, and the attribute's whole value, template text and values together, must
+ * pass safeUrl, or it becomes "#" (srcset, ping, refresh: empty). Refused (throws): a tag name,
+ * an unquoted attribute value, a bare position inside a tag, markup in an attribute value, an
+ * on*, style or srcdoc attribute, the inside of a comment, <script>, <style> or another
+ * raw-text element, anything inside or after an inline <svg> or <math>, a CDATA section, and a
+ * template that ends inside a tag, a comment, raw text or an open <svg>/<math>. */
 export function html(strings: TemplateStringsArray, ...values: ReadonlyArray<Content>): SafeHtml {
-  let out = strings[0] ?? "";
-  for (let index = 0; index < values.length; index += 1) {
-    out += interpolate(out, values[index]) + (strings[index + 1] ?? "");
+  const scanner = new TemplateScanner();
+  for (let index = 0; index < strings.length; index += 1) {
+    scanner.text(strings[index] ?? "");
+    if (index < values.length) scanner.value(values[index]);
   }
-  return safe(out);
+  return safe(scanner.finish());
 }
 
 /** The explicit escape hatch: mark a string as safe markup. Only for markup you produced or
@@ -156,26 +558,9 @@ export function join(items: ReadonlyArray<Content>, separator: Content = ""): Sa
   return safe(items.map((item) => renderContent(item)).filter((item) => item !== "").join(sep));
 }
 
-const ALLOWED_SCHEMES = new Set(["http", "https", "mailto", "tel"]);
-
-/** A URL safe for href/action/src: http(s), mailto, tel or relative; otherwise "#". */
-export function safeUrl(value: unknown): string {
-  // What the URL parser does first: strip leading/trailing C0 controls and spaces, drop every
-  // tab and newline (so "java\tscript:" is still a javascript: URL).
-  const cleaned = String(value ?? "").replace(/^[\u0000- ]+|[\u0000- ]+$/g, "").replace(/[\t\n\r]/g, "");
-  const colon = cleaned.indexOf(":");
-  if (colon === -1) return cleaned;
-  const delimiter = cleaned.search(/[/?#]/);
-  if (delimiter !== -1 && delimiter < colon) return cleaned; // a colon in a path, query or fragment
-  const scheme = cleaned.slice(0, colon);
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*$/.test(scheme) && ALLOWED_SCHEMES.has(scheme.toLowerCase())) return cleaned;
-  return "#";
-}
-
 export type AttrValue = string | number | boolean | null | undefined;
 export type Attributes = Readonly<Record<string, AttrValue>>;
 
-const URL_ATTRIBUTES = new Set(["href", "action", "formaction", "src", "cite", "poster", "xlink:href"]);
 const ATTRIBUTE_NAME = /^[a-z][a-z0-9-]*$/;
 
 function checkAttributeName(name: string): void {
@@ -186,14 +571,20 @@ function checkAttributeName(name: string): void {
 }
 
 /** Render attributes: ` name="value"` each, escaped; true renders `name=""`, false/null/undefined
- * nothing; URL attributes go through safeUrl; names are checked (no on*, no style). */
+ * nothing; URL attributes go through safeUrl (srcset and ping check every URL, and so does the
+ * content of a refresh <meta>, rendered empty when one is refused); names are checked (no on*, no
+ * style). */
 export function attrs(record: Attributes): string {
+  const refresh = isRefresh(record["http-equiv"]);
   let out = "";
   for (const [name, value] of Object.entries(record)) {
     checkAttributeName(name);
     if (value === null || value === undefined || value === false) continue;
     if (value === true) { out += ` ${name}=""`; continue; }
-    const text = URL_ATTRIBUTES.has(name) ? safeUrl(value) : String(value);
+    const kind = urlKind(name, refresh);
+    let text = String(value);
+    if (kind === "url") text = safeUrl(text);
+    else if (kind && !urlValueAllowed(kind, text)) text = REFUSED_URL_VALUE[kind];
     out += ` ${name}="${escapeHtml(text)}"`;
   }
   return out;
